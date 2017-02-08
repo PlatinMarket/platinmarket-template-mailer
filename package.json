@@ -11,7 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.16.0",
+    "encoding": "^0.1.12",
     "express": "^4.14.1",
-    "express-handlebars": "^3.0.0"
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.0",
+    "request": "^2.79.0",
+    "xml2js": "^0.4.17"
   }
 }

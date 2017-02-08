@@ -4,12 +4,13 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<p class="lead text-center">PlatinBOX E-mails</p>
+					<p class="alert alert-danger" style="display: none;"></p>
 					<form>
 						<div class="form-group">
-							<input type="email" class="form-control" placeholder="E-posta" required />
+							<input type="email" name="email" class="form-control" placeholder="E-posta" required />
 						</div>			
 						<div class="form-group">
-							<input type="password" class="form-control" placeholder="Şifre" required />
+							<input type="password" name="password" class="form-control" placeholder="Şifre" required />
 						</div>
 						<button type="submit" class="btn btn-block btn-success">Oturum aç</button>
 					</form>
@@ -18,3 +19,26 @@
 		</div>
 	</div>
 </div>
+<script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
+<script>
+
+    $("form")
+        .on('submit', function(e) {
+            e.preventDefault();
+            $(e.target).trigger('log.in');
+            $.post('/login', {email: $("input[name='email']").val(), password: $("input[name='password']").val()})
+                .then(r => $(e.target).trigger('success.log.in'))
+                .catch(err => $(e.target).trigger($.Event('error.log.in', err)));
+        })
+        .on('log.in', function(e) {
+            $(this).find('input, button').attr('disabled', 'disabled');
+        })
+        .on('error.log.in', function(e) {
+            $(this).find('input, button').removeAttr('disabled');
+            $(".alert").show().html(e.responseText);
+        })
+        .on('success.log.in', function(e) {
+            $(".alert").show().html("Giriş başarılı");
+            window.location = '/';
+        });
+</script>

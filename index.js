@@ -3,6 +3,22 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var expressHandlebars  = require('express-handlebars');
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var loginRequire = require('./lib/isLogged');
+
+// Set body parser
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
+// Session middleware
+app.set('trust proxy', 1); // trust first proxy
+app.use(session({
+    secret: 'pm-template-helper',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true, httpOnly: false }
+}));
 
 // Public folder
 app.use(express.static('public'));
@@ -20,6 +36,22 @@ app.get('/', (req, res) => {
 // Login page
 app.get('/login', (req, res) => {
     res.render('login', {layout: 'login'});
+});
+
+// Login post
+app.post('/login', (req, res) => {
+    if (!req.body.email || !req.body.password) return res.sendStatus(400);
+    var auth = require('./lib/auth');
+    auth(req.body.email, req.body.password)
+        .then(user => {
+            req.session.user = user;
+            return res.sendStatus(200);
+        })
+        .catch(e => {
+            res.statusCode = 400;
+            res.send(e.message);
+            res.end();
+        });
 });
 
 // Start server

@@ -3,5 +3,9 @@ node_modules/*
 
 template/*
 !template/empty
+!template/sample
 
 public/assets/*
+
+config/*
+!config/config.js.default
