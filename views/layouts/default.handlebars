@@ -10,7 +10,21 @@
 </head>
 <body>
     {{{body}}}
+
+    <script id="template-dropdown-item" type="text/x-handlebars-template">
+        <li><a href="/template/\{{folder}}/edit">\{{name}}</a></li>
+    </script>
+
     <script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
     <script type="application/javascript" src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="/assets/handlebars/handlebars.min.js"></script>
+    <script>
+        $.get('/template').then(templates => {
+            var content = Handlebars.compile($("#template-dropdown-item").html());
+            templates.forEach(templateItem => {
+                $("[data-zone='template-list']").append(content(templateItem));
+            });
+        });
+    </script>
 </body>
 </html>

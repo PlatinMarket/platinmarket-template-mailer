@@ -21,7 +21,7 @@
 </div>
 <script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
 <script>
-
+    $("input[name='email']").val(localStorage.getItem('lastEmail') || "");
     $("form")
         .on('submit', function(e) {
             e.preventDefault();
@@ -39,6 +39,7 @@
         })
         .on('success.log.in', function(e) {
             $(".alert").show().html("Giriş başarılı");
+            localStorage.setItem('lastEmail', $("input[name='email']").val());
             window.location = '/';
         });
 </script>

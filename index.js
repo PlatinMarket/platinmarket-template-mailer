@@ -6,19 +6,20 @@ var expressHandlebars  = require('express-handlebars');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var loginRequire = require('./lib/isLogged');
-
-// Set body parser
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+var templateStore = require('./lib/templates');
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
 app.use(session({
-    secret: 'pm-template-helper',
+    secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true, httpOnly: false }
+    cookie: { httpOnly: false }
 }));
+
+// Set body parser
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 // Public folder
 app.use(express.static('public'));
@@ -29,8 +30,12 @@ app.set('views', './views');
 app.set('view engine', 'tpl');
 
 // Main page
-app.get('/', (req, res) => {
-    res.render('index');
+app.get('/', loginRequire, (req, res) => {
+    res.render('index', { user: req.session.user });
+});
+
+app.get('/template', loginRequire, (req, res) => {
+    templateStore.list().then(list => res.json(list.map(l => Object.assign({folder: l.folder, name: l.name})))).catch(err => res.statusCode(500));
 });
 
 // Template edit
@@ -51,6 +56,12 @@ app.get('/template/create', (req, res) => {
 // Login page
 app.get('/login', (req, res) => {
     res.render('login', {layout: 'login'});
+});
+
+// Logout page
+app.get('/logout', loginRequire, (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
 });
 
 // Login post
