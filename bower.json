@@ -1,0 +1,22 @@
+{
+  "name": "platinmarket-template-mailer",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Burak Doğan <me@burak-dogan.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/PlatinMarket/platinmarket-template-mailer",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/assets",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "bootstrap": "^3.3.7"
+  }
+}
