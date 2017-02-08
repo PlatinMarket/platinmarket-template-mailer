@@ -35,22 +35,26 @@ app.get('/', loginRequire, (req, res) => {
 });
 
 app.get('/template', loginRequire, (req, res) => {
-    templateStore.list().then(list => res.json(list.map(l => Object.assign({folder: l.folder, name: l.name})))).catch(err => res.statusCode(500));
+    templateStore.list()
+      .then(list => res.json(list.filter(l => req.session.user.isSuper || l.department.indexOf(req.session.user.department) > -1).map(l => Object.assign({folder: l.folder, name: l.name}))))
+      .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Template edit
-app.get('/template/:name/edit', (req, res) => {
-    res.render('edit_template');
+app.get('/template/:name/edit', loginRequire, (req, res) => {
+    templateStore.get(req.params.name)
+      .then(template => res.render('edit_template', { user: req.session.user, currentTemplate: template }))
+      .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Template render
-app.get('/template/:name/render', (req, res) => {
-    res.render('view_template');
+app.get('/template/:name/render', loginRequire, (req, res) => {
+    res.render('view_template', { user: req.session.user });
 });
 
 // Template create
-app.get('/template/create', (req, res) => {
-    res.render('create_template');
+app.get('/template/create', loginRequire, (req, res) => {
+    res.render('create_template', { user: req.session.user });
 });
 
 // Login page
@@ -73,11 +77,7 @@ app.post('/login', (req, res) => {
             req.session.user = user;
             return res.sendStatus(200);
         })
-        .catch(e => {
-            res.statusCode = 400;
-            res.send(e.message);
-            res.end();
-        });
+        .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Start server

@@ -7,6 +7,9 @@
     <title>Platinmarket Template Mailer</title>
     <link rel="stylesheet" type="text/css" href="/assets/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
+    <script type="application/javascript" src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="/assets/handlebars/handlebars.min.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -39,18 +42,22 @@
 		</div>
 	</nav>
     {{{body}}}
-    <script id="template-dropdown-item" type="text/x-handlebars-template">
-        <li><a href="/template/\{{folder}}/edit">\{{name}}</a></li>
-    </script>
 
-    <script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
-    <script type="application/javascript" src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="application/javascript" src="/assets/handlebars/handlebars.min.js"></script>
+    <script id="template-dropdown-item" type="text/x-handlebars-template">
+        \{{#each templates}}
+            <li data-class="{active: '{{currentTemplate.name}}' == '\{{name}}' }"><a href="/template/\{{folder}}/edit">\{{name}}</a></li>
+        \{{/each}}
+    </script>
     <script>
         $.get('/template').then(templates => {
             var content = Handlebars.compile($("#template-dropdown-item").html());
-            templates.forEach(templateItem => {
-                $("[data-zone='template-list']").append(content(templateItem));
+            $("[data-zone='template-list']").html(content({ templates }));
+            $("[data-class]").each(function(){
+                try {
+                    var classMap = eval("(function(){return " + $(this).attr('data-class') + ";})()");
+                    Object.keys(classMap).forEach(k => classMap[k] ? $(this).addClass(k) : $(this).removeClass(k));
+                }
+                catch (err) {}
             });
         });
     </script>

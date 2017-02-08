@@ -34,8 +34,9 @@
             $(this).find('input, button').attr('disabled', 'disabled');
         })
         .on('error.log.in', function(e) {
-            $(this).find('input, button').removeAttr('disabled');
-            $(".alert").show().html(e.responseText);
+          	$(this).find('input, button').removeAttr('disabled');
+            $(".alert").show().html(e.responseJSON ? e.responseJSON.message : e.responseText);
+            console.error(e.responseJSON || e.responseText || e);
         })
         .on('success.log.in', function(e) {
             $(".alert").show().html("Giriş başarılı");

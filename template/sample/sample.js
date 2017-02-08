@@ -1,7 +1,7 @@
 module.exports = {
     name: "Sample",
     description: "Description",
-    department: ['Yazılım'],
+    department: ['Yazılım', 'Destek'],
     parameter: [
         {
             name: 'email',
