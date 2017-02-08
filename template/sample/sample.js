@@ -2,5 +2,6 @@ modules.exports = {
     name: "sample",
     forDepartment: ['Yazılım'],
     parameters: ['email', 'dada', 'baba'],
-    required: ['email']
+    required: ['email'],
+    textFallback: true
 };

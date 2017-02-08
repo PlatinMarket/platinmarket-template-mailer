@@ -33,6 +33,21 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
+// Template edit
+app.get('/template/:name/edit', (req, res) => {
+    res.render('edit_template');
+});
+
+// Template render
+app.get('/template/:name/render', (req, res) => {
+    res.render('view_template');
+});
+
+// Template create
+app.get('/template/create', (req, res) => {
+    res.render('create_template');
+});
+
 // Login page
 app.get('/login', (req, res) => {
     res.render('login', {layout: 'login'});
