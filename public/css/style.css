@@ -2,7 +2,9 @@ body, html {
     padding: 0;
     margin: 0;
 }
-
-.container{
-	margin-top: 30px;
+body{
+	padding-top: 70px; 
+}
+.embed-responsive-4by3{
+	padding-bottom: 100%;
 }
