@@ -29,7 +29,6 @@
 						<label for="exampleInputPassword1">Password</label>
 						<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
 					  </div>
-					  <hr/>
 					  <button type="submit" class="btn btn-block btn-success">Kaydet & Önizle</button>
 					</form>
 				</div>
