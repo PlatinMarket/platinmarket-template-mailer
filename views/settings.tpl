@@ -1,22 +1,61 @@
-<h3>Gönderim ayarları</h3>
-<form name="smtp">
-    <div class="alert alert-danger" style="display: none;"></div>
-    <label>Host:</label>
-    <input type="text" name="host" value="{{user.smtp.host}}" />
-    <br>
-    <label>Port:</label>
-    <input type="text" name="port" value="{{user.smtp.port}}" />
-    <br>
-    <label><input type="checkbox" name="secure" /> Use TLS</label>
-    <br>
-    <label>Kullanıcı adı</label>
-    <input type="text" name="auth_user" value="{{user.smtp.auth.user}}" />
-    <br>
-    <label>Şifre</label>
-    <input type="password" name="auth_pass" value="{{user.smtp.auth.pass}}" />
-    <button type="submit">Kaydet</button>
-</form>
-
+<div class="container">
+	<p class="lead">Gönderim ayarları</p>	
+	<div class="row">
+		<div class="col-lg-6 col-md-6 col-sm-12">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<form name="smtp" class="form-horizontal">
+						<div class="alert alert-danger" style="display: none;"></div>
+						<div class="form-group">
+							<label for="auth_user" class="col-lg-3 col-md-4 col-sm-2 control-label">Kullanıcı adı</label>
+							<div class="col-lg-9 col-md-8 col-sm-10">
+								<input type="email" name="auth_user" id="auth_user" class="form-control" value="{{user.smtp.auth.user}}" />
+							</div>		
+						</div>		
+						<div class="form-group">
+							<label for="auth_pass" class="col-lg-3 col-md-4 col-sm-2 control-label">Şifre</label>
+							<div class="col-lg-9 col-md-8 col-sm-10">
+								<input type="password" name="auth_pass" id="auth_pass" class="form-control" value="{{user.smtp.auth.pass}}" />
+							</div>				
+						</div>				
+						<div class="form-group">
+							<label for="host" class="col-lg-3 col-md-4 col-sm-2 control-label">Host</label>
+							<div class="col-lg-9 col-md-8 col-sm-10">
+								<input type="text" name="host" id="host" class="form-control" value="{{user.smtp.host}}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="port" class="col-lg-3 col-md-4 col-sm-2 control-label">Port</label>
+							<div class="col-lg-9 col-md-8 col-sm-10">
+								<input type="text" name="port" id="port" class="form-control" value="{{user.smtp.port}}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-lg-offset-3 col-lg-9 col-md-offset-4 col-md-8 col-sm-offset-2 col-sm-10">
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" name="secure" /> Use TLS
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12 col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-4 col-sm-2 col-sm-offset-2">
+								<button type="submit" class="btn btn-block btn-success">Kaydet</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-6 col-md-6 hidden-sm hidden-xs">
+			<div class="jumbotron" style="background-color:#f8f8f8;">
+				<p>Bilgilendirme</p>
+				<div>Bu alanda kaydedilecek e-posta hesap bilgileri, düzgün bir şekilde e-posta göndermenizi sağlayacaktır. Lütfen doğru bilgileri yazdığınızdan emin olunuz.</div>
+			</div>
+		</div>
+	</div>
+</div>
 <script>
     $("form[name='smtp']")
         .on('submit', (e) => {
