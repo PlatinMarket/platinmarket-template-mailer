@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ajv": "^4.11.2",
     "body-parser": "^1.16.0",
     "encoding": "^0.1.12",
     "express": "^4.14.1",

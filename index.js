@@ -8,6 +8,7 @@ var session = require('express-session');
 var loginRequire = require('./lib/isLogged');
 var templateStore = require('./lib/templates');
 var settings = require('./lib/settings');
+var ajv = new require('ajv')({allErrors: true});
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -61,6 +62,35 @@ app.get('/template/create', loginRequire, (req, res) => {
 // Settings
 app.get('/settings', loginRequire, (req, res) => {
     res.render('settings', { user: req.user });
+});
+
+// Settings Post
+app.post('/settings/smtp', loginRequire, (req, res) => {
+    var data = req.body;
+    var valid = ajv.validate({
+        required: ['host', 'port', 'secure', 'auth'],
+        properties: {
+            host: { type: "string", maxLength: 128, minLength: 5 },
+            port: { type: ["number", "string"], maxLength: 5 },
+            secure: {type: "string" },
+            auth: {
+                type: "object",
+                required: ['user', 'pass'],
+                properties: {
+                    user: { type: "string", maxLength: 128, minLength: 5 },
+                    pass: { type: "string", maxLength: 128, minLength: 5 }
+                },
+                additionalProperties: false
+            }
+        },
+        additionalProperties: false
+    }, data);
+    if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
+    data.port = parseInt(data.port, 10);
+    data.secure = data.secure === 'true';
+    settings.save(req.user, {smtp: data})
+      .then(success => res.sendStatus(200))
+      .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Login page

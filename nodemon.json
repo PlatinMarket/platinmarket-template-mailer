@@ -1,0 +1,3 @@
+{
+  "ignore": ["template/**", "user/*.json", "views/**"]
+}
