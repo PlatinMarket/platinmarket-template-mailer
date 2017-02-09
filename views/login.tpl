@@ -1,4 +1,4 @@
-<div class="container margin-top">
+<div class="container">
 	<div class="row">
 		<div class="col-xs-12 col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
 			<div class="panel panel-default">
@@ -39,7 +39,6 @@
             console.error(e.responseJSON || e.responseText || e);
         })
         .on('success.log.in', function(e) {
-            $(".alert").show().html("Giriş başarılı");
             localStorage.setItem('lastEmail', $("input[name='email']").val());
             window.location = '/';
         });
