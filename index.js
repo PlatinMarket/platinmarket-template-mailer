@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var loginRequire = require('./lib/isLogged');
 var templateStore = require('./lib/templates');
+var settings = require('./lib/settings');
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -31,35 +32,40 @@ app.set('view engine', 'tpl');
 
 // Main page
 app.get('/', loginRequire, (req, res) => {
-    res.render('index', { user: req.session.user });
+    res.render('index', { user: req.user });
 });
 
 app.get('/template', loginRequire, (req, res) => {
     templateStore.list()
-      .then(list => res.json(list.filter(l => req.session.user.isSuper || l.department.indexOf(req.session.user.department) > -1).map(l => Object.assign({folder: l.folder, name: l.name}))))
+      .then(list => res.json(list.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1).map(l => Object.assign({folder: l.folder, name: l.name}))))
       .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Template edit
 app.get('/template/:name/edit', loginRequire, (req, res) => {
     templateStore.get(req.params.name)
-      .then(template => res.render('edit_template', { user: req.session.user, currentTemplate: template }))
+      .then(template => res.render('edit_template', { user: req.user, currentTemplate: template }))
       .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Template render
 app.get('/template/:name/render', loginRequire, (req, res) => {
-    res.render('view_template', { user: req.session.user });
+    res.render('view_template', { user: req.user });
 });
 
 // Template create
 app.get('/template/create', loginRequire, (req, res) => {
-    res.render('create_template', { user: req.session.user });
+    res.render('create_template', { user: req.user });
+});
+
+// Settings
+app.get('/settings', loginRequire, (req, res) => {
+    res.render('settings', { user: req.user });
 });
 
 // Login page
 app.get('/login', (req, res) => {
-    res.render('login', {layout: 'login'});
+    res.render('login', { layout: 'login' });
 });
 
 // Logout page

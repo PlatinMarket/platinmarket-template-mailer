@@ -9,3 +9,6 @@ public/assets/*
 
 config/*
 !config/config.js.default
+
+user/*
+!user/empty
