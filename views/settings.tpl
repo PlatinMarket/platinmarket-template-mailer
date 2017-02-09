@@ -34,12 +34,13 @@
 							<div class="col-lg-offset-3 col-lg-9 col-md-offset-4 col-md-8 col-sm-offset-2 col-sm-10">
 								<div class="checkbox">
 									<label>
-										<input type="checkbox" name="secure" /> Use TLS
+										<input type="checkbox" name="secure" /> Güvenli bağlantı (TLS) kullan
 									</label>
 								</div>
 							</div>
 						</div>
 						<div class="row">
+							<hr />
 							<div class="col-xs-12 col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-4 col-sm-2 col-sm-offset-2">
 								<button type="submit" class="btn btn-block btn-success">Kaydet</button>
 							</div>
