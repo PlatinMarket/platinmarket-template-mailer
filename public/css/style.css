@@ -8,6 +8,31 @@ body{
 	padding-top: 70px; 
 	font-family: 'Open Sans', sans-serif;
 }
+textarea{
+	resize:none;
+}
 .embed-responsive-4by3{
 	padding-bottom: 100%;
+}
+.edit-create .page-header{
+	margin-top:0;
+}
+.edit-create .page-header span:empty:after{
+	content: 'Yeni şablon';
+	display: inline-block;
+}
+.edit-create .departments{
+	display: block;
+}
+.edit-create .departments .label{
+	margin-top:10px;
+	margin-right:5px;
+	display: inline-block;
+	padding:5px 10px;
+}
+.edit-create .label-close{
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: baseline;
+	margin-left: 5px;
 }
