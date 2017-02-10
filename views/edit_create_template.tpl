@@ -71,7 +71,7 @@
 						<label for="p_name_show">Eleman adı</label>
 						<input type="text" name="p_name_show" id="p_name_show" class="form-control" />
 					</div>
-					<div class="p_name_zone form-group">
+					<div class="form-group">
 						<label for="p_type">Eleman tipi</label>
 						<select name="p_type" id="p_type" class="form-control" data-default-value="string">
 							<option value="string">String</option>
@@ -227,7 +227,7 @@
 
       $("button[name='edit_parameter']").off('click').on('click', function (e){
         e.preventDefault();
-        var target = $(this).closest('div.parameter');
+        var target = $(this).closest('.parameter');
         var parameter = {
           name: target.find("input[name='name']").val(),
           title: target.find("input[name='title']").val(),
@@ -313,7 +313,6 @@
 
     // Fill form by parameter
     function fillForm(parameter){
-      console.log(parameter);
       $("input[name='p_title']").val(parameter.title).trigger("change");
       $("input[name='p_name']").val(parameter.name).trigger("change");
       $(".p_name_zone").hide();
@@ -351,9 +350,11 @@
       $("input, button, select, textarea").attr("disabled", "disabled");
       $.post('/template' + (!id ? '/create' : '/' + id + '/edit'), template)
         .then(r => {
+          if (!id) return window.location = "/template/" + r.id.toString() + "/edit";
           $("input, button, select, textarea").removeAttr("disabled");
           $(".alert").removeClass('alert-danger').addClass('alert-success').show().html("Kaydedildi");
           setTimeout(() => $(".alert").hide(), 2000);
+
         })
         .catch(err => {
           $("input, button, select, textarea").removeAttr("disabled");
