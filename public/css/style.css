@@ -11,7 +11,7 @@ body{
 textarea{
 	resize:none;
 }
-.edit-create .page-header{
+.page-header{
 	margin-top:0;
 }
 .edit-create .page-header span:empty:after{
