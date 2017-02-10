@@ -11,9 +11,6 @@ body{
 textarea{
 	resize:none;
 }
-.embed-responsive-4by3{
-	padding-bottom: 100%;
-}
 .edit-create .page-header{
 	margin-top:0;
 }

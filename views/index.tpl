@@ -35,19 +35,23 @@
 			</div>
 		</div>
 		<div class="col-lg-9 col-md-8">
-			<div class="row">
-				<div class="col-xs-4"><p class="lead">Önizleme</p></div>
-				<div class="col-xs-8 text-right">
-					<form>
-						<div class="input-group">
-							<input type="email" class="form-control" placeholder="Gönderilecek e-posta" required />
-							<span class="input-group-btn">
-								<button type="submit" class="btn btn-primary">Gönder</button>
-							</span>
-						</div>
-					</form>
+			<p class="lead">Gönderi</p>
+			<form>
+				<div class="form-group">
+					<input type="text" class="form-control" placeholder="E-posta konusu" required />
 				</div>
-			</div>
+				<div class="form-group">
+					<div class="input-group">
+						<input type="email" class="form-control" placeholder="Gönderilecek e-posta" required />
+						<span class="input-group-btn">
+							<button type="submit" class="btn btn-primary">Gönder</button>
+						</span>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="col-lg-9 col-md-8">
+			<p class="lead">Önizleme</p>
 			<div class="panel panel-default">
 				<div class="embed-responsive embed-responsive-4by3">
 				  <iframe class="embed-responsive-item" src="/templates/blue2/"></iframe>
