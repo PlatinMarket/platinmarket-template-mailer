@@ -132,6 +132,13 @@ app.post('/template/:id/edit', (req, res) => {
     .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
+// Template delete
+app.get('/template/:id/delete', (req, res) => {
+  templateStore.delete(req.params.id)
+    .then(() => res.redirect('/'))
+    .catch(err => res.status(404).send(err ? err.message : 'Template `' + req.params.id + '` not found'));
+});
+
 // Template render
 app.get('/template/:name/render', (req, res) => {
     res.render('view_template', { user: req.user });

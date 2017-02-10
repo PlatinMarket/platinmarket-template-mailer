@@ -3,6 +3,9 @@
 		<span>{{currentTemplate.name}}</span> 
 		<small>{{currentTemplate.description}}</small>
 		<button type="button" class="btn btn-success pull-right" onclick="submit()">Şablonu Kaydet</button>
+        {{#if currentTemplate.id}}
+		<button type="button" class="btn btn-danger pull-right" onclick="deleteTemplate('{{currentTemplate.id}}')" style="margin-right: 8px;">Şablonu Sil</button>
+        {{/if}}
 		<div class="clearfix"></div>
 	</h3>
 	<div class="alert alert-danger" style="display: none;"></div>
@@ -361,5 +364,11 @@
           $(".alert").removeClass('alert-success').addClass('alert-danger').show().html(err.responseJSON ? err.responseJSON.message : err.responseText);
           console.error(err.responseJSON || err.responseText || err);
         });
+    }
+
+    function deleteTemplate(id){
+      if (!confirm("Emin misiniz?")) return;
+      $("input, button, select, textarea").attr("disabled", "disabled");
+      window.location = "/template/" + id + "/delete";
     }
 </script>
