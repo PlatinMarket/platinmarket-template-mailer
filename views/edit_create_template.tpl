@@ -103,7 +103,7 @@
 							</table>
 						</li>
 						{{else}}
-						<li class="list-group-item">Henüz parametre eklenmemiş</li>
+						<li class="list-group-item empty">Henüz parametre eklenmemiş</li>
 					{{/each}}
 				</ul>
 			</div>
@@ -283,6 +283,7 @@
         if ((op == 'add' && checkVal > 0) || (op == 'edit' && checkVal > 1)) return alert("Aynı isimde mevcut");
         if (op == "add") {
           var item = Handlebars.compile($("#template-parameter-item").html())(parameter);
+		  $(".list-group-item.empty").remove();
           $(".parameters").append(item);
         }
         var target = $("input[name='name']").toArray().find(e => $(e).val() == parameter.name);
