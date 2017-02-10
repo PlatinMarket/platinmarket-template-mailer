@@ -8,6 +8,7 @@ var session = require('express-session');
 var templateStore = require('./lib/templates');
 var settings = require('./lib/settings');
 var ajv = new require('ajv')({allErrors: true});
+var surl = require('speakingurl');
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -100,7 +101,10 @@ app.get('/template/create', (req, res) => {
 
 // Template post
 app.post('/template/create', function (req, res) {
-  res.json(req.body);
+  var id = surl(req.body.name.trim().slice(0, 15), {separator: '_', lang: 'tr'});
+  templateStore.create(id, req.body)
+    .then(success => res.sendStatus(200))
+    .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Template required requests
@@ -120,8 +124,9 @@ app.get('/template/:id/edit', (req, res) => {
 
 // Template edit post
 app.post('/template/:id/edit', (req, res) => {
-     console.log(req.body);
-    res.status(500).json({message: "ııh"});
+  templateStore.save(req.params.id, req.body)
+    .then(success => res.sendStatus(200))
+    .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Template render
