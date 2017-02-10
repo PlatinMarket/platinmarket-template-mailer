@@ -2,10 +2,10 @@
 	<h3 class="page-header">
 		<span>{{currentTemplate.name}}</span> 
 		<small>{{currentTemplate.description}}</small>
-		<button type="button" class="btn btn-success pull-right" onclick="submit()">Şablonu Kaydet</button>
         {{#if currentTemplate.id}}
-		<button type="button" class="btn btn-danger pull-right" onclick="deleteTemplate('{{currentTemplate.id}}')" style="margin-right: 8px;">Şablonu Sil</button>
+		<button type="button" class="btn btn-link" onclick="deleteTemplate('{{currentTemplate.id}}')">Şablonu Sil</button>
         {{/if}}
+		<button type="button" class="btn btn-success pull-right" onclick="submit()">Şablonu Kaydet</button>
 		<div class="clearfix"></div>
 	</h3>
 	<div class="alert alert-danger" style="display: none;"></div>
@@ -61,44 +61,6 @@
 			</div>
 		</div>
 		<div class="col-lg-6">
-			<p class="lead new_parameter">Yeni parametre ekle</p>
-			<p class="lead edit_parameter" style="display: none;">Parametre düzenle</p>
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<input type="hidden" name="p_name" value="" />
-					<div class="form-group">
-						<label for="p_title">Parametre adı (label)</label>
-						<input type="text" name="p_title" id="p_title" class="form-control" data-slug-target="[name='p_name_show']" data-default-value="" />
-					</div>
-					<div class="p_name_zone form-group">
-						<label for="p_name_show">Eleman adı</label>
-						<input type="text" name="p_name_show" id="p_name_show" class="form-control" />
-					</div>
-					<div class="form-group">
-						<label for="p_type">Eleman tipi</label>
-						<select name="p_type" id="p_type" class="form-control" data-default-value="string">
-							<option value="string">String</option>
-							<option value="boolean">Boolean</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" name="p_require" data-default-value="1" /> Zorunlu alan
-							</label>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="p_default">Varsayılan değer</label>
-						<input type="text" name="p_default" id="p_default" class="form-control" data-default-value="" />
-					</div>
-					<hr/>
-					<div class="text-right">
-						<button type="button" name="cancel_parameter" class="btn btn-link" style="display: none;">İptal</button>
-						<button type="button" name="add_parameter" class="btn btn-primary">Kaydet</button>
-					</div>
-				</div>
-			</div>
 			<p class="lead">Parametreler</p>
 			<div class="panel panel-default">
 				<ul class="parameters list-group">
@@ -144,7 +106,46 @@
 						<li class="list-group-item">Henüz parametre eklenmemiş</li>
 					{{/each}}
 				</ul>
-			</div>		
+			</div>
+			<p class="lead new_parameter">Yeni parametre ekle</p>
+			<p class="lead edit_parameter" style="display: none;">Parametre düzenle</p>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<input type="hidden" name="p_name" value="" />
+					<div class="form-group">
+						<label for="p_title">Parametre adı (label)</label>
+						<input type="text" name="p_title" id="p_title" class="form-control" data-slug-target="[name='p_name_show']" data-default-value="" />
+					</div>
+					<div class="p_name_zone form-group">
+						<label for="p_name_show">Eleman adı</label>
+						<input type="text" name="p_name_show" id="p_name_show" class="form-control" />
+					</div>
+					<div class="form-group">
+						<label for="p_type">Eleman tipi</label>
+						<select name="p_type" id="p_type" class="form-control" data-default-value="string">
+							<option value="string">String</option>
+							<option value="boolean">Boolean</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="p_require" data-default-value="1" /> Zorunlu alan
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="p_default">Varsayılan değer</label>
+						<input type="text" name="p_default" id="p_default" class="form-control" data-default-value="" />
+					</div>
+					<hr/>
+					<div class="text-right">
+						<button type="button" name="cancel_parameter" class="btn btn-link" style="display: none;">İptal</button>
+						<button type="button" name="add_parameter" class="btn btn-primary">Kaydet</button>
+					</div>
+				</div>
+			</div>
+	
 		</div>
 	</div>
 </div>
@@ -265,6 +266,7 @@
           default: target.find("input[name='default']").val()
         };
         fillForm(parameter);
+		$("input[name='p_title']").focus();
       });
 
       $("button[name='add_parameter']").off('click').on('click', function () {
