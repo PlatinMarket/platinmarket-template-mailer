@@ -1,1 +1,1 @@
-Sample From Html
+Sample From Html {{e-posta_adresi}} {{adi_soyadi}}

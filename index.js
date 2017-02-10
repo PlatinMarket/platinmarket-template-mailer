@@ -9,6 +9,8 @@ var templateStore = require('./lib/templates');
 var settings = require('./lib/settings');
 var ajv = new require('ajv')({allErrors: true});
 var surl = require('speakingurl');
+var handlebars = require('handlebars');
+
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -140,8 +142,14 @@ app.get('/template/:id/delete', (req, res) => {
 });
 
 // Template render
-app.get('/template/:name/render', (req, res) => {
-    res.render('view_template', { user: req.user });
+app.get('/template/:id/view', (req, res) => {
+    res.render('view_template', { currentTemplate: req.template, user: req.user });
+});
+
+// Template render
+app.post('/template/:id/render', (req, res) => {
+  res.send(handlebars.compile(req.template.html)(Object.assign(req.body, { user: Object.assign(req.user, { smtp: null }) })));
+  res.end();
 });
 
 // Template create
