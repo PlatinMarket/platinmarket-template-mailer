@@ -80,7 +80,7 @@
                   })
                   .catch(err => {
                     $(e.target).trigger('ended.submit');
-                    $(e.target).find(".alert").show().html(err.responseJSON ? err.responseJSON.message : err.responseText);
+                    $(e.target).find(".alert").removeClass('alert-success').addClass('alert-danger').show().html(err.responseJSON ? err.responseJSON.message : err.responseText);
                     console.error(err.responseJSON || err.responseText || err);
                   });
 

@@ -5,7 +5,6 @@ var fs = require('fs');
 var expressHandlebars  = require('express-handlebars');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var loginRequire = require('./lib/isLogged');
 var templateStore = require('./lib/templates');
 var settings = require('./lib/settings');
 var ajv = new require('ajv')({allErrors: true});
@@ -31,41 +30,117 @@ app.engine('tpl', expressHandlebars({defaultLayout: 'default'}));
 app.set('views', './views');
 app.set('view engine', 'tpl');
 
+// Login require pages
+app.use(['/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
+    var sess = req.session;
+    if (sess && sess.user) {
+      settings.get(sess.user)
+        .then(user => {
+          req.user = user;
+          next();
+        })
+        .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+      return;
+    }
+    res.redirect('/login');
+});
+
 // Main page
-app.get('/', loginRequire, (req, res) => {
+app.get('/', (req, res) => {
     res.render('index', { user: req.user });
 });
 
-app.get('/template', loginRequire, (req, res) => {
+// Get template list
+app.get('/template', (req, res) => {
     templateStore.list()
       .then(list => res.json(list.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1).map(l => Object.assign({folder: l.folder, name: l.name}))))
       .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
+// Template post
+app.post(['/template/create', '/template/:id/edit'], function (req, res, next) {
+  var data = req.body;
+  var valid = ajv.validate({
+    required: ['name', 'html', 'description', 'department', 'parameter', 'textFallback'],
+    properties: {
+      name: { type: "string", maxLength: 128, minLength: 5 },
+      description: { type: "string", maxLength: 128 },
+      department: { type: "array", items: { type: "string", maxLength: 128 } },
+      parameter: {
+        type: "array",
+        items: {
+          type: "object",
+          required: ['name', 'title', 'type', 'require', 'default'],
+          properties: {
+            name: { type: "string", maxLength: 128, minLength: 1 },
+            title: { type: "string", maxLength: 128, minLength: 1 },
+            type: { type: "string", enum: ["string", "boolean"] },
+            require: { type: "string" },
+            default: { type: "string", maxLength: 128 }
+          },
+          additionalProperties: false
+        }
+      },
+      textFallback: { type: "string" },
+      html: { type: "string" },
+      text: { type: "string" }
+    },
+    additionalProperties: false
+  }, data);
+  if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
+  data.textFallback = data.textFallback === 'true';
+  data.parameter.forEach(p => p.require = (p.require === 'true'));
+  next();
+});
+
+// Template create
+app.get('/template/create', (req, res) => {
+  res.render('edit_create_template', { user: req.user, currentTemplate: {} });
+});
+
+// Template post
+app.post('/template/create', function (req, res) {
+  res.json(req.body);
+});
+
+// Template required requests
+app.use('/template/:id', function (req, res, next) {
+  templateStore.get(req.params.id)
+    .then(template => {
+      req.template = template;
+      next();
+    })
+    .catch(err => res.status(404).send(err ? err.message : 'Template `' + req.params.id + '` not found'));
+});
+
 // Template edit
-app.get('/template/:name/edit', loginRequire, (req, res) => {
-    templateStore.get(req.params.name)
-      .then(template => res.render('edit_template', { user: req.user, currentTemplate: template }))
-      .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+app.get('/template/:id/edit', (req, res) => {
+    res.render('edit_create_template', { user: req.user, currentTemplate: req.template });
+});
+
+// Template edit post
+app.post('/template/:id/edit', (req, res) => {
+     console.log(req.body);
+    res.status(500).json({message: "ııh"});
 });
 
 // Template render
-app.get('/template/:name/render', loginRequire, (req, res) => {
+app.get('/template/:name/render', (req, res) => {
     res.render('view_template', { user: req.user });
 });
 
 // Template create
-app.get('/template/create', loginRequire, (req, res) => {
+app.get('/template/create', (req, res) => {
     res.render('create_template', { user: req.user });
 });
 
 // Settings
-app.get('/settings', loginRequire, (req, res) => {
+app.get('/settings', (req, res) => {
     res.render('settings', { user: req.user });
 });
 
 // Settings Post
-app.post('/settings/smtp', loginRequire, (req, res) => {
+app.post('/settings/smtp', (req, res) => {
     var data = req.body;
     var valid = ajv.validate({
         required: ['host', 'port', 'secure', 'auth'],
@@ -99,7 +174,7 @@ app.get('/login', (req, res) => {
 });
 
 // Logout page
-app.get('/logout', loginRequire, (req, res) => {
+app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });

@@ -6,8 +6,16 @@
         {
             "name": "email",
             "title": "E-Posta Adresi",
-            "type": "email",
-            "default": null
+            "type": "string",
+            "require": false,
+            "default": "ass"
+        },
+        {
+            "name": "isim",
+            "title": "Adı soyadı",
+            "type": "string",
+            "require": true,
+            "default": "asd"
         }
     ],
     "textFallback": true
