@@ -33,3 +33,6 @@ textarea{
     vertical-align: baseline;
 	margin-left: 5px;
 }
+.edit-create .table{
+	margin: 10px 0;
+}

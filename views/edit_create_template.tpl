@@ -115,18 +115,30 @@
 							<input type="hidden" name="default" value="{{default}}" />
 							<div class="pull-left">
 								<h4 class="list-group-item-heading" data-bind="title">{{title}}</h4>
-								<p class="list-group-item-text">
-									<span class="label label-default" data-bind="name">{{name}}</span>
-									<span class="label label-info" data-bind="type">{{type}}</span>
-									<span class="label label-danger" data-bind="require">{{require}}</span>
-									<span class="label label-primary" data-bind="default">{{default}}</span>
-								</p>
 							</div>
-							<div class="pull-right btn-group btn-group-sm">
-								<button type="button" name="edit_parameter" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
-								<button type="button" name="delete_parameter" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+							<div class="pull-right btn-group btn-group-xs">
+								<button type="button" name="edit_parameter" class="btn btn-sm btn-default">Düzenle</button>
+								<button type="button" name="delete_parameter" class="btn btn-default">Sil</button>
 							</div>
 							<div class="clearfix"></div>
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>Eleman adı</th>
+										<th>Eleman tipi</th>
+										<th>Zorunlu alan</th>
+										<th>Varsayılan değer</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td data-bind="name">{{name}}</td>
+										<td data-bind="type">{{type}}</td>
+										<td data-bind="require">{{require}}</td>
+										<td data-bind="default">{{default}}</td>
+									</tr>
+								</tbody>
+							</table>
 						</li>
 						{{else}}
 						<li class="list-group-item">Henüz parametre eklenmemiş</li>
@@ -150,18 +162,30 @@
         <input type="hidden" name="default" value="\{{default}}" />
 		<div class="pull-left">
 			<h4 class="list-group-item-heading" data-bind="title">\{{title}}</h4>
-			<p class="list-group-item-text">
-				<span class="label label-default" data-bind="name">\{{name}}</span>
-				<span class="label label-info" data-bind="type">\{{type}}</span>
-				<span class="label label-danger" data-bind="require">\{{require}}</span>
-				<span class="label label-primary" data-bind="default">\{{default}}</span>
-			</p>
 		</div>
-		<div class="pull-right btn-group btn-group-sm">
-			<button type="button" name="edit_parameter" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
-			<button type="button" name="delete_parameter" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+		<div class="pull-right btn-group btn-group-xs">
+			<button type="button" name="edit_parameter" class="btn btn-sm btn-default">Düzenle</button>
+			<button type="button" name="delete_parameter" class="btn btn-default">Sil</button>
 		</div>
 		<div class="clearfix"></div>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Eleman adı</th>
+					<th>Eleman tipi</th>
+					<th>Zorunlu alan</th>
+					<th>Varsayılan değer</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td data-bind="name">\{{name}}</td>
+					<td data-bind="type">\{{type}}</td>
+					<td data-bind="require">\{{require}}</td>
+					<td data-bind="default">\{{default}}</td>
+				</tr>
+			</tbody>
+		</table>
     </li>
 </script>
 
@@ -267,8 +291,11 @@
         target.find("input[name='type']").val(parameter.type);
         target.find("input[name='require']").val(parameter.require ? "1" : "0");
         target.find("input[name='default']").val(parameter.default);
-        target.find("span[data-bind='name']").html(parameter.name);
-        target.find("span[data-bind='title']").html(parameter.title);
+        target.find("[data-bind='name']").html(parameter.name);
+        target.find("[data-bind='title']").html(parameter.title);
+        target.find("[data-bind='type']").html(parameter.type);
+        target.find("[data-bind='require']").html(parameter.require ? "true" : "false");
+        target.find("[data-bind='default']").html(parameter.default);
         resetForm();
         refreshListeners();
       });
