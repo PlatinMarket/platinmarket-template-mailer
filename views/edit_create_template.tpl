@@ -128,6 +128,8 @@
 							</div>
 							<div class="clearfix"></div>
 						</li>
+						{{else}}
+						<li class="list-group-item">Henüz parametre eklenmemiş</li>
 					{{/each}}
 				</ul>
 			</div>		
