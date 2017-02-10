@@ -90,7 +90,10 @@ app.post(['/template/create', '/template/:id/edit'], function (req, res, next) {
   }, data);
   if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
   data.textFallback = data.textFallback === 'true';
-  data.parameter.forEach(p => p.require = (p.require === 'true'));
+  data.parameter.forEach(p => {
+    p.require = (p.require === 'true');
+    p.name = surl(p.title, {separator: '_', lang: 'tr'});
+  });
   next();
 });
 
