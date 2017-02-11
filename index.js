@@ -50,7 +50,9 @@ app.use(['/template', '/settings', '/logout', /^\/$/], function (req, res, next)
 
 // Main page
 app.get('/', (req, res) => {
-    res.render('index', { user: req.user });
+  templateStore.list()
+    .then(templates => res.render('index', { user: req.user, templates }))
+    .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Get template list
@@ -64,9 +66,10 @@ app.get('/template', (req, res) => {
 app.post(['/template/create', '/template/:id/edit'], function (req, res, next) {
   var data = req.body;
   var valid = ajv.validate({
-    required: ['name', 'html', 'description', 'department', 'parameter', 'textFallback'],
+    required: ['name', 'subject', 'html', 'description', 'department', 'parameter', 'textFallback'],
     properties: {
       name: { type: "string", maxLength: 128, minLength: 5 },
+      subject: { type: "string", minLength: 5 },
       description: { type: "string", maxLength: 128 },
       department: { type: "array", items: { type: "string", maxLength: 128 } },
       parameter: {
@@ -148,8 +151,12 @@ app.get('/template/:id/view', (req, res) => {
 
 // Template render
 app.post('/template/:id/render', (req, res) => {
-  res.send(handlebars.compile(req.template.html)(Object.assign(req.body, { user: Object.assign(req.user, { smtp: null }) })));
-  res.end();
+  templateStore.render(req.template, req.body, { user: Object.assign(req.user, { smtp: null }) })
+    .then((rendered) => {
+      res.send(rendered.html);
+      res.end();
+    })
+    .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Template create

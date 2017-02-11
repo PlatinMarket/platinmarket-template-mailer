@@ -39,8 +39,8 @@
 						<div class="departments"></div>
 					</div>
 					<div class="form-group">
-						<label for="tamplate_header">Varsayılan e-posta konusu</label>
-						<input name="tamplate_header" id="tamplate_header" class="form-control" value="{{currentTemplate.subject}}" />
+						<label for="template_subject">Varsayılan e-posta konusu</label>
+						<input name="template_subject" id="template_subject" class="form-control" value="{{currentTemplate.subject}}" />
 					</div>
 					<div class="form-group">
 						<label for="template_html">Html içerik</label>
@@ -368,6 +368,7 @@
       var template = {
         name: $("input[name='template_name']").val(),
         description: $("input[name='template_description']").val(),
+        subject: $("input[name='template_subject']").val(),
         department: $("input[name='template_department']").val() ? $("input[name='template_department']").val().split(",") : [],
         html: $("textarea[name='template_html']").val(),
         textFallback: $("input[name='template_textFallback']")[0].checked

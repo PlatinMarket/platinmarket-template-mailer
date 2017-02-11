@@ -1,3 +1,7 @@
+{{#each templates}}
+ {{name}} {{description}}
+
+{{/each}}
 <div class="container main-page">
 	<div class="department-zone">
 		<h3 class="page-header">Satış</h3>
