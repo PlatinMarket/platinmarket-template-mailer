@@ -18,6 +18,11 @@ textarea{
 .main-page .department-zone{
 	margin-bottom: 30px;
 }
+.main-page .thumbnail{
+	text-decoration:none!important;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+			box-shadow: 0 1px 1px rgba(0,0,0,.05);
+}
 .edit-create .page-header span:empty:after{
 	content: 'Yeni şablon';
 	display: inline-block;
@@ -39,7 +44,4 @@ textarea{
 }
 .edit-create .table{
 	margin: 10px 0;
-}
-.thumbnail:hover{
-	text-decoration:none;
 }
