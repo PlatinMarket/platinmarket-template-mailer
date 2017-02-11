@@ -83,7 +83,7 @@
 								<button type="button" name="delete_parameter" class="btn btn-default">Sil</button>
 							</div>
 							<div class="clearfix"></div>
-							<table class="table table-bordered">
+							<table class="table table-bordered table-condensed">
 								<thead>
 									<tr>
 										<th>Eleman adı</th>
@@ -169,7 +169,7 @@
 			<button type="button" name="delete_parameter" class="btn btn-default">Sil</button>
 		</div>
 		<div class="clearfix"></div>
-		<table class="table table-bordered">
+		<table class="table table-bordered table-condensed">
 			<thead>
 				<tr>
 					<th>Eleman adı</th>

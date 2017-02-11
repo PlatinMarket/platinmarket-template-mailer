@@ -6,6 +6,7 @@ body, html {
 }
 body{
 	padding-top: 70px; 
+	padding-bottom: 70px;
 	font-family: 'Open Sans', sans-serif;
 }
 textarea{
@@ -13,6 +14,9 @@ textarea{
 }
 .page-header{
 	margin-top:0;
+}
+.main-page .department-zone{
+	margin-bottom: 30px;
 }
 .edit-create .page-header span:empty:after{
 	content: 'Yeni şablon';
@@ -35,4 +39,7 @@ textarea{
 }
 .edit-create .table{
 	margin: 10px 0;
+}
+.thumbnail:hover{
+	text-decoration:none;
 }
