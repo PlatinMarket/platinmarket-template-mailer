@@ -18,7 +18,7 @@
 								<input type="text" name="{{name}}" id="{{name}}" value="{{default}}" class="form-control" {{#if require}}required{{/if}} />
 							</div>
 						{{/each}}
-					  	<button type="submit" class="btn btn-block btn-primary">Kaydet ve Önizle</button>
+					  	<button type="submit" class="btn btn-block btn-success">Gönder</button>
 					</form>
 				</div>
 			</div>
@@ -30,12 +30,7 @@
 					<input type="text" name="subject" class="form-control" value="" placeholder="E-posta konusu" readonly />
 				</div>
 				<div class="form-group">
-					<div class="input-group">
-						<input type="email" class="form-control" placeholder="Gönderilecek e-posta" required />
-						<span class="input-group-btn">
-							<button type="submit" class="btn btn-success">Gönder</button>
-						</span>
-					</div>
+					<input type="email" class="form-control" placeholder="Gönderilecek e-posta" required />
 				</div>
 			</form>
 		</div>
@@ -98,4 +93,18 @@
       $("iframe[name='preview']")[type == 'text' ? 'hide' : 'show']();
       $("textarea[name='preview_text']")[type == 'html' ? 'hide' : 'show']();
     });
+
+    var delay = (function(){
+      var timer = 0;
+      return function(callback, ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback, ms);
+      };
+    })();
+
+    $("form[name='render_form']").find("input").off("keyup").on("keyup", (e) => {
+      delay(function(){
+        $("form[name='render_form']").trigger("submit");
+      }, 500 );
+	});
 </script>
