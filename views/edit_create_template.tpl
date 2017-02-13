@@ -214,12 +214,18 @@
 </script>
 <link rel="stylesheet" type="text/css" href="/assets/codemirror/lib/codemirror.css" />
 <link rel="stylesheet" type="text/css" href="/assets/codemirror/addon/display/fullscreen.css" />
+<link rel="stylesheet" type="text/css" href="/assets/codemirror/addon/lint/html-lint.css" />
 <link rel="stylesheet" type="text/css" href="/assets/codemirror/theme/monokai.css" />
 <script type="application/javascript" src="/assets/codemirror/lib/codemirror.js"></script>
 <script type="application/javascript" src="/assets/codemirror/addon/display/fullscreen.js"></script>
 <script type="application/javascript" src="/assets/codemirror/addon/search/search.js"></script>
+<script type="application/javascript" src="/assets/codemirror/addon/lint/lint.js"></script>
+<script type="application/javascript" src="/assets/codemirror/addon/lint/html-lint.js"></script>
 <script type="application/javascript" src="/assets/codemirror/addon/search/searchcursor.js"></script>
 <script type="application/javascript" src="/assets/codemirror/addon/search/jump-to-line.js"></script>
+<script type="application/javascript" src="/assets/codemirror/mode/xml/xml.js"></script>
+<script type="application/javascript" src="/assets/codemirror/mode/javascript/javascript.js"></script>
+<script type="application/javascript" src="/assets/codemirror/mode/css/css.js"></script>
 <script type="application/javascript" src="/assets/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 <script src="/assets/speakingurl/speakingurl.min.js"></script>
 <script>
