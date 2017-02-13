@@ -29,7 +29,7 @@
 				</a>
 			</div>
 			{{else}}
-			Henüz grup eklenmemiş
+			<div class="col-xs-12 text-danger">Henüz grup eklenmemiş</div>
 			{{/each}}
 		</div>
 	</div>

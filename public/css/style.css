@@ -10,6 +10,9 @@ body{
 textarea{
 	resize:none;
 }
+.btn{
+	outline:none!important;
+}
 .page-header{
 	margin-top:0;
 }
@@ -43,7 +46,6 @@ textarea{
 .edit-create .table{
 	margin: 10px 0;
 }
-
 .panel-body .form-group:last-child{
 	margin-bottom: 0;
 }
@@ -73,7 +75,7 @@ textarea{
 	transition: margin 0.3s ease;
 }
 .codemirror_full .navbar{
-	margin-top: -70px;
+	margin-top: -51px;
 }
 .CodeMirror{
 	border: 1px solid #ccc;
