@@ -51,7 +51,13 @@ app.use(['/template', '/settings', '/logout', /^\/$/], function (req, res, next)
 // Main page
 app.get('/', (req, res) => {
   templateStore.list()
-    .then(templates => res.render('index', { user: req.user, templates }))
+    .then(templates => {
+      var departments = [];
+      templates.forEach(t => t.department.forEach(d => departments.push(d)));
+      var departmentTemplates = [];
+      departments.forEach(d => departmentTemplates.push({ name: d, templates: templates.filter(t => t.department.indexOf(d) > -1) }));
+      res.render('index', { user: req.user, templates, departments: departmentTemplates});
+    })
     .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
