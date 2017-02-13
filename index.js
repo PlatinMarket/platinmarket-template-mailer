@@ -153,14 +153,20 @@ app.get('/template/group/view', (req, res) => {
       if (!group) return res.status(404).send("Group not found");
       templateStore.list()
         .then(templates => {
-          templates = templates.filter(t => (req.user.isSuper || template.department.indexOf(req.user.department) > -1) && t.group && t.group.indexOf(group) > -1);
+          templates = templates.filter(t => (req.user.isSuper || t.department.indexOf(req.user.department) > -1) && t.group && t.group.indexOf(group) > -1);
           var parameters = [];
           templates.forEach(t => t.parameter.filter(p => parameters.find(_p => _p.name == p.name) == null).forEach(p => parameters.push(p)));
           res.render('view_template', { currentTemplate: { name: group, description: templates.map(t => t.name), templateFolders: templates.map(t => t.folder), subTemplates: templates, parameter: parameters, isGroup: true }, user: req.user });
         })
-        .catch(err => res.status(500).send("Hata oluştu"));
+        .catch(err => {
+          res.status(500).send("Hata oluştu");
+          console.error(err);
+        });
     })
-    .catch(err => res.status(500).send("Hata oluştu"));
+    .catch(err => {
+      res.status(500).send("Hata oluştu");
+      console.error(err);
+    });
 });
 
 // Template required requests

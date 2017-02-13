@@ -28,9 +28,10 @@
 						<input type="text" name="template_description" id="template_description" class="form-control" value="{{currentTemplate.description}}" />
 					</div>
 					<div class="form-group">
-						<label for="new_department">Şablon grupları</label>
+						<label for="new_group">Şablon grupları</label>
 						<div class="input-group">
-							<input type="text" value="" placeholder="Şablon grubu yazınız örn. Hoşgeldin" name="new_group" id="new_group" class="form-control"/>
+							<input type="text" value="" placeholder="Şablon grubu yazınız örn. Hoşgeldin" name="new_group" id="new_group" class="form-control" list="group_list"/>
+							<datalist id="group_list"></datalist>
 							<span class="input-group-btn">
 								<button type="button" class="btn btn-default" onclick="addValue('group')">Ekle</button>
 							</span>
@@ -41,7 +42,8 @@
 					<div class="form-group">
 						<label for="new_department">Aktif departmanlar</label>
 						<div class="input-group">
-							<input type="text" value="" placeholder="Departman yazınız" name="new_department" id="new_department" class="form-control"/>
+							<input type="text" value="" placeholder="Departman yazınız" name="new_department" id="new_department" class="form-control" list="department_list"/>
+							<datalist id="department_list"></datalist>
 							<span class="input-group-btn">
 								<button type="button" class="btn btn-default" onclick="addValue('department')">Ekle</button>
 							</span>
@@ -216,7 +218,7 @@
 </script>
 <link rel="stylesheet" type="text/css" href="/assets/codemirror/lib/codemirror.css" />
 <link rel="stylesheet" type="text/css" href="/assets/codemirror/addon/display/fullscreen.css" />
-<link rel="stylesheet" type="text/css" href="/assets/codemirror/addon/lint/html-lint.css" />
+<link rel="stylesheet" type="text/css" href="/assets/codemirror/addon/lint/lint.css" />
 <link rel="stylesheet" type="text/css" href="/assets/codemirror/theme/monokai.css" />
 <script type="application/javascript" src="/assets/codemirror/lib/codemirror.js"></script>
 <script type="application/javascript" src="/assets/codemirror/addon/display/fullscreen.js"></script>
@@ -280,6 +282,8 @@
 
     // Refresh Parameter listeners
     function refreshListeners() {
+      $("input[list]").off("input").on("input", (e) => $(e.target).parent().find("button").trigger("click"));
+
       $("input[data-slug-target]").each(function(){
         $(this).off('change').off('keyup').on('change keyup', (e) => {
             var target = $(this).attr('data-slug-target');
@@ -457,5 +461,15 @@
         editor.setOption("fullScreen", false);
 		$("body").removeClass("codemirror_full");
       }
+    })
+
+	$.get('/groups').then(groups => {
+      var gTemplate = "<option value=\"%VALUE%\"/>";
+	  groups.forEach(g => $("#group_list").append(gTemplate.replace("%VALUE%", g)));
+	});
+
+    $.get('/departments').then(departments => {
+      var dTemplate = "<option value=\"%VALUE%\"/>";
+      departments.forEach(g => $("#department_list").append(dTemplate.replace("%VALUE%", g)));
     })
 </script>
