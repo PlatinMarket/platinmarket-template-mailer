@@ -48,10 +48,17 @@ app.use(['/template', '/settings', '/logout', /^\/$/], function (req, res, next)
     res.redirect('/login');
 });
 
+// Super User Zone
+app.use(['/template/:id/edit', '/template/create', '/template/:id/delete'], function (req, res, next) {
+  if (!req.user.isSuper) return res.status(403).send("Yetkiniz yok");
+  next();
+});
+
 // Main page
 app.get('/', (req, res) => {
   templateStore.list()
     .then(templates => {
+      templates = templates.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1);
       var departments = [];
       templates.forEach(t => t.department.forEach(d => departments.push(d)));
       var departmentTemplates = [];
@@ -125,6 +132,7 @@ app.post('/template/create', function (req, res) {
 app.use('/template/:id', function (req, res, next) {
   templateStore.get(req.params.id)
     .then(template => {
+      if (!req.user.isSuper && template.department.indexOf(req.user.department) == -1) return res.status(403).send("Yetkiniz yok");
       req.template = template;
       next();
     })
@@ -133,7 +141,7 @@ app.use('/template/:id', function (req, res, next) {
 
 // Template edit
 app.get('/template/:id/edit', (req, res) => {
-    res.render('edit_create_template', { user: req.user, currentTemplate: req.template });
+  res.render('edit_create_template', { user: req.user, currentTemplate: req.template });
 });
 
 // Template edit post
