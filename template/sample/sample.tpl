@@ -199,7 +199,7 @@
         						<tr>
         							<td align="center" mc:edit="main-header" style="color: #596064; font-size: 23px; font-weight: bold; font-family: 'PT Sans', Arial, sans-serif;" class="main-header">
 			        					<multiline>
-			        						{{e-posta_adresi}} / {{adi_soyadi}} / HEADLINE INTRODUCTION HERE
+			        						{{buda_mi_go}} / {{adi_soyadi}} / HEADLINE INTRODUCTION HERE
 			        					</multiline>
 			        				</td>	
         						</tr>

@@ -55,10 +55,10 @@
 			<div class="panel panel-default">
 				<div class="embed-responsive embed-responsive-4by3">
 				  <iframe class="embed-responsive-item" name="preview"></iframe>
-                  {{#if currentTemplate.textFallback}}<textarea readonly name="preview_text" style="display: none;"></textarea>{{/if}}
+                  <textarea readonly name="preview_text" style="display: none;"></textarea>
 				</div>
 			</div>
-            {{#if currentTemplate.textFallback}}
+
 			<div class="form-group">
                 <div class="btn-group pull-right type_changer" data-toggle="buttons">
                     <label class="btn btn-default btn-sm active">
@@ -70,7 +70,7 @@
                 </div>
                 <div class="clearfix"></div>
 			</div>
-            {{/if}}
+
 		</div>
 	</div>
 </div>
@@ -117,7 +117,7 @@
         $.post('/template/' + template + '/render', params).then(result => {
           $("iframe[name='preview']").contents().find("html").html(result.html);
           $("input[name='subject']").val(result.subject);
-          if (result.text) $("textarea[name='preview_text']").val(result.text);
+          $("textarea[name='preview_text']").val(result.text || "Text şablonu kaydedilmemiş");
 
           setTimeout(() => {
             $("form[name='render_form']").find("button").removeAttr("disabled");
