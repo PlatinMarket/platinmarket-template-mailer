@@ -54,7 +54,7 @@
 						<input name="template_subject" id="template_subject" class="form-control" value="{{currentTemplate.subject}}" />
 					</div>
 					<div class="form-group">
-						<label for="template_html">Html içerik</label> <button class="btn btn-default btn-xs" onclick="editor.setOption('fullScreen', true);">Tam Sayfa</button>
+						<label for="template_html">Html içerik</label> <button class="btn btn-default btn-xs" onclick="editor.setOption('fullScreen', true); editor.setOption('lineNumbers', true);">Tam Sayfa</button>
 						<textarea name="template_html" id="template_html" class="form-control" rows="8">{{currentTemplate.html}}</textarea>
 					</div>
 					<div class="form-group">
@@ -212,6 +212,15 @@
         <div class="label label-primary">\{{this}} <div class="label-close" onclick="removeValue('group', '\{{this}}');"><span class="glyphicon glyphicon-remove"></span></div></div>
     \{{/each}}
 </script>
+<link rel="stylesheet" type="text/css" href="/assets/codemirror/lib/codemirror.css" />
+<link rel="stylesheet" type="text/css" href="/assets/codemirror/addon/display/fullscreen.css" />
+<link rel="stylesheet" type="text/css" href="/assets/codemirror/theme/monokai.css" />
+<script type="application/javascript" src="/assets/codemirror/lib/codemirror.js"></script>
+<script type="application/javascript" src="/assets/codemirror/addon/display/fullscreen.js"></script>
+<script type="application/javascript" src="/assets/codemirror/addon/search/search.js"></script>
+<script type="application/javascript" src="/assets/codemirror/addon/search/searchcursor.js"></script>
+<script type="application/javascript" src="/assets/codemirror/addon/search/jump-to-line.js"></script>
+<script type="application/javascript" src="/assets/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 <script src="/assets/speakingurl/speakingurl.min.js"></script>
 <script>
 
@@ -393,7 +402,7 @@
         subject: $("input[name='template_subject']").val(),
         group: $("input[name='template_group']").val() ? $("input[name='template_group']").val().split(",") : [],
         department: $("input[name='template_department']").val() ? $("input[name='template_department']").val().split(",") : [],
-        html: $("textarea[name='template_html']").val(),
+        html: editor.getValue(),
         textFallback: $("input[name='template_textFallback']")[0].checked
       };
       if (template.textFallback) template['text'] = $("textarea[name='template_text']").val();
@@ -429,11 +438,15 @@
     }
 
     var editor = CodeMirror.fromTextArea($("textarea[name='template_html']")[0], {
-      lineNumbers: true
+      lineNumbers: false,
+      mode: "htmlmixed"
     });
 
     $(document).on("keyup", function (e) {
 	  var keycode = e.which || e.keyCode;
-	  if (keycode === 27) editor.setOption("fullScreen", false);
+	  if (keycode === 27) {
+        editor.setOption("lineNumbers", false);
+        editor.setOption("fullScreen", false);
+      }
     })
 </script>
