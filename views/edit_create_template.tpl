@@ -43,11 +43,7 @@
 						<div class="input-group">
 							<input type="text" value="" placeholder="Departman yazınız" name="new_department" id="new_department" class="form-control"/>
 							<span class="input-group-btn">
-<<<<<<< HEAD
-								<button type="button" class="btn btn-default" onclick="addDepartment()">Ekle</button>
-=======
-								<button type="button" class="btn btn-primary" onclick="addValue('department')">Ekle</button>
->>>>>>> origin/master
+								<button type="button" class="btn btn-default" onclick="addValue('department')">Ekle</button>
 							</span>
 						</div>
 						<input type="hidden" value="{{currentTemplate.department}}" name="template_department" />
