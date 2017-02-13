@@ -55,7 +55,7 @@
 					</div>
 					<div class="form-group">
 						<label for="template_html" class="pull-left">Html içerik</label> 
-						<button class="btn btn-default btn-xs pull-right" onclick="editor.setOption('fullScreen', true); editor.setOption('lineNumbers', true);"><span class="glyphicon glyphicon-fullscreen"></span></button>
+						<button class="btn btn-default btn-xs pull-right" onclick="editor.setOption('fullScreen', true); editor.setOption('lineNumbers', true);$('body').addClass('codemirror_full');"><span class="glyphicon glyphicon-fullscreen"></span></button>
 						<div class="clearfix"></div>
 						<textarea name="template_html" id="template_html" class="form-control" rows="8">{{currentTemplate.html}}</textarea>
 					</div>
@@ -455,6 +455,7 @@
 	  if (keycode === 27) {
         editor.setOption("lineNumbers", false);
         editor.setOption("fullScreen", false);
+		$("body").removeClass("codemirror_full");
       }
     })
 </script>
