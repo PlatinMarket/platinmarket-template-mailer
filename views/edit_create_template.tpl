@@ -28,11 +28,26 @@
 						<input type="text" name="template_description" id="template_description" class="form-control" value="{{currentTemplate.description}}" />
 					</div>
 					<div class="form-group">
+						<label for="new_department">Şablon grupları</label>
+						<div class="input-group">
+							<input type="text" value="" placeholder="Şablon grubu yazınız örn. Hoşgeldin" name="new_group" id="new_group" class="form-control"/>
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-primary" onclick="addValue('group')">Ekle</button>
+							</span>
+						</div>
+						<input type="hidden" value="{{currentTemplate.group}}" name="template_group" />
+						<div class="groups"></div>
+					</div>
+					<div class="form-group">
 						<label for="new_department">Aktif departmanlar</label>
 						<div class="input-group">
 							<input type="text" value="" placeholder="Departman yazınız" name="new_department" id="new_department" class="form-control"/>
 							<span class="input-group-btn">
+<<<<<<< HEAD
 								<button type="button" class="btn btn-default" onclick="addDepartment()">Ekle</button>
+=======
+								<button type="button" class="btn btn-primary" onclick="addValue('department')">Ekle</button>
+>>>>>>> origin/master
 							</span>
 						</div>
 						<input type="hidden" value="{{currentTemplate.department}}" name="template_department" />
@@ -191,43 +206,54 @@
 </script>
 
 <script id="template-department-item" type="text/x-handlebars-template">
-    \{{#each departments}}
-        <div class="label label-primary">\{{this}} <div class="label-close" onclick="removeDepartment('\{{this}}');"><span class="glyphicon glyphicon-remove"></span></div></div>
+    \{{#each data}}
+        <div class="label label-primary">\{{this}} <div class="label-close" onclick="removeValue('department', '\{{this}}');"><span class="glyphicon glyphicon-remove"></span></div></div>
+    \{{/each}}
+</script>
+
+<script id="template-group-item" type="text/x-handlebars-template">
+    \{{#each data}}
+        <div class="label label-primary">\{{this}} <div class="label-close" onclick="removeValue('group', '\{{this}}');"><span class="glyphicon glyphicon-remove"></span></div></div>
     \{{/each}}
 </script>
 <script src="/assets/speakingurl/speakingurl.min.js"></script>
 <script>
-    /*
-    Remove Department
-     */
-    function removeDepartment(department) {
-        var departments = $("input[name='template_department']").val().toString().trim();
-        departments = departments ? departments.split(',') : [];
-        var index = departments.indexOf(department);
-        if (index == -1) return;
-        departments.splice(index, 1);
-        $("input[name='template_department']").val(departments.join(','));
-        $(".departments").html(Handlebars.compile($("#template-department-item").html())({departments}));
+
+	/*
+	Remove value
+	 */
+	function removeValue(type, data) {
+      var values = $("input[name='template_" + type + "']").val().toString().trim();
+      values = values ? values.split(',') : [];
+      var index = values.indexOf(data);
+      if (index == -1) return;
+      values.splice(index, 1);
+      $("input[name='template_" + type + "']").val(values.join(','));
+      $("." + type + "s").html(Handlebars.compile($("#template-" + type + "-item").html())({data: values}));
     }
 
     /*
-    Add Department
+    Add Value
      */
-    function addDepartment() {
-        var department = $("input[name='new_department']").val().toString().trim();
-        if (!department) return;
-        var departments = $("input[name='template_department']").val().toString().trim();
-        departments = departments ? departments.split(',') : [];
-        if (departments.indexOf(department) > -1) return;
-        $("input[name='new_department']").val('');
-        departments.push(department);
-        $("input[name='template_department']").val(departments.join(','));
-        $(".departments").html(Handlebars.compile($("#template-department-item").html())({departments}));
+    function addValue(type) {
+        var value = $("input[name='new_" + type + "']").val().toString().trim();
+        if (!value) return;
+        var values = $("input[name='template_" + type + "']").val().toString().trim();
+        values = values ? values.split(',') : [];
+        if (values.indexOf(value) > -1) return;
+        $("input[name='new_" + type + "']").val('');
+        values.push(value);
+        $("input[name='template_" + type + "']").val(values.join(','));
+        $("." + type + "s").html(Handlebars.compile($("#template-" + type + "-item").html())({data: values}));
     }
+
+    // Render Groups
+    var groups = $("input[name='template_group']").val().toString().trim() ? $("input[name='template_group']").val().toString().trim().split(",") : [];
+    $(".groups").html(Handlebars.compile($("#template-group-item").html())({ data: groups }));
 
     // Render Departments
     var departments = $("input[name='template_department']").val().toString().trim() ? $("input[name='template_department']").val().toString().trim().split(",") : [];
-    $(".departments").html(Handlebars.compile($("#template-department-item").html())({ departments }));
+    $(".departments").html(Handlebars.compile($("#template-department-item").html())({ data: departments }));
 
     // Text fallback
     {{#if currentTemplate.textFallback}}
@@ -369,6 +395,7 @@
         name: $("input[name='template_name']").val(),
         description: $("input[name='template_description']").val(),
         subject: $("input[name='template_subject']").val(),
+        group: $("input[name='template_group']").val() ? $("input[name='template_group']").val().split(",") : [],
         department: $("input[name='template_department']").val() ? $("input[name='template_department']").val().split(",") : [],
         html: $("textarea[name='template_html']").val(),
         textFallback: $("input[name='template_textFallback']")[0].checked

@@ -84,6 +84,7 @@ app.post(['/template/create', '/template/:id/edit'], function (req, res, next) {
       name: { type: "string", maxLength: 128, minLength: 5 },
       subject: { type: "string", minLength: 5 },
       description: { type: "string", maxLength: 128 },
+      group: { type: "array", items: { type: "string", maxLength: 128 } },
       department: { type: "array", items: { type: "string", maxLength: 128 } },
       parameter: {
         type: "array",
