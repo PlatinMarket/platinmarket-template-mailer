@@ -17,3 +17,9 @@
         </div>
     {{/each}}
 </div>
+
+<ul>
+    {{#each groups}}
+    <li><a href="/template/group/view?name={{name}}">{{name}} ({{templates}})</a></li>
+    {{/each}}
+</ul>

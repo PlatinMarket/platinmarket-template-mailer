@@ -2,7 +2,9 @@
 	<h3 class="page-header">
 		{{currentTemplate.name}} <small>{{currentTemplate.description}}</small>
 		{{#if user.isSuper}}
-		<a class="btn btn-default pull-right" href="/template/{{currentTemplate.id}}/edit">Şablonu düzenle</a>
+        	{{#unless currentTemplate.isGroup}}
+				<a class="btn btn-default pull-right" href="/template/{{currentTemplate.id}}/edit">Şablonu düzenle</a>
+        	{{/unless}}
 		{{/if}}
 		<div class="clearfix"></div>
 	</h3>
@@ -24,6 +26,7 @@
 		</div>
 		<div class="col-lg-9 col-md-8">
 			<p class="lead">E-posta</p>
+			<div data-zone="template-selector"></div>
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<form class="form-horizontal">
@@ -71,7 +74,34 @@
 		</div>
 	</div>
 </div>
+
+<script id="template-render-selector" type="text/x-handlebars-template">
+	<select name="template-selector">
+		\{{#each templates}}
+		<option>\{{this}}</option>
+        \{{/each}}
+	</select>
+</script>
+
+{{#if currentTemplate.isGroup}}
+	<input type="hidden" name="group_templates" value="{{currentTemplate.description}}" />
+{{else}}
+	<input type="hidden" name="group_templates" value="{{currentTemplate.name}}" />
+{{/if}}
 <script>
+	var templates = $("input[name='group_templates']").val().trim() ? $("input[name='group_templates']").val().trim().split(",") : [];
+    var template = templates[0];
+	var isGroup = templates.length > 1;
+
+    if (isGroup) {
+      $("[data-zone='template-selector']").html(Handlebars.compile($("#template-render-selector").html())({templates: templates}));
+      $("select[name='template-selector']").on('change', (e) => {
+        template = e.target.value;
+        $("form[name='render_form']").trigger("submit");
+	  });
+      $("select[name='template-selector']").val(template);
+    }
+
 	// Before Load
 	$("form[name='render_form']").on("submit", function (e) {
 	  e.preventDefault();
@@ -84,7 +114,7 @@
 
         var params = {};
         $(e.target).serializeArray().forEach(p => params[p.name] = p.value);
-        $.post('/template/{{currentTemplate.name}}/render', params).then(result => {
+        $.post('/template/' + template + '/render', params).then(result => {
           $("iframe[name='preview']").contents().find("html").html(result.html);
           $("input[name='subject']").val(result.subject);
           if (result.text) $("textarea[name='preview_text']").val(result.text);

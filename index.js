@@ -34,7 +34,7 @@ app.set('views', './views');
 app.set('view engine', 'tpl');
 
 // Login require pages
-app.use(['/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
+app.use(['/departments', '/groups', '/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
     var sess = req.session;
     if (sess && sess.user) {
       settings.get(sess.user)
@@ -59,13 +59,29 @@ app.get('/', (req, res) => {
   templateStore.list()
     .then(templates => {
       templates = templates.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1);
-      var departments = [];
-      templates.forEach(t => t.department.forEach(d => departments.push(d)));
-      var departmentTemplates = [];
-      departments.forEach(d => departmentTemplates.push({ name: d, templates: templates.filter(t => t.department.indexOf(d) > -1) }));
-      res.render('index', { user: req.user, templates, departments: departmentTemplates});
+      departmentTemplates = templateStore.departments(templates).map(d => {
+        return { name: d, templates: templates.filter(t => t.department && t.department.indexOf(d) > -1) };
+      });
+      groupTemplates = templateStore.groups(templates).map(d => {
+        return { name: d, templates: templates.filter(t => t.group && t.group.indexOf(d) > -1).map(t => t.name) };
+      });
+      res.render('index', { user: req.user, templates, departments: departmentTemplates, groups: groupTemplates });
     })
     .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+});
+
+// Get Groups
+app.get('/groups', function (req, res) {
+  templateStore.groups()
+    .then(groups => res.json(groups))
+    .catch(err => res.status(500).send("Hata oluştu"));
+});
+
+// Get Groups
+app.get('/departments', function (req, res) {
+  templateStore.departments()
+    .then(departments => res.json(departments))
+    .catch(err => res.status(500).send("Hata oluştu"));
 });
 
 // Get template list
@@ -129,6 +145,25 @@ app.post('/template/create', function (req, res) {
     .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
+// Template render
+app.get('/template/group/view', (req, res) => {
+  templateStore.groups()
+    .then(groups => {
+      var group = groups.find(g => req.query.name == g);
+      if (!group) return res.status(404).send("Group not found");
+      templateStore.list()
+        .then(templates => {
+          templates = templates.filter(t => (req.user.isSuper || template.department.indexOf(req.user.department) > -1) && t.group && t.group.indexOf(group) > -1);
+          var parameters = [];
+          templates.forEach(t => t.parameter.filter(p => parameters.find(_p => _p.name == p.name) == null).forEach(p => parameters.push(p)));
+          var description = templates.map(t => t.name);
+          res.render('view_template', { currentTemplate: { name: group, description: templates.map(t => t.name), subTemplates: templates, parameter: parameters, isGroup: true }, user: req.user });
+        })
+        .catch(err => res.status(500).send("Hata oluştu"));
+    })
+    .catch(err => res.status(500).send("Hata oluştu"));
+});
+
 // Template required requests
 app.use('/template/:id', function (req, res, next) {
   templateStore.get(req.params.id)
@@ -161,7 +196,7 @@ app.get('/template/:id/delete', (req, res) => {
 
 // Template render
 app.get('/template/:id/view', (req, res) => {
-    res.render('view_template', { currentTemplate: req.template, user: req.user });
+    res.render('view_template', { currentTemplate: Object.assign(req.template, { isGroup: false }), user: req.user });
 });
 
 // Template render
