@@ -78,7 +78,7 @@ app.post(['/template/create', '/template/:id/edit'], function (req, res, next) {
           type: "object",
           required: ['name', 'title', 'type', 'require', 'default'],
           properties: {
-            name: { type: "string", maxLength: 128, minLength: 1 },
+            name: { type: "string", maxLength: 40, minLength: 3 },
             title: { type: "string", maxLength: 128, minLength: 1 },
             type: { type: "string", enum: ["string", "boolean"] },
             require: { type: "string" },
@@ -97,7 +97,7 @@ app.post(['/template/create', '/template/:id/edit'], function (req, res, next) {
   data.textFallback = data.textFallback === 'true';
   data.parameter.forEach(p => {
     p.require = (p.require === 'true');
-    p.name = surl(p.title, {separator: '_', lang: 'tr'});
+    p.name = p.name && p.name.match(/[\s|\W]/) == null ? p.name : surl(p.title.replace(/-/gi, "_").trim(), {separator: '_', lang: 'tr'});
   });
   next();
 });
@@ -150,10 +150,12 @@ app.get('/template/:id/view', (req, res) => {
 });
 
 // Template render
-app.post('/template/:id/render', (req, res) => {
+app.post(['/template/:id/render', '/template/:id/render/:type'], (req, res) => {
+  var type = req.params.type || null;
+  if (type && ['html', 'text', 'subject'].indexOf(type) === -1) return res.status(404).send('Requested type `' + type + '` not found!');
   templateStore.render(req.template, req.body, { user: Object.assign(req.user, { smtp: null }) })
     .then((rendered) => {
-      res.send(rendered.html);
+      res.json(type ? rendered[type] : rendered);
       res.end();
     })
     .catch(err => res.status(500).json({message: err.message, stack: err.stack}));

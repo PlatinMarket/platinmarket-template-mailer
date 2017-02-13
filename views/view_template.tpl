@@ -27,7 +27,7 @@
 			<p class="lead">Gönderi</p>
 			<form>
 				<div class="form-group">
-					<input type="text" class="form-control" value="{{currentTemplate.subject}}" placeholder="E-posta konusu" required />
+					<input type="text" name="subject" class="form-control" value="" placeholder="E-posta konusu" readonly />
 				</div>
 				<div class="form-group">
 					<div class="input-group">
@@ -40,10 +40,24 @@
 			</form>
 		</div>
 		<div class="col-lg-9 col-md-8">
-			<p class="lead">Önizleme</p>
+            <p class="lead">Önizleme</p>
+            {{#if currentTemplate.textFallback}}
+                <div class="btn-group pull-right type_changer" data-toggle="buttons" style="margin-bottom: 10px;">
+                    <label class="btn btn-info btn-sm active">
+                        <input type="radio" name="options" id="option1" autocomplete="off" value="html" checked> Html
+                    </label>
+                    <label class="btn btn-info btn-sm">
+                        <input type="radio" name="options" id="option2" autocomplete="off" value="text"> Text
+                    </label>
+                </div>
+                <div class="clearfix"></div>
+            {{/if}}
 			<div class="panel panel-default">
 				<div class="embed-responsive embed-responsive-4by3">
 				  <iframe class="embed-responsive-item" name="preview"></iframe>
+                  {{#if currentTemplate.textFallback}}
+                    <textarea readonly name="preview_text" style="display: none;"></textarea>
+                  {{/if}}
 				</div>
 			</div>
 		</div>
@@ -52,18 +66,44 @@
 <script>
 	// Before Load
 	$("form[name='render_form']").on("submit", function (e) {
-      	$("form[name='render_form']").find("button").attr("disabled", "disabled");
-  		$("body").addClass("preview_loading");
-  		//e.preventDefault();
-    });
+	  e.preventDefault();
+	  try {
+        $("iframe[name='preview']").contents().find("html").html("");
+        $("input[name='subject']").val("");
+        $("textarea[name='preview_text']").val("");
+        $("form[name='render_form']").find("button").attr("disabled", "disabled");
+        $("body").addClass("preview_loading");
 
-    // Loaded event
-	$("iframe[name='preview']").on('load', function () {
-      setTimeout(() => {
-        $("form").find("button").removeAttr("disabled");
-        $("body").removeClass("preview_loading");
-	  }, 200);
+        var params = {};
+        $(e.target).serializeArray().forEach(p => params[p.name] = p.value);
+        $.post('/template/{{currentTemplate.name}}/render', params).then(result => {
+          $("iframe[name='preview']").contents().find("html").html(result.html);
+          $("input[name='subject']").val(result.subject);
+          if (result.text) $("textarea[name='preview_text']").val(result.text);
+
+          setTimeout(() => {
+            $("form[name='render_form']").find("button").removeAttr("disabled");
+            $("body").removeClass("preview_loading");
+          }, 200);
+        });
+      } catch (err) {
+	    console.error(err);
+      }
     });
 
     $("form[name='render_form']").trigger("submit");
+
+    $(".type_changer").on("change", function (e) {
+      var type = e.target.value;
+      switch (type) {
+        case 'text':
+          $("iframe[name='preview']").hide();
+          $("textarea[name='preview_text']").show();
+          break;
+        case 'html':
+          $("iframe[name='preview']").show();
+          $("textarea[name='preview_text']").hide();
+          break;
+      }
+    });
 </script>

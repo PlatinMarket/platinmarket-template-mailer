@@ -1,6 +1,6 @@
 <div class="container edit-create">
 	<h3 class="page-header">
-		<span>{{currentTemplate.name}}</span> 
+		<span>{{currentTemplate.name}}</span>
 		<small>{{currentTemplate.description}}</small>
         {{#if currentTemplate.id}}
 		<button type="button" class="btn btn-link" onclick="deleteTemplate('{{currentTemplate.id}}')">Şablonu Sil</button>
@@ -278,6 +278,7 @@
           require: $("input[name='p_require']")[0].checked,
           default: parseVal($("input[name='p_default']").val(), $("select[name='p_type']").val())
         };
+        console.log(parameter);
         if (!parameter.name || !parameter.title || !parameter.type) return alert("Alanları kontrol ediniz");
         var checkVal = $(".parameter").toArray().filter(e => $(e).find("input[name='name']").val() == parameter.name).length;
         if ((op == 'add' && checkVal > 0) || (op == 'edit' && checkVal > 1)) return alert("Aynı isimde mevcut");
