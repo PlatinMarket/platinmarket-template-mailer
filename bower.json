@@ -19,6 +19,7 @@
     "jquery": "^3.1.1",
     "bootstrap": "^3.3.7",
     "handlebars": "^4.0.5",
-    "speakingurl": "^11.0.0"
+    "speakingurl": "^11.0.0",
+    "codemirror": "^5.22.2"
   }
 }

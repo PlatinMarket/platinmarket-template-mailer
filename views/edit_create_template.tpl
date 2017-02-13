@@ -54,7 +54,7 @@
 						<input name="template_subject" id="template_subject" class="form-control" value="{{currentTemplate.subject}}" />
 					</div>
 					<div class="form-group">
-						<label for="template_html">Html içerik</label>
+						<label for="template_html">Html içerik</label> <button class="btn btn-default btn-xs" onclick="editor.setOption('fullScreen', true);">Tam Sayfa</button>
 						<textarea name="template_html" id="template_html" class="form-control" rows="8">{{currentTemplate.html}}</textarea>
 					</div>
 					<div class="form-group">
@@ -427,4 +427,13 @@
       $("input, button, select, textarea").attr("disabled", "disabled");
       window.location = "/template/" + id + "/delete";
     }
+
+    var editor = CodeMirror.fromTextArea($("textarea[name='template_html']")[0], {
+      lineNumbers: true
+    });
+
+    $(document).on("keyup", function (e) {
+	  var keycode = e.which || e.keyCode;
+	  if (keycode === 27) editor.setOption("fullScreen", false);
+    })
 </script>
