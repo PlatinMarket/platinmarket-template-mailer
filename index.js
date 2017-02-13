@@ -156,8 +156,7 @@ app.get('/template/group/view', (req, res) => {
           templates = templates.filter(t => (req.user.isSuper || template.department.indexOf(req.user.department) > -1) && t.group && t.group.indexOf(group) > -1);
           var parameters = [];
           templates.forEach(t => t.parameter.filter(p => parameters.find(_p => _p.name == p.name) == null).forEach(p => parameters.push(p)));
-          var description = templates.map(t => t.name);
-          res.render('view_template', { currentTemplate: { name: group, description: templates.map(t => t.name), subTemplates: templates, parameter: parameters, isGroup: true }, user: req.user });
+          res.render('view_template', { currentTemplate: { name: group, description: templates.map(t => t.name), templateFolders: templates.map(t => t.folder), subTemplates: templates, parameter: parameters, isGroup: true }, user: req.user });
         })
         .catch(err => res.status(500).send("Hata oluştu"));
     })
