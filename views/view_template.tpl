@@ -18,7 +18,6 @@
 								<input type="text" name="{{name}}" id="{{name}}" value="{{default}}" class="form-control" {{#if require}}required{{/if}} />
 							</div>
 						{{/each}}
-					  	<button type="submit" class="btn btn-block btn-success">Gönder</button>
 					</form>
 				</div>
 			</div>
@@ -30,31 +29,35 @@
 					<input type="text" name="subject" class="form-control" value="" placeholder="E-posta konusu" readonly />
 				</div>
 				<div class="form-group">
-					<input type="email" class="form-control" placeholder="Gönderilecek e-posta" required />
+					<div class="input-group">
+						<input type="email" class="form-control" placeholder="Gönderilecek e-posta" required />
+						<span class="input-group-btn">
+							<button type="submit" class="btn btn-block btn-success">Gönder</button>
+						</span>
+					</div>
 				</div>
 			</form>
 		</div>
 		<div class="col-lg-9 col-md-8">
-            <p class="lead">Önizleme</p>
-            {{#if currentTemplate.textFallback}}
-                <div class="btn-group pull-right type_changer" data-toggle="buttons" style="margin-bottom: 10px;">
-                    <label class="btn btn-info btn-sm active">
-                        <input type="radio" name="options" id="option1" autocomplete="off" value="html" checked> Html
-                    </label>
-                    <label class="btn btn-info btn-sm">
-                        <input type="radio" name="options" id="option2" autocomplete="off" value="text"> Text
-                    </label>
-                </div>
-                <div class="clearfix"></div>
-            {{/if}}
 			<div class="panel panel-default">
 				<div class="embed-responsive embed-responsive-4by3">
 				  <iframe class="embed-responsive-item" name="preview"></iframe>
-                  {{#if currentTemplate.textFallback}}
-                    <textarea readonly name="preview_text" style="display: none;"></textarea>
-                  {{/if}}
+                  {{#if currentTemplate.textFallback}}<textarea readonly name="preview_text" style="display: none;"></textarea>{{/if}}
 				</div>
 			</div>
+            {{#if currentTemplate.textFallback}}
+			<div class="form-group">
+                <div class="btn-group pull-right type_changer" data-toggle="buttons">
+                    <label class="btn btn-default btn-sm active">
+                        <input type="radio" name="options" id="option1" autocomplete="off" value="html" checked>Html
+                    </label>
+                    <label class="btn btn-default btn-sm">
+                        <input type="radio" name="options" id="option2" autocomplete="off" value="text">Text
+                    </label>
+                </div>
+                <div class="clearfix"></div>
+			</div>
+            {{/if}}
 		</div>
 	</div>
 </div>
