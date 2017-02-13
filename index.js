@@ -234,7 +234,7 @@ app.post('/login', (req, res) => {
             req.session.user = user;
             return res.sendStatus(200);
         })
-        .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+        .catch(err => res.status(500).json({message: err ? err.message : "Belirsiz bir hata", stack: err ? err.stack : ""}));
 });
 
 // Start server
