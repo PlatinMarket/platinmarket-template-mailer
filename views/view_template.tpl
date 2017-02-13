@@ -26,16 +26,9 @@
 		</div>
 		<div class="col-lg-9 col-md-8">
 			<p class="lead">E-posta</p>
-			<div data-zone="template-selector"></div>
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<form class="form-horizontal">
-						<div class="form-group">
-							<label for="subject" class="col-lg-2 control-label">Konu</label>
-							<div class="col-lg-10">
-								<input type="text" name="subject" id="subject" class="form-control" value="" readonly />
-							</div>
-						</div>
 						<div class="form-group">
 							<label for="email" class="col-lg-2 control-label">E-posta adresi</label>
 							<div class="col-lg-10">
@@ -47,39 +40,42 @@
 								</div>
 							</div>
 						</div>
+						<div class="form-group">
+							<label for="subject" class="col-lg-2 control-label">Konu</label>
+							<div class="col-lg-10">
+								<input type="text" name="subject" id="subject" class="form-control" value="" readonly />
+							</div>
+						</div>
 					</form>
 				</div>
 			</div>
-		</div>
-		<div class="col-lg-9 col-md-8">
+			<div class="form-group pull-left" data-zone="template-selector"></div>
+			<div class="form-group pull-right ">
+                <div class="btn-group type_changer" data-toggle="buttons">
+                    <label class="btn btn-default active">
+                        <input type="radio" name="options" id="option1" autocomplete="off" value="html" checked>Html
+                    </label>
+                    <label class="btn btn-default">
+                        <input type="radio" name="options" id="option2" autocomplete="off" value="text">Text
+                    </label>
+                </div>
+			</div>
+			<div class="clearfix"></div>
 			<div class="panel panel-default">
 				<div class="embed-responsive embed-responsive-4by3">
 				  <iframe class="embed-responsive-item" name="preview"></iframe>
                   <textarea readonly name="preview_text" style="display: none;"></textarea>
 				</div>
 			</div>
-
-			<div class="form-group">
-                <div class="btn-group pull-right type_changer" data-toggle="buttons">
-                    <label class="btn btn-default btn-sm active">
-                        <input type="radio" name="options" id="option1" autocomplete="off" value="html" checked>Html
-                    </label>
-                    <label class="btn btn-default btn-sm">
-                        <input type="radio" name="options" id="option2" autocomplete="off" value="text">Text
-                    </label>
-                </div>
-                <div class="clearfix"></div>
-			</div>
-
 		</div>
 	</div>
 </div>
 
 <script id="template-render-selector" type="text/x-handlebars-template">
-	<select name="template-selector">
+	<select id="template-selector" name="template-selector" class="form-control">
 		\{{#each templates}}
 		<option>\{{this}}</option>
-        \{{/each}}
+		\{{/each}}
 	</select>
 </script>
 
