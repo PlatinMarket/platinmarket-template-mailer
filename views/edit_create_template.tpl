@@ -278,7 +278,6 @@
           require: $("input[name='p_require']")[0].checked,
           default: parseVal($("input[name='p_default']").val(), $("select[name='p_type']").val())
         };
-        console.log(parameter);
         if (!parameter.name || !parameter.title || !parameter.type) return alert("Alanları kontrol ediniz");
         var checkVal = $(".parameter").toArray().filter(e => $(e).find("input[name='name']").val() == parameter.name).length;
         if ((op == 'add' && checkVal > 0) || (op == 'edit' && checkVal > 1)) return alert("Aynı isimde mevcut");

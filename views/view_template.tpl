@@ -95,15 +95,7 @@
 
     $(".type_changer").on("change", function (e) {
       var type = e.target.value;
-      switch (type) {
-        case 'text':
-          $("iframe[name='preview']").hide();
-          $("textarea[name='preview_text']").show();
-          break;
-        case 'html':
-          $("iframe[name='preview']").show();
-          $("textarea[name='preview_text']").hide();
-          break;
-      }
+      $("iframe[name='preview']")[type == 'text' ? 'hide' : 'show']();
+      $("textarea[name='preview_text']")[type == 'html' ? 'hide' : 'show']();
     });
 </script>
