@@ -3,9 +3,9 @@
 		<span>{{currentTemplate.name}}</span>
 		<small>{{currentTemplate.description}}</small>
         {{#if currentTemplate.id}}
-		<button type="button" class="btn btn-link" onclick="deleteTemplate('{{currentTemplate.id}}')">Şablonu Sil</button>
+		<button type="button" class="btn btn-link" onclick="deleteTemplate('{{currentTemplate.id}}')">Sil</button>
         {{/if}}
-		<button type="button" class="btn btn-success pull-right" onclick="submit()">Şablonu Kaydet</button>
+		<button type="button" class="btn btn-success pull-right" onclick="submit()">Kaydet</button>
 		<div class="clearfix"></div>
 	</h3>
 	<div class="alert alert-danger" style="display: none;"></div>
@@ -32,11 +32,11 @@
 						<div class="input-group">
 							<input type="text" value="" placeholder="Şablon grubu yazınız örn. Hoşgeldin" name="new_group" id="new_group" class="form-control"/>
 							<span class="input-group-btn">
-								<button type="button" class="btn btn-primary" onclick="addValue('group')">Ekle</button>
+								<button type="button" class="btn btn-default" onclick="addValue('group')">Ekle</button>
 							</span>
 						</div>
 						<input type="hidden" value="{{currentTemplate.group}}" name="template_group" />
-						<div class="groups"></div>
+						<div class="groups tags"></div>
 					</div>
 					<div class="form-group">
 						<label for="new_department">Aktif departmanlar</label>
@@ -47,7 +47,7 @@
 							</span>
 						</div>
 						<input type="hidden" value="{{currentTemplate.department}}" name="template_department" />
-						<div class="departments"></div>
+						<div class="departments tags"></div>
 					</div>
 					<div class="form-group">
 						<label for="template_subject">Varsayılan e-posta konusu</label>

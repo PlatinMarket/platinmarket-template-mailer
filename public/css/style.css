@@ -26,10 +26,10 @@ textarea{
 	content: 'Yeni şablon';
 	display: inline-block;
 }
-.edit-create .departments{
+.edit-create .tags{
 	display: block;
 }
-.edit-create .departments .label{
+.edit-create .tags .label{
 	margin-top:10px;
 	margin-right:5px;
 	display: inline-block;
