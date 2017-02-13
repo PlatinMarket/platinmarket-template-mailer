@@ -23,20 +23,30 @@
 			</div>
 		</div>
 		<div class="col-lg-9 col-md-8">
-			<p class="lead">Gönderi</p>
-			<form>
-				<div class="form-group">
-					<input type="text" name="subject" class="form-control" value="" placeholder="E-posta konusu" readonly />
+			<p class="lead">E-posta</p>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label for="subject" class="col-lg-2 control-label">Konu</label>
+							<div class="col-lg-10">
+								<input type="text" name="subject" id="subject" class="form-control" value="" readonly />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="email" class="col-lg-2 control-label">E-posta adresi</label>
+							<div class="col-lg-10">
+								<div class="input-group">
+									<input type="email" name="email" id="email" class="form-control" required />
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-block btn-primary">Gönder</button>
+									</span>
+								</div>
+							</div>
+						</div>
+					</form>
 				</div>
-				<div class="form-group">
-					<div class="input-group">
-						<input type="email" class="form-control" placeholder="Gönderilecek e-posta" required />
-						<span class="input-group-btn">
-							<button type="submit" class="btn btn-block btn-success">Gönder</button>
-						</span>
-					</div>
-				</div>
-			</form>
+			</div>
 		</div>
 		<div class="col-lg-9 col-md-8">
 			<div class="panel panel-default">

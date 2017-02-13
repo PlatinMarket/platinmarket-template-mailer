@@ -6,7 +6,6 @@ body, html {
 }
 body{
 	padding-top: 70px; 
-	padding-bottom: 70px;
 	font-family: 'Open Sans', sans-serif;
 }
 textarea{
@@ -46,6 +45,12 @@ textarea{
 	margin: 10px 0;
 }
 
+.panel-body .form-group:last-child{
+	margin-bottom: 0;
+}
+.preview_loading .embed-responsive{
+	opacity:.5;	
+}
 .embed-responsive textarea{
 	position: absolute;
     top: 0;

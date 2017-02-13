@@ -32,7 +32,7 @@
 						<div class="input-group">
 							<input type="text" value="" placeholder="Departman yazınız" name="new_department" id="new_department" class="form-control"/>
 							<span class="input-group-btn">
-								<button type="button" class="btn btn-primary" onclick="addDepartment()">Ekle</button>
+								<button type="button" class="btn btn-default" onclick="addDepartment()">Ekle</button>
 							</span>
 						</div>
 						<input type="hidden" value="{{currentTemplate.department}}" name="template_department" />
@@ -141,7 +141,7 @@
 					<hr/>
 					<div class="text-right">
 						<button type="button" name="cancel_parameter" class="btn btn-link" style="display: none;">İptal</button>
-						<button type="button" name="add_parameter" class="btn btn-primary">Kaydet</button>
+						<button type="button" name="add_parameter" class="btn btn-default">Ekle</button>
 					</div>
 				</div>
 			</div>
