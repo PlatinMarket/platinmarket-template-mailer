@@ -113,7 +113,6 @@
     var template = templates[0];
 	var isGroup = templates.length > 1;
 
-	console.log(template_folders);
     if (isGroup) {
       $("[data-zone='template-selector']").html(Handlebars.compile($("#template-render-selector").html())({templates: templates}));
       $("select[name='template-selector']").on('change', (e) => {
