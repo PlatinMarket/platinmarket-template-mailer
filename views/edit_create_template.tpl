@@ -24,6 +24,12 @@
 					</div>
 					{{/if}}
 					<div class="form-group">
+						<label for="template_type">Şablon Tipi</label>
+						<select type="text" name="template_type" id="template_type" class="form-control">
+							<option value="email">E-Posta</option>
+						</select>
+					</div>
+					<div class="form-group">
 						<label for="template_description">Kısa açıklama</label>
 						<input type="text" name="template_description" id="template_description" class="form-control" value="{{currentTemplate.description}}" />
 					</div>
@@ -282,7 +288,10 @@
 
     // Refresh Parameter listeners
     function refreshListeners() {
-      $("input[list]").off("input").on("input", (e) => $(e.target).parent().find("button").trigger("click"));
+      $("input[list]").off("keyup").on("keyup", (e) => {
+      	var keyCode = e.which || e.keyCode;
+        if (keyCode == 13) $(e.target).parent().find("button").trigger("click");
+      });
 
       $("input[data-slug-target]").each(function(){
         $(this).off('change').off('keyup').on('change keyup', (e) => {

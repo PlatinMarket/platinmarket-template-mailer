@@ -98,6 +98,7 @@ app.post(['/template/create', '/template/:id/edit'], function (req, res, next) {
     required: ['name', 'subject', 'html', 'description', 'department', 'parameter', 'textFallback'],
     properties: {
       name: { type: "string", maxLength: 128, minLength: 5 },
+      type: { type: "string", enum: ["email", "sms"] },
       subject: { type: "string", minLength: 5 },
       description: { type: "string", maxLength: 128 },
       group: { type: "array", items: { type: "string", maxLength: 128 } },
