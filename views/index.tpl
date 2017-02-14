@@ -16,6 +16,7 @@
 		</div>
 	</div>
 	{{/each}}
+	{{#if groups}}
 	<h3 class="page-header">Gruplar</h3>
 	<div class="row">
 		<div class="list-group">
@@ -28,10 +29,9 @@
 					</div>
 				</a>
 			</div>
-			{{else}}
-			<div class="col-xs-12 text-danger">Henüz grup eklenmemiş</div>
 			{{/each}}
 		</div>
 	</div>
+	{{/if}}
 </div>
 
