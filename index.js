@@ -10,7 +10,8 @@ var settings = require('./lib/settings');
 var ajv = new require('ajv')({allErrors: true});
 var surl = require('speakingurl');
 var handlebars = require('handlebars');
-
+var sender = require('./lib/sender');
+var config = require('./config/config');
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -174,8 +175,8 @@ app.get('/template/group/view', (req, res) => {
 app.use('/template/:id', function (req, res, next) {
   templateStore.get(req.params.id)
     .then(template => {
-      if (!req.user.isSuper && template.department.indexOf(req.user.department) == -1) return res.status(403).send("Yetkiniz yok");
       req.template = template;
+      if (!req.user.isSuper && req.template.department.indexOf(req.user.department) == -1) return res.status(403).send("Yetkiniz yok");
       next();
     })
     .catch(err => res.status(404).send(err ? err.message : 'Template `' + req.params.id + '` not found'));
@@ -217,6 +218,61 @@ app.post(['/template/:id/render', '/template/:id/render/:type'], (req, res) => {
     .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
+/*
+SEND PROCESS
+ */
+
+// 1. Parse template
+app.use('/send/:id', (req, res, next) => {
+  if (!req.params.id || req.params.id.trim() == "") return res.sendStatus(404);
+  req.params.id = req.params.id.trim();
+  templateStore.list()
+    .then(templates => {
+      var template = templates.find(t => t.folder && t.folder === req.params.id.trim()) || templates.filter(t => t.group && t.group.indexOf(req.params.id.trim()) > -1);
+      templates = template instanceof Array ? template : [template];
+      if (templates.length == 0) return res.sendStatus(404);
+      Promise.all(templates.map(t => templateStore.get(t.folder)))
+        .then(templates => {
+          req.templates = templates;
+          next();
+        })
+        .catch(err => { throw err; })
+    })
+    .catch(err => res.sendStatus(500));
+});
+
+// 2. Parse params
+app.use('/send/:id', (req, res, next) => {
+  var params = Object.assign(req.query, req.body);
+  params = Object.assign({
+    from: req.user ? req.user.email : (config && config.user && config.user.default ? config.user.default.email : undefined),
+  }, params);
+  req.body = params;
+  if (!params || !params.from || !params.to) return res.sendStatus(400);
+  settings.users()
+    .then(users => {
+      var defaultUser = (config && config.user && config.user && config.user.default  ? config.user.default : {});
+      req.user = params.from == defaultUser.email ? Object.assign(defaultUser, { isDefault: true }) : users.find(u => u.email == params.from);
+      if (!req.user) return res.sendStatus(400);
+      next();
+    })
+    .catch(err => res.status(500).send(err));
+});
+
+// Template render
+app.use('/send/:id', (req, res) => {
+  Promise.all(req.templates.map(t => templateStore.render(t, req.body, { user: {name: req.user.name, email: req.user.email} })))
+    .then((renderedTemplates) => {
+      renderedTemplates = renderedTemplates.map(t => Object.assign(t, { template: req.templates.find(_t => _t.folder == t.template_id), template_id: undefined })).filter(t => t.template && t.template.type);
+      renderedTemplates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to));
+      res.sendStatus(200);
+    })
+    .catch(err => {
+      console.log(err);
+      res.sendStatus(500);
+    });
+});
+
 // Template create
 app.get('/template/create', (req, res) => {
     res.render('create_template', { user: req.user });
@@ -251,7 +307,7 @@ app.post('/settings/smtp', (req, res) => {
     if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
     data.port = parseInt(data.port, 10);
     data.secure = data.secure === 'true';
-    settings.save(req.user, {smtp: data})
+    settings.save(req.user, { smtp: data })
       .then(success => res.sendStatus(200))
       .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
