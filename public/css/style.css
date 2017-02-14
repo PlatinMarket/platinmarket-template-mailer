@@ -49,8 +49,21 @@ textarea{
 .panel-body .form-group:last-child{
 	margin-bottom: 0;
 }
+.panel-embed{
+	background: repeating-linear-gradient(
+		  -55deg,
+		  #222,
+		  #222 10px,
+		  #333 10px,
+		  #333 20px
+	);
+}
 .preview_loading .embed-responsive{
-	opacity:.5;	
+	opacity: .8;	
+}
+.embed-responsive{
+	margin: 0 auto;
+	transition: all 0.2s ease;
 }
 .embed-responsive textarea{
 	position: absolute;

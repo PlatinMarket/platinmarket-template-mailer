@@ -49,19 +49,39 @@
 					</form>
 				</div>
 			</div>
-			<div class="form-group pull-left" data-zone="template-selector"></div>
-			<div class="form-group pull-right ">
-                <div class="btn-group type_changer" data-toggle="buttons">
-                    <label class="btn btn-default active">
-                        <input type="radio" name="options" id="option1" autocomplete="off" value="html" checked>Html
-                    </label>
-                    <label class="btn btn-default">
-                        <input type="radio" name="options" id="option2" autocomplete="off" value="text">Text
-                    </label>
-                </div>
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="form-group hidden visible-lg">
+						<div class="btn-group size_changer" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="radio" name="options" id="desktop" autocomplete="off" value="100%" checked />Desktop
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="options" id="tablet" autocomplete="off" value="768px" />Tablet
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="options" id="mobile" autocomplete="off" value="375px" />Mobile
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 text-center">
+					<div class="form-group" data-zone="template-selector"></div>
+				</div>
+				<div class="col-lg-4 text-right">
+					<div class="form-group">
+						<div class="btn-group type_changer" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="radio" name="options" id="option1" autocomplete="off" value="html" checked />Html
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="options" id="option2" autocomplete="off" value="text" />Text
+							</label>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="clearfix"></div>
-			<div class="panel panel-default">
+			<div class="panel panel-default panel-embed">
 				<div class="embed-responsive embed-responsive-4by3">
 				  <iframe class="embed-responsive-item" name="preview"></iframe>
                   <textarea readonly name="preview_text" style="display: none;"></textarea>
@@ -136,6 +156,11 @@
       var type = e.target.value;
       $("iframe[name='preview']")[type == 'text' ? 'hide' : 'show']();
       $("textarea[name='preview_text']")[type == 'html' ? 'hide' : 'show']();
+    });
+	
+    $(".size_changer").on("change", function (e) {
+      var size = e.target.value;
+      $(".embed-responsive").css("width",size);
     });
 
     var delay = (function(){
