@@ -115,7 +115,7 @@
       // Für IMAP
       if (endpoint == 'imap') {
         data[endpoint] = Object.assign(data[endpoint], {
-          sent_folder: $("form[name='" + endpoint + "']").find("[name='imap_sent_folder']").val()
+          sent_folder: $("form[name='" + endpoint + "']").find("[name='imap_sent_folder']").val() || $("form[name='" + endpoint + "']").find("[name='imap_sent_folder']").attr("value")
         });
       }
       return data;
@@ -178,4 +178,13 @@
 		.selectpicker({
       		noneSelectedText: $("form[name='imap']").find("[name='imap_sent_folder']").attr("value") || "Seçiniz"
 		});
+
+    $("form[name='imap']").find("[name='host'], [name='port']").on("keyup", (e) => {
+      var host = $("form[name='imap']").find("[name='host']").val();
+      var port = $("form[name='imap']").find("[name='port']").val();
+      if (!host || !port)
+        $("form[name='imap']").find("[name='imap_sent_folder']").prop('disabled', true).selectpicker('refresh');
+      else
+        $("form[name='imap']").find("[name='imap_sent_folder']").prop('disabled', false).selectpicker('refresh');
+    }).trigger('keyup');
 </script>
