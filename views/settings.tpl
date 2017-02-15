@@ -97,14 +97,15 @@
 <script type="application/javascript" src="/assets/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 <script>
 	function generateData(endpoint) {
-      var data = {
+      var data = {};
+      data[endpoint] = {
         host: $("form[name='" + endpoint + "']").find("[name='host']").val(),
         port: parseInt($("form[name='" + endpoint + "']").find("[name='port']").val(), 10),
         secure: $("form[name='" + endpoint + "']").find("[name='secure']")[0].checked
       };
       // Für SMTP
       if (endpoint == 'smtp') {
-        data = Object.assign(data, {
+        data[endpoint] = Object.assign(data[endpoint] , {
           auth: {
             user: $("form[name='" + endpoint + "']").find("[name='auth_user']").val(),
             pass: $("form[name='" + endpoint + "']").find("[name='auth_pass']").val()
@@ -113,7 +114,7 @@
       }
       // Für IMAP
       if (endpoint == 'imap') {
-        data = Object.assign(data, {
+        data[endpoint] = Object.assign(data[endpoint], {
           sent_folder: $("form[name='" + endpoint + "']").find("[name='imap_sent_folder']").val()
         });
       }
@@ -126,7 +127,7 @@
           var endpoint = e.target.name;
           $(e.target).trigger('started.submit');
           try {
-                var data = generateData(endpoint);
+                var data = Object.assign(generateData('smtp'), generateData('imap'));
                 $.post('/settings/' + endpoint, data)
                   .then(r => {
                     $(e.target).trigger('ended.submit');
@@ -160,7 +161,7 @@
           	var selected = $("form[name='imap']").find("[name='imap_sent_folder']").attr("value");
 		    $(e.target).selectpicker('toggle');
 		    $(e.target).selectpicker({noneSelectedText: "Lütfen bekleyin..."}).selectpicker('refresh');
-			$.post("/settings/mailboxes", Object.assign({ smtp: generateData('smtp'), imap: generateData('imap') })).then((list) => {
+			$.post("/settings/mailboxes", Object.assign(generateData('smtp'), generateData('imap'))).then((list) => {
 				$(e.target).find("option").remove();
 				$(e.target).data("data", list);
               	$(e.target).append("<option value='' " + (!selected ? "selected='selected'" : "") + ">Seçiniz</option>");
