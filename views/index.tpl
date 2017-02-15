@@ -1,61 +1,80 @@
 <div class="container main-page">
-	{{#each departments}}
-	<div class="department-zone">
-		<h3 class="page-header">{{name}}</h3>
-		<div class="row">
-			{{#each templates}}
-			<div class="col-lg-3 col-md-4 col-sm-6">
-				<a href="/template/{{folder}}/view" class="thumbnail" title="{{description}}">
-					<div class="caption">
-						<h4>{{name}}</h4>
-						<p class="text-muted ellipsis">{{description}}</p>
-					</div>
-				</a>
-			</div>
-			{{/each}}
-		</div>
-	</div>
-	{{/each}}
-	{{#if groups}}
-	<h3 class="page-header">Gruplar</h3>
 	<div class="row">
-		<div class="list-group">
-		   {{#each groups}}
-		   <div class="col-lg-3 col-md-4 col-sm-6">
-				<a href="/template/group/view?name={{name}}" class="thumbnail" title="{{templates}}">
-					<div class="caption">
-						<h4>{{name}}</h4>
-						<p class="text-muted ellipsis">{{templates}}</p>
-					</div>
-				</a>
+		<div class="col-lg-3">
+			{{#each departments}}
+			<div class="department-zone">
+				<h3 class="page-header">{{name}}</h3>
+				<div class="list-group">
+					{{#each templates}}
+					<a href="/template/{{folder}}/view" class="list-group-item">
+						<h4 class="list-group-item-heading">{{name}}</h4>
+						<p class="list-group-item-text ellipsis text-muted">{{description}}</p>
+					</a>
+				  {{/each}}
+				</div>
 			</div>
 			{{/each}}
+			{{#if groups}}
+			<div class="department-zone">
+				<h3 class="page-header">Gruplar</h3>
+				<div class="list-group">
+				   {{#each groups}}
+				   <a href="/template/{{folder}}/view" class="list-group-item">
+						<h4 class="list-group-item-heading">{{name}}</h4>
+						<p class="list-group-item-text ellipsis text-muted">{{templates}}</p>
+					</a>
+					{{/each}}
+				</div>
+			</div>
+			{{/if}}
+		</div>
+		<div class="col-lg-9">
+			<div class="department-zone">
+				<h3 class="page-header">Gönderiler</h3>
+				<div class="form-group">
+					<div class="btn-group type pull-left" data-toggle="buttons">
+						<label class="btn btn-default active">
+							<input type="radio" name="type" autocomplete="off" value="email" checked />E-posta
+						</label>
+					</div>
+					<div class="btn-group status pull-right" data-toggle="buttons">
+						<label class="btn btn-default active">
+							<input type="radio" name="status" autocomplete="off" value="completed" checked />Bitmiş
+						</label>
+						<label class="btn btn-default">
+							<input type="radio" name="status" autocomplete="off" value="active" />Aktif
+						</label>
+						<label class="btn btn-default">
+							<input type="radio" name="status" autocomplete="off" value="failed" />Başarısız
+						</label>
+						<label class="btn btn-default">
+							<input type="radio" name="status" autocomplete="off" value="waiting" />Sırada
+						</label>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<div class="panel panel-default table-responsive">
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>Konu</th>
+								<th>Kimden</th>
+								<th>Kime</th>
+								<th>Tarih</th>
+							</tr>
+						</thead>
+						<tbody data-zone="jobs"></tbody>
+					</table>
+				</div>
+				<nav>
+				  <ul class="pager">
+					<li class="disabled"><a href="#">Geri</a></li>
+					<li><a href="#">İleri</a></li>
+				  </ul>
+				</nav>
+			</div>
 		</div>
 	</div>
-	{{/if}}
-</div>
-
-<div>
-	<select name="type" class="form-control">
-		<option value="email" selected="selected">E-Posta</option>
-	</select>
-	<select name="status" class="form-control">
-		<option value="completed" selected="selected">Bitmiş</option>
-		<option value="active">Aktif</option>
-		<option value="failed">Başarısız</option>
-		<option value="waiting">Sırada</option>
-	</select>
-	<table>
-		<thead>
-			<tr>
-				<th>Konu</th>
-				<th>Kimden</th>
-				<th>Kime</th>
-				<th>Tarih</th>
-			</tr>
-		</thead>
-		<tbody data-zone="jobs"></tbody>
-	</table>
 </div>
 
 <script type="application/javascript" src="/assets/moment/min/moment.min.js"></script>
@@ -64,10 +83,16 @@
 <script id="template-job-item" type="text/x-handlebars-template">
 	\{{#each jobs}}
 		<tr data-job-id="\{{id}}">
-			<td><a href="#" onclick="showJobDetails(\{{id}});">\{{subject}}</a></td>
+			<td>
+				<a href="javascript:showJobDetails(\{{id}});"><b>\{{subject}}</b></a>
+			</td>
 			<td>\{{from}}</td>
 			<td>\{{to}}</td>
-			<td>\{{fromNow timestamp}}</td>
+			<td class="text-muted">\{{fromNow timestamp}}</td>
+		</tr>
+		\{{else}}
+		<tr>
+			<td colspan="4" class="text-muted">Gönderi bulunamadı</td>
 		</tr>
 	\{{/each}}
 </script>
@@ -79,10 +104,10 @@
   });
 </script>
 <script>
-	$("select[name='status'], select[name='type']")
+	$("input[name='status'], input[name='type']")
 	  	.on('change', (e) => {
-	  	  	var status = $("select[name='status']")[0].value;
-	  	  	var type = $("select[name='type']")[0].value || "email";
+	  	  	var status = $("input[name='status']:checked").val();
+	  	  	var type = $("input[name='type']:checked").val();
 	  	  	if (!status || !type) return;
 
 			$(e.target).trigger("loading.jobs");
@@ -138,15 +163,42 @@
 </div>
 <script id="template-job-modal" type="text/x-handlebars-template">
 	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Gönderi bilgileri</h4>
 	</div>
 	<div class="modal-body">
-		...
-	</div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		<button type="button" class="btn btn-primary">Save changes</button>
+		<div class="panel panel-default">
+			<table class="table table-bordered table-striped">
+				<tbody>
+					<tr>
+						<td>returnvalue.accepted</td>
+						<td>\{{returnvalue.accepted}}</td>
+					</tr>
+					<tr>
+						<td>returnvalue.envelope.from</td>
+						<td>\{{returnvalue.envelope.from}}</td>
+					</tr>
+					<tr>
+						<td>returnvalue.envelope.to</td>
+						<td>\{{returnvalue.envelope.to}}</td>
+					</tr>
+					<tr>
+						<td>returnvalue.rejected</td>
+						<td>\{{returnvalue.rejected}}</td>
+					</tr>
+					<tr>
+						<td>returnvalue.response</td>
+						<td>\{{returnvalue.response}}</td>
+					</tr>
+					<tr>
+						<td>stacktrace</td>
+						<td>\{{stacktrace}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </script>
 
