@@ -119,30 +119,28 @@ EmailSender.prototype.process = function(message, from, to) {
     // Check user properties
     if (!from.smtp || !from.smtp.auth) return reject(new Error("Bad config for user `" + from.email + "`"));
 
-    /*
-    this.saveSentFolder(message, from, to).then(r => resolve("success")).catch((err) => {
-      console.log(err);
-      reject(err);
-    });
-
-    return;*/
-
-    // Send message
+    // Set Transport
     var transport = this.createTransport(from);
 
+    // Get raw message
+    var rawMessage = null;
     transport.use('stream', (mail, cb) => {
       mail.message.build((err, data) => {
         if (err) return cb(err);
-        this.saveSentFolder(data.toString(), from).then(() => cb()).catch(err => cb(err));
+        rawMessage = data.toString();
+        cb();
       });
     });
 
+    // Send message
     transport.sendMail(this.createMessage(message, from, to))
       .then(result => {
         transport.close();
-        resolve(result);
+        // Save message to sent_folder
+        return this.saveSentFolder(rawMessage, from).then(() => resolve(result));
       })
       .catch(err => {
+        transport.close();
         this.lastError = err;
         reject(err);
       });

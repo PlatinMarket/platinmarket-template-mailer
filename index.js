@@ -36,7 +36,7 @@ app.set('views', './views');
 app.set('view engine', 'tpl');
 
 // Login require pages
-app.use(['/departments', '/groups', '/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
+app.use(['/job', '/departments', '/groups', '/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
     var sess = req.session;
     if (sess && sess.user) {
       settings.get(sess.user)
@@ -47,6 +47,7 @@ app.use(['/departments', '/groups', '/template', '/settings', '/logout', /^\/$/]
         .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
       return;
     }
+    if (req.get('X-Requested-With') == 'XMLHttpRequest') return res.status(401).json({message: "Giriş yapınız" });
     res.redirect('/login');
 });
 
@@ -54,6 +55,20 @@ app.use(['/departments', '/groups', '/template', '/settings', '/logout', /^\/$/]
 app.use(['/template/:id/edit', '/template/create', '/template/:id/delete'], function (req, res, next) {
   if (!req.user.isSuper) return res.status(403).send("Yetkiniz yok");
   next();
+});
+
+// Get Job List by type
+app.get('/job/detail/:type/:id', (req, res) => {
+  sender.getJob(req.params.type, req.params.id).then(job => res.json(job)).catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+});
+
+// Get Job List by type
+app.get('/job/list/:type', (req, res) => {
+  var type = req.params.type;
+  var typeMap = {'completed': 'getCompleted', 'failed': 'getFailed', 'active': 'getActive', 'waiting': 'getWaiting'};
+  type = typeMap[type]
+  if (!type) return res.sendStatus(400);
+  Promise.all(sender.getQueues().map(q => { return q[type]().then(jobs => Object.assign({name:q.name, list: jobs.filter(j => j.data.from && (req.user.isSuper || j.data.from.email == req.user.email)).map(j => Object.assign({from: j.data.from.email, subject: j.data.message.subject, timestamp: j.timestamp, to: j.data.to, id: j.jobId})) } )); })).then(list => res.json(list));
 });
 
 // Main page
@@ -265,8 +280,7 @@ app.use('/send/:id', (req, res) => {
   Promise.all(req.templates.map(t => templateStore.render(t, req.body, { user: {name: req.user.name, email: req.user.email} })))
     .then((renderedTemplates) => {
       renderedTemplates = renderedTemplates.map(t => Object.assign(t, { template: req.templates.find(_t => _t.folder == t.template_id), template_id: undefined })).filter(t => t.template && t.template.type);
-      renderedTemplates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to));
-      res.sendStatus(200);
+      return Promise.all(renderedTemplates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to))).then((jobs) => res.json(jobs.map(j => parseInt(j.jobId, 10))));
     })
     .catch(err => {
       console.log(err);
@@ -403,7 +417,12 @@ app.post('/login', (req, res) => {
         .catch(err => res.status(500).json({message: err ? err.message : "Belirsiz bir hata", stack: err ? err.stack : ""}));
 });
 
-// Start server
-app.listen(process.env.PORT || 3000, function () {
+// Build queue & Start server
+sender.getReady().then(() => {
+  console.log("-- ACTIVE QUEUES ------");
+  sender.getQueues().forEach(q => console.log("* " + q.name + " ready"));
+  console.log("-----------------------");
+  app.listen(process.env.PORT || 3000, function () {
     console.log("Server started on port " + (process.env.PORT || 3000).toString());
-});
+  });
+}).catch(err => console.error(err));
