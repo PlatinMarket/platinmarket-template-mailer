@@ -6,10 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Platinmarket Template Mailer</title>
     <link rel="stylesheet" type="text/css" href="/assets/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/toastr/toastr.min.css" />
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
     <script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
     <script type="application/javascript" src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
     <script type="application/javascript" src="/assets/handlebars/handlebars.min.js"></script>
+    <script type="application/javascript" src="/assets/toastr/toastr.min.js"></script>
+    <script>
+        toastr.options = {
+            closeButton: false,
+            newestOnTop: true,
+            showDuration: "50",
+            hideDuration: "50",
+            timeOut: "5000",
+            showEasing: "linear",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut"
+        };
+    </script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">

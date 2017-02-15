@@ -20,6 +20,8 @@
     "bootstrap": "^3.3.7",
     "handlebars": "^4.0.5",
     "speakingurl": "^11.0.0",
-    "codemirror": "^5.22.2"
+    "codemirror": "^5.22.2",
+    "toastr": "^2.1.3",
+    "bootstrap-select": "^1.12.2"
   }
 }

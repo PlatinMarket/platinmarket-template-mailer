@@ -8,7 +8,6 @@
 		<button type="button" class="btn btn-success pull-right" onclick="submit()">Kaydet</button>
 		<div class="clearfix"></div>
 	</h3>
-	<div class="alert alert-danger" style="display: none;"></div>
 	<div class="row">
 		<div class="col-lg-6">
 			<p class="lead">Şablon bilgileri</p>
@@ -441,13 +440,11 @@
         .then(r => {
           if (!id) return window.location = "/template/" + r.id.toString() + "/edit";
           $("input, button, select, textarea").removeAttr("disabled");
-          $(".alert").removeClass('alert-danger').addClass('alert-success').show().html("Kaydedildi");
-          setTimeout(() => $(".alert").hide(), 2000);
-
+          toastr.success("Kaydedildi");
         })
         .catch(err => {
           $("input, button, select, textarea").removeAttr("disabled");
-          $(".alert").removeClass('alert-success').addClass('alert-danger').show().html(err.responseJSON ? err.responseJSON.message : err.responseText);
+          toastr.error(err.responseJSON ? err.responseJSON.message : err.responseText);
           console.error(err.responseJSON || err.responseText || err);
         });
     }

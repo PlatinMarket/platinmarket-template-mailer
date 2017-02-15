@@ -12,6 +12,7 @@ var surl = require('speakingurl');
 var handlebars = require('handlebars');
 var sender = require('./lib/sender');
 var config = require('./config/config');
+var emailSender = require('./sender/email');
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -283,33 +284,86 @@ app.get('/settings', (req, res) => {
     res.render('settings', { user: req.user });
 });
 
-// Settings Post
-app.post('/settings/smtp', (req, res) => {
-    var data = req.body;
-    var valid = ajv.validate({
-        required: ['host', 'port', 'secure', 'auth'],
+// SMTP Validation
+app.post('/settings/smtp', (req, res, next) => {
+  var data = req.body;
+  var valid = ajv.validate({
+    required: ['host', 'port', 'secure', 'auth'],
+    properties: {
+      host: { type: "string", maxLength: 128, minLength: 1 },
+      port: { type: ["number", "string"], maxLength: 1 },
+      secure: {type: "string" },
+      auth: {
+        type: "object",
+        required: ['user', 'pass'],
         properties: {
-            host: { type: "string", maxLength: 128, minLength: 5 },
-            port: { type: ["number", "string"], maxLength: 5 },
-            secure: {type: "string" },
-            auth: {
-                type: "object",
-                required: ['user', 'pass'],
-                properties: {
-                    user: { type: "string", maxLength: 128, minLength: 5 },
-                    pass: { type: "string", maxLength: 128, minLength: 5 }
-                },
-                additionalProperties: false
-            }
+          user: { type: "string", maxLength: 128, minLength: 1 },
+          pass: { type: "string", maxLength: 128, minLength: 1 }
         },
         additionalProperties: false
-    }, data);
-    if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
-    data.port = parseInt(data.port, 10);
-    data.secure = data.secure === 'true';
-    settings.save(req.user, { smtp: data })
-      .then(success => res.sendStatus(200))
-      .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+      }
+    },
+    additionalProperties: false
+  }, data);
+  if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
+  data.port = parseInt(data.port, 10);
+  data.secure = data.secure === 'true';
+  emailSender.validateSMTP({ smtp: data }).then(valid => {
+    if (!valid) return res.status(422).json({message: "SMTP doğrulaması başarısız. " + (emailSender.lastError ? emailSender.lastError.response : ""), error: emailSender.lastError });
+    req.body = data;
+    next();
+  });
+});
+
+// SMTP Settings Post
+app.post('/settings/smtp', (req, res) => {
+  settings.save(req.user, { smtp: req.body })
+    .then(success => res.sendStatus(200))
+    .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+});
+
+// IMAP Validation
+app.post('/settings/imap', (req, res, next) => {
+  var data = req.body;
+  var valid = ajv.validate({
+    required: ['host', 'secure', 'port'],
+    properties: {
+      host: { type: "string", maxLength: 128, minLength: 1 },
+      sent_folder: { type: "string", maxLength: 128, minLength: 1 },
+      port: { type: ["number", "string"], maxLength: 1 },
+      secure: {type: "string" }
+    },
+    additionalProperties: false
+  }, data);
+  if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
+  data.port = parseInt(data.port, 10);
+  data.secure = data.secure === 'true';
+  emailSender.validateIMAP(Object.assign(req.user, { imap: req.body })).then(valid => {
+    if (!valid) return res.status(422).json({message: "IMAP doğrulaması başarısız. " + (emailSender.lastError ? emailSender.lastError.code : ""), error: emailSender.lastError });
+    req.body = data;
+    next();
+  });
+});
+
+// IMAP Settings Post
+app.post('/settings/imap', (req, res) => {
+  settings.save(req.user, { imap: req.body })
+    .then(success => res.sendStatus(200))
+    .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+});
+
+// IMAP Get Mail box list
+app.post('/settings/mailboxes', (req, res) => {
+  var data = req.body || {};
+  if (data.smtp) {
+    data.smtp.port = parseInt(data.smtp.port, 10);
+    data.smtp.secure = data.smtp.secure === 'true';
+  }
+  if (data.imap) {
+    data.imap.port = parseInt(data.imap.port, 10);
+    data.imap.secure = data.imap.secure === 'true';
+  }
+  emailSender.getBoxes(Object.assign(req.user, data)).then(list => res.json(list)).catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Login page
