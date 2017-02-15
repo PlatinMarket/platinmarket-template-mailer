@@ -157,13 +157,15 @@
     $("form[name='imap']").find("[name='imap_sent_folder']")
 	    .on('shown.bs.select', (e) => {
 		    if ($(e.target).data("data")) return;
+          	var selected = $("form[name='imap']").find("[name='imap_sent_folder']").attr("value");
 		    $(e.target).selectpicker('toggle');
 		    $(e.target).selectpicker({noneSelectedText: "Lütfen bekleyin..."}).selectpicker('refresh');
 			$.post("/settings/mailboxes", Object.assign({ smtp: generateData('smtp'), imap: generateData('imap') })).then((list) => {
 				$(e.target).find("option").remove();
 				$(e.target).data("data", list);
+              	$(e.target).append("<option value='' " + (!selected ? "selected='selected'" : "") + ">Seçiniz</option>");
 				list.forEach(l => {
-				  $(e.target).append("<option value='" + l + "'>" + l + "</option>");
+				  $(e.target).append("<option value='" + l + "' " + (selected == l ? "selected='selected'" : "") + ">" + l + "</option>");
 				});
 				$(e.target).selectpicker({noneSelectedText: "Seçiniz"}).selectpicker('refresh').selectpicker('toggle');
 			}).catch(err => {
@@ -173,6 +175,6 @@
 			});
 		})
 		.selectpicker({
-      		noneSelectedText: "Seçiniz"
+      		noneSelectedText: $("form[name='imap']").find("[name='imap_sent_folder']").attr("value") || "Seçiniz"
 		});
 </script>
