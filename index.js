@@ -313,6 +313,8 @@ app.post('/settings/smtp', (req, res, next) => {
   if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
   data.smtp.port = parseInt(data.smtp.port, 10);
   data.smtp.secure = data.smtp.secure === 'true';
+  data.imap.port = parseInt(data.imap.port, 10);
+  data.imap.secure = data.imap.secure === 'true';
   emailSender.validateSMTP(data).then(valid => {
     if (!valid) return res.status(422).json({message: "SMTP doğrulaması başarısız. " + (emailSender.lastError ? emailSender.lastError.response : ""), error: emailSender.lastError });
     req.body = data;
@@ -346,6 +348,8 @@ app.post('/settings/imap', (req, res, next) => {
     additionalProperties: { smtp: { type: "object" } }
   }, data);
   if (!valid) return res.status(422).json({message: "Alanları kontrol edip tekrar deneyiniz", fields: ajv.errors });
+  data.smtp.port = parseInt(data.smtp.port, 10);
+  data.smtp.secure = data.smtp.secure === 'true';
   data.imap.port = parseInt(data.imap.port, 10);
   data.imap.secure = data.imap.secure === 'true';
   emailSender.validateIMAP(Object.assign(req.user, data)).then(valid => {

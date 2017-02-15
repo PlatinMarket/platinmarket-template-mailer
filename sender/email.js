@@ -39,6 +39,25 @@ EmailSender.prototype.validateIMAP = function (user) {
   });
 };
 
+// Save mail to sent folder
+EmailSender.prototype.saveSentFolder = function (message, user) {
+  return new Promise((resolve, reject) => {
+    var imap = this.createImapClient(user);
+    imap.once('ready', () => {
+      imap.append(message, { mailbox: user.imap.sent_folder, flags: ['Seen'] }, (err) => {
+        imap.end();
+        if (err) return reject(err);
+        resolve();
+      })
+    });
+    imap.once('error', (err) => {
+      reject(err);
+      imap.end();
+    });
+    imap.connect();
+  });
+};
+
 // Get Mail Box List
 EmailSender.prototype.getBoxes = function (user) {
   return new Promise((resolve, reject) => {
@@ -47,7 +66,6 @@ EmailSender.prototype.getBoxes = function (user) {
       imap.getBoxes(function (err, boxes) {
         if (err) return reject(err);
         if (!boxes) return reject(new Error("No mailbox found"))
-        console.log(boxes);
         imap.end();
         resolve(Object.keys(boxes));
       });
@@ -99,8 +117,25 @@ EmailSender.prototype.process = function(message, from, to) {
   return new Promise((resolve, reject) => {
     // Check user properties
     if (!from.smtp || !from.smtp.auth) return reject(new Error("Bad config for user `" + from.email + "`"));
+
+    /*
+    this.saveSentFolder(message, from, to).then(r => resolve("success")).catch((err) => {
+      console.log(err);
+      reject(err);
+    });
+
+    return;*/
+
     // Send message
     var transport = this.createTransport(from);
+
+    transport.use('stream', (mail, cb) => {
+      mail.message.build((err, data) => {
+        if (err) return cb(err);
+        this.saveSentFolder(data.toString(), from).then(() => cb()).catch(err => cb(err));
+      });
+    });
+
     transport.sendMail(this.createMessage(message, from, to))
       .then(result => {
         transport.close();
