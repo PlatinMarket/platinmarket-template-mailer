@@ -10,6 +10,13 @@ body{
 textarea{
 	resize:none;
 }
+@media screen and (min-width: 768px) {
+	.ellipsis {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+}
 .btn{
 	outline:none!important;
 }
@@ -62,8 +69,9 @@ textarea{
 	opacity: .8;	
 }
 .embed-responsive{
+	width:100%;
 	margin: 0 auto;
-	transition: all 0.2s ease;
+	transition: all 0.15s ease;
 }
 .embed-responsive textarea{
 	position: absolute;

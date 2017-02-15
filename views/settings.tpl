@@ -1,94 +1,123 @@
 <div class="container">
+	<h3 class="page-header">Ayarlar</h3>
 	<div class="row">
-		<div class="col-lg-6 col-md-6 col-sm-12">
-			<p class="lead">SMTP ayarları</p>
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<form name="smtp" class="form-horizontal">
-						<div class="form-group">
-							<label for="auth_user" class="col-lg-3 col-md-4 col-sm-2 control-label">Kullanıcı adı</label>
-							<div class="col-lg-9 col-md-8 col-sm-10">
-								<input type="email" name="auth_user" id="auth_user" class="form-control" value="{{user.smtp.auth.user}}" />
-							</div>		
-						</div>		
-						<div class="form-group">
-							<label for="auth_pass" class="col-lg-3 col-md-4 col-sm-2 control-label">Şifre</label>
-							<div class="col-lg-9 col-md-8 col-sm-10">
-								<input type="password" name="auth_pass" id="auth_pass" class="form-control" value="{{user.smtp.auth.pass}}" />
-							</div>				
-						</div>				
-						<div class="form-group">
-							<label for="host" class="col-lg-3 col-md-4 col-sm-2 control-label">Host</label>
-							<div class="col-lg-9 col-md-8 col-sm-10">
-								<input type="text" name="host" id="host" class="form-control" value="{{user.smtp.host}}" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="port" class="col-lg-3 col-md-4 col-sm-2 control-label">Port</label>
-							<div class="col-lg-9 col-md-8 col-sm-10">
-								<input type="text" name="port" id="port" class="form-control" value="{{user.smtp.port}}" />
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-lg-offset-3 col-lg-9 col-md-offset-4 col-md-8 col-sm-offset-2 col-sm-10">
-								<div class="checkbox">
-									<label>
-										<input type="checkbox" name="secure" /> Güvenli bağlantı (TLS) kullan
-									</label>
+		<div class="col-lg-7 col-md-7 col-sm-12">	
+			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="smtp_heading">
+					  <h4 class="panel-title">
+						<a role="button" data-toggle="collapse" data-parent="#accordion" href="#smtp_settings" aria-expanded="true" aria-controls="smtp_settings">
+						  SMTP ayarları
+						</a>
+					  </h4>
+					</div>
+					<div id="smtp_settings" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="smtp_heading">
+						<div class="panel-body">
+							<form name="smtp" class="form-horizontal">
+								<div class="form-group">
+									<label for="auth_user" class="col-lg-3 col-md-4 col-sm-3 control-label">Kullanıcı adı</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<input type="email" name="auth_user" id="auth_user" class="form-control" value="{{user.smtp.auth.user}}" />
+									</div>		
+								</div>		
+								<div class="form-group">
+									<label for="auth_pass" class="col-lg-3 col-md-4 col-sm-3 control-label">Şifre</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<input type="password" name="auth_pass" id="auth_pass" class="form-control" value="{{user.smtp.auth.pass}}" />
+									</div>				
+								</div>				
+								<div class="form-group">
+									<label for="host" class="col-lg-3 col-md-4 col-sm-3 control-label">SMPT Host</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<input type="text" name="host" id="host" class="form-control" value="{{user.smtp.host}}" />
+									</div>
 								</div>
-							</div>
+								<div class="form-group">
+									<label for="port" class="col-lg-3 col-md-4 col-sm-3 control-label">SMPT Port</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<input type="text" name="port" id="port" class="form-control" value="{{user.smtp.port}}" />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-lg-offset-3 col-lg-9 col-md-offset-4 col-md-8 col-sm-offset-3 col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="secure" /> Güvenli bağlantı (TLS) kullan
+											</label>
+										</div>
+									</div>
+								</div>
+								<br/>
+								<div class="row">
+									<div class="col-xs-12 col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-4 col-sm-2 col-sm-offset-3">
+										<button type="submit" class="btn btn-block btn-success">Kaydet</button>
+									</div>
+								</div>
+							</form>
 						</div>
-						<div class="row">
-							<hr />
-							<div class="col-xs-12 col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-4 col-sm-2 col-sm-offset-2">
-								<button type="submit" class="btn btn-block btn-success">Kaydet</button>
-							</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="imap_heading">
+					  <h4 class="panel-title">
+						<a role="button" data-toggle="collapse" data-parent="#accordion" href="#imap_settings" aria-expanded="false" aria-controls="imap_settings">
+						  IMAP ayarları
+						</a>
+					  </h4>
+					</div>
+					<div id="imap_settings" class="panel-collapse collapse" role="tabpanel" aria-labelledby="imap_heading">
+						<div class="panel-body">
+							<form name="imap" class="form-horizontal">
+								<div class="form-group">
+									<label class="col-lg-3 col-md-4 col-sm-3 control-label">Kullanıcı adı</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<p class="form-control-static text-muted">{{user.smtp.auth.user}}</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="imap_host" class="col-lg-3 col-md-4 col-sm-3 control-label">IMAP Host</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<input type="text" name="host" id="imap_host" class="form-control" value="{{user.imap.host}}" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="imap_port" class="col-lg-3 col-md-4 col-sm-3 control-label">IMAP Port</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<input type="text" name="port" id="imap_port" class="form-control" value="{{user.imap.port}}" />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-lg-offset-3 col-lg-9 col-md-offset-4 col-md-8 col-sm-offset-3 col-sm-9">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="secure" /> Güvenli bağlantı (TLS) kullan
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="row"><hr/></div>
+								<div class="form-group">
+									<label for="imap_sent_folder" class="col-lg-3 col-md-4 col-sm-3 control-label">Gönderilen klasörü</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<select name="imap_sent_folder" id="imap_sent_folder" class="form-control" value="{{user.imap.sent_folder}}"></select>
+										<span class="help-block">Gönderilmiş öğeler klasörünü imap bilgileri doğru şekilde girildikten sonra seçebilrsiniz </span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12 col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-4 col-sm-2 col-sm-offset-3">
+										<button type="submit" class="btn btn-block btn-success">Kaydet</button>
+									</div>
+								</div>
+							</form>
 						</div>
-					</form>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-lg-6 col-md-6">
-			<p class="lead">IMAP ayarları</p>
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<form name="imap" class="form-horizontal">
-						<div class="form-group">
-							<label for="imap_sent_folder" class="col-lg-3 col-md-4 col-sm-2 control-label">Gönd. Klasörü</label>
-							<div class="col-lg-9 col-md-8 col-sm-10">
-								<select name="imap_sent_folder" id="imap_sent_folder" class="form-control" value="{{user.imap.sent_folder}}"></select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="host" class="col-lg-3 col-md-4 col-sm-2 control-label">Host</label>
-							<div class="col-lg-9 col-md-8 col-sm-10">
-								<input type="text" name="host" id="host" class="form-control" value="{{user.imap.host}}" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="port" class="col-lg-3 col-md-4 col-sm-2 control-label">Port</label>
-							<div class="col-lg-9 col-md-8 col-sm-10">
-								<input type="text" name="port" id="port" class="form-control" value="{{user.imap.port}}" />
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-lg-offset-3 col-lg-9 col-md-offset-4 col-md-8 col-sm-offset-2 col-sm-10">
-								<div class="checkbox">
-									<label>
-										<input type="checkbox" name="secure" /> Güvenli bağlantı (TLS) kullan
-									</label>
-								</div>
-							</div>
-						</div>
-						<div class="form-group" style="height: 35px;"></div>
-						<div class="row">
-							<hr />
-							<div class="col-xs-12 col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-4 col-sm-2 col-sm-offset-2">
-								<button type="submit" class="btn btn-block btn-success">Kaydet</button>
-							</div>
-						</div>
-					</form>
-				</div>
+		<div class="col-lg-5 col-md-5 hidden-sm hidden-xs">
+			<div class="jumbotron" style="background-color:#f8f8f8;">
+				<p>Bilgilendirme</p>
+				<div>Bu alanda kaydedilecek e-posta hesap bilgileri, düzgün bir şekilde e-posta göndermenizi sağlayacaktır. Lütfen doğru bilgileri yazdığınızdan emin olunuz.</div>
 			</div>
 		</div>
 	</div>
