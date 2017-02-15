@@ -42,7 +42,7 @@ EmailSender.prototype.validateIMAP = function (user) {
 // Save mail to sent folder
 EmailSender.prototype.saveSentFolder = function (message, user) {
   return new Promise((resolve, reject) => {
-    if (!user.imap.host) return resolve();
+    if (!user || !user.imap || !user.imap.host) return resolve();
     var imap = this.createImapClient(user);
     imap.once('ready', () => {
       imap.append(message, { mailbox: user.imap.sent_folder, flags: ['Seen'] }, (err) => {
