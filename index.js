@@ -330,7 +330,7 @@ app.post('/settings/imap', (req, res, next) => {
     properties: {
       host: { type: "string", maxLength: 128, minLength: 1 },
       sent_folder: { type: "string", maxLength: 128, minLength: 1 },
-      port: { type: ["number", "string"], maxLength: 1 },
+      port: { type: ["number", "string"], maxLength: 10 },
       secure: {type: "string" }
     },
     additionalProperties: false
