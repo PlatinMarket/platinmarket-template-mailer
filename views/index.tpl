@@ -31,25 +31,32 @@
 		<div class="col-lg-9">
 			<div class="department-zone">
 				<h3 class="page-header">Gönderiler</h3>
-				<div class="form-group">
-					<div class="btn-group type pull-left" data-toggle="buttons">
-						<label class="btn btn-default active">
-							<input type="radio" name="type" autocomplete="off" value="email" checked />E-posta
-						</label>
+				<div class="row">
+					<div class="col-lg-2">
+						<div class="form-group">
+							<select name="type" class="form-control selectpicker show-tick">
+								<optgroup label="Gönderi tip">
+									<option value="email" selected>E-posta</option>
+								</optgroup>
+							</select>
+						</div>
 					</div>
-					<div class="btn-group status pull-right" data-toggle="buttons">
-						<label class="btn btn-default active">
-							<input type="radio" name="status" autocomplete="off" value="completed" checked />Bitmiş
-						</label>
-						<label class="btn btn-default">
-							<input type="radio" name="status" autocomplete="off" value="active" />Aktif
-						</label>
-						<label class="btn btn-default">
-							<input type="radio" name="status" autocomplete="off" value="failed" />Başarısız
-						</label>
-						<label class="btn btn-default">
-							<input type="radio" name="status" autocomplete="off" value="waiting" />Sırada
-						</label>
+					<div class="col-lg-2">
+						<div class="form-group">
+							<select name="status" class="form-control selectpicker show-tick">
+								<optgroup label="Gönderi durumu">
+									<option value="completed" selected>Bitmiş</option>
+									<option value="active">Aktif</option>
+									<option value="failed">Başarısız</option>
+									<option value="waiting">Sırada</option>
+								</optgroup>
+							</select>
+						</div>
+					</div>
+					<div class="col-lg-8 text-right">
+						<div class="form-group">
+							<a class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+						</div>
 					</div>
 					<div class="clearfix"></div>
 				</div>
@@ -66,17 +73,13 @@
 						<tbody data-zone="jobs"></tbody>
 					</table>
 				</div>
-				<nav>
-				  <ul class="pager">
-					<li class="disabled"><a href="#">Geri</a></li>
-					<li><a href="#">İleri</a></li>
-				  </ul>
-				</nav>
 			</div>
 		</div>
 	</div>
 </div>
 
+<link rel="stylesheet" type="text/css" href="/assets/bootstrap-select/dist/css/bootstrap-select.min.css" />
+<script type="application/javascript" src="/assets/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 <script type="application/javascript" src="/assets/moment/min/moment.min.js"></script>
 <script type="application/javascript" src="/assets/moment/locale/tr.js"></script>
 <script type="application/javascript" src="/assets/lodash/dist/lodash.min.js"></script>
@@ -104,10 +107,10 @@
   });
 </script>
 <script>
-	$("input[name='status'], input[name='type']")
+	$("select[name='status'], select[name='type']")
 	  	.on('change', (e) => {
-	  	  	var status = $("input[name='status']:checked").val();
-	  	  	var type = $("input[name='type']:checked").val();
+	  	  	var status = $("select[name='status']")[0].value;
+	  	  	var type = $("select[name='type']")[0].value || "email";
 	  	  	if (!status || !type) return;
 
 			$(e.target).trigger("loading.jobs");
