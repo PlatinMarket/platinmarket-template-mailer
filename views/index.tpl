@@ -3,27 +3,39 @@
 		<div class="col-lg-3">
 			{{#each departments}}
 			<div class="department-zone">
-				<h3 class="page-header">{{name}}</h3>
-				<div class="list-group">
-					{{#each templates}}
-					<a href="/template/{{folder}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{description}}">
-						<h4 class="list-group-item-heading">{{name}}</h4>
-						<p class="list-group-item-text ellipsis text-muted">{{description}}</p>
-					</a>
-				  {{/each}}
+				<h3 class="page-header">
+					{{name}}
+					<span class="label label-inverse pull-right">{{templates.length}}</span>
+					<div class="clearfix"></div>
+				</h3>
+				<div class="panel panel-default">
+					<div class="list-group">
+						{{#each templates}}
+						<a href="/template/{{folder}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{description}}">
+							<h4 class="list-group-item-heading">{{name}}</h4>
+							<p class="list-group-item-text ellipsis text-muted">{{description}}</p>
+						</a>
+					  {{/each}}
+					</div>
 				</div>
 			</div>
 			{{/each}}
 			{{#if groups}}
 			<div class="department-zone">
-				<h3 class="page-header">Gruplar</h3>
-				<div class="list-group">
-				   {{#each groups}}
-				   <a href="/template/{{folder}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{templates}}">
-						<h4 class="list-group-item-heading">{{name}}</h4>
-						<p class="list-group-item-text ellipsis text-muted">{{templates}}</p>
-					</a>
-					{{/each}}
+				<h3 class="page-header">
+					Gruplar
+					<span class="label label-inverse pull-right">{{groups.length}}</span>
+					<div class="clearfix"></div>
+				</h3>
+				<div class="panel panel-default">
+					<div class="list-group">
+					   {{#each groups}}
+					   <a href="/template/{{folder}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{templates}}">
+							<h4 class="list-group-item-heading">{{name}}</h4>
+							<p class="list-group-item-text ellipsis text-muted">{{templates}}</p>
+						</a>
+						{{/each}}
+					</div>
 				</div>
 			</div>
 			{{/if}}
