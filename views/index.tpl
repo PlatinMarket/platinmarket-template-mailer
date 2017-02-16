@@ -6,7 +6,7 @@
 				<h3 class="page-header">{{name}}</h3>
 				<div class="list-group">
 					{{#each templates}}
-					<a href="/template/{{folder}}/view" class="list-group-item">
+					<a href="/template/{{folder}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{description}}">
 						<h4 class="list-group-item-heading">{{name}}</h4>
 						<p class="list-group-item-text ellipsis text-muted">{{description}}</p>
 					</a>
@@ -19,7 +19,7 @@
 				<h3 class="page-header">Gruplar</h3>
 				<div class="list-group">
 				   {{#each groups}}
-				   <a href="/template/{{folder}}/view" class="list-group-item">
+				   <a href="/template/{{folder}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{templates}}">
 						<h4 class="list-group-item-heading">{{name}}</h4>
 						<p class="list-group-item-text ellipsis text-muted">{{templates}}</p>
 					</a>
@@ -153,6 +153,15 @@
 		});
 	  });
     }
+	
+	$('[data-toggle="tooltip"]').tooltip({
+		trigger: 'hover',
+		container: 'body',
+		delay: {
+			"show": 1000,
+			"hide": 0
+		}
+	});
 </script>
 
 
