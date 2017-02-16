@@ -30,7 +30,7 @@
 				<div class="panel panel-default">
 					<div class="list-group">
 					   {{#each groups}}
-					   <a href="/template/{{folder}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{templates}}">
+					   <a href="/template/group/view?name={{name}}" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{templates}}">
 							<h4 class="list-group-item-heading">{{name}}</h4>
 							<p class="list-group-item-text ellipsis text-muted">{{templates}}</p>
 						</a>
@@ -67,7 +67,7 @@
 					</div>
 					<div class="col-lg-8 text-right">
 						<div class="form-group">
-							<a class="btn btn-default"><span class="glyphicon glyphicon-refresh spin" aria-hidden="true"></span></a>
+							<a class="btn btn-default" onclick="refreshList()" data-loading-text="Loading..." data-role="refresh"><span class="glyphicon glyphicon-refresh spin" aria-hidden="true"></span></a>
 						</div>
 					</div>
 					<div class="clearfix"></div>
@@ -137,11 +137,22 @@
 		})
 	  	.on('loading.jobs', (e) => {
 		  $(e.target).prop('disabled', true);
+		  $("a[data-role='refresh'] span").addClass("spin");
 		})
 	    .on('loaded.jobs', (e) => {
           $(e.target).prop('disabled', false);
+          $("a[data-role='refresh'] span").removeClass("spin");
 		})
 	    .first().trigger("change");
+
+    function refreshList() {
+      if ($("a[data-role='refresh']").hasClass("disabled")) return;
+      $("a[data-role='refresh']").addClass("disabled");
+      $("select[name='status']").trigger("change");
+      setTimeout(() => {
+        $("a[data-role='refresh']").removeClass("disabled");
+	  }, 1000);
+    };
 
 	function renderList(jobs) {
 	  jobs = _.sortBy(jobs, [j => (0 - j.timestamp)]);
