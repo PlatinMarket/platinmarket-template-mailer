@@ -55,7 +55,7 @@
 					</div>
 					<div class="col-lg-8 text-right">
 						<div class="form-group">
-							<a class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+							<a class="btn btn-default"><span class="glyphicon glyphicon-refresh spin" aria-hidden="true"></span></a>
 						</div>
 					</div>
 					<div class="clearfix"></div>
