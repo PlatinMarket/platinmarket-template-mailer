@@ -13,6 +13,7 @@ var handlebars = require('handlebars');
 var sender = require('./lib/sender');
 var config = require('./config/config');
 var emailSender = require('./sender/email');
+var files = require('./lib/files');
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -51,6 +52,10 @@ app.use(['/job', '/departments', '/groups', '/template', '/settings', '/logout',
     res.redirect('/login');
 });
 
+app.get('/files', function (req, res) {
+  files.getFiles().then(files => res.json(files)).catch(err => res.status(500).json({message: err.message }));
+});
+
 // Super User Zone
 app.use(['/template/:id/edit', '/template/create', '/template/:id/delete'], function (req, res, next) {
   if (!req.user.isSuper) return res.status(403).send("Yetkiniz yok");
@@ -59,7 +64,10 @@ app.use(['/template/:id/edit', '/template/create', '/template/:id/delete'], func
 
 // Get Job List by type
 app.get('/job/detail/:type/:id', (req, res) => {
-  sender.getJob(req.params.type, req.params.id).then(job => res.json(job)).catch(err => res.status(500).json({message: err.message, stack: err.stack}));
+  sender.getJob(req.params.type, req.params.id).then(job => {
+    if (!req.user.isSuper && job.data.from.email != req.user.email) return res.status(403).send("Yetkiniz yok");
+    res.json(job)
+  }).catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
 // Get Job List by type

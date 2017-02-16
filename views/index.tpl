@@ -146,12 +146,8 @@
 	    .first().trigger("change");
 
     function refreshList() {
-      if ($("a[data-role='refresh']").hasClass("disabled")) return;
-      $("a[data-role='refresh']").addClass("disabled");
+      if ($("a[data-role='refresh'] span").hasClass("spin")) return;
       $("select[name='status']").trigger("change");
-      setTimeout(() => {
-        $("a[data-role='refresh']").removeClass("disabled");
-	  }, 1000);
     };
 
 	function renderList(jobs) {
