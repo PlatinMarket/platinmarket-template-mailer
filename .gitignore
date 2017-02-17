@@ -12,3 +12,5 @@ config/*
 
 user/*
 !user/empty
+
+uploads/*

@@ -29,10 +29,14 @@
 </head>
 <body>
     <h3>Files</h3>
+    <button data-role="create_folder">Yeni klasör</button>
+    <input id="fileupload" type="file" name="files[]" data-url="/files/upload" multiple>
     <div class="breadcrumb"></div>
     <ul class="file_explorer"></ul>
 
-
+    <script src="/assets/speakingurl/speakingurl.min.js"></script>
+    <script src="/assets/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="/assets/blueimp-file-upload/js/jquery.fileupload.js"></script>
     <script id="template-path-breadcrumb" type="text/x-handlebars-template">
         \{{#if paths}}
             <a data-path-href="" style="cursor:pointer">Kök dizin</a> /
@@ -75,6 +79,18 @@
         \{{/if}}
     </script>
     <script>
+      $('#fileupload').fileupload({
+        dataType: 'json',
+        done: function (e, res) {
+          if (res.result && res.result instanceof Array) {
+            var data = { entries: res.result.map(e => { return { id: e.id, name: e.name, type: 'file', path: e.path_lower, isFile: true, isFolder: false }; }) };
+            var _file = Handlebars.compile($('#template-files').html())(data);
+            if ($("ul.file_explorer > li").length == 0) $("ul.file_explorer").html("");
+            $("ul.file_explorer").append(_file).triggerHandler('loaded.template');
+          }
+        }
+      });
+
         function loading(state) {
             if (typeof state == 'boolean') {
               if ($('body').data('loading') !== state) $("ul.file_explorer").trigger(state ? 'loading.folder' : 'loaded.folder');
@@ -82,6 +98,25 @@
             }
             return $('body').data('loading');
         }
+
+        $("[data-role='create_folder']").on('click', function () {
+          var folder = '';
+          if (!(folder = prompt('Klasör adı'))) return;
+          folder = getSlug(folder.trim().slice(0, 30), "_");
+          if (!folder) return;
+          if (folder.trim().indexOf('/') > -1) return;
+          folder = $("ul.file_explorer").data('path') + '/' + folder;
+          $.post('/files/create_folder', { path: folder }).then(folder => {
+            var data = { entries: [{ id: folder.id, name: folder.name, type: 'folder', path: folder.path_lower, isFile: false, isFolder: true }] };
+            var _folder = Handlebars.compile($('#template-files').html())(data);
+            if ($("ul.file_explorer > li").length == 0) $("ul.file_explorer").html("");
+            if ($("ul.file_explorer li.folder").length > 0)
+              $("ul.file_explorer li.folder").last().after(_folder);
+            else
+              $("ul.file_explorer").append(_folder);
+            $("ul.file_explorer").triggerHandler('loaded.template');
+          }).catch(err => console.error(err));
+        });
 
         $("ul.file_explorer")
           .on('loading.folder', (e) => {
@@ -91,6 +126,8 @@
             console.log('loaded');
           })
           .on('loaded.template', (e) => {
+            // Set base folder for file upload
+            $('#fileupload').fileupload({ formData: { path: $("ul.file_explorer").data('path') } });
 
             // Thumbnails
             $('[data-src]').each(function () {
@@ -144,6 +181,10 @@
             if (e.defaultPrevented) return;
             getFiles(path);
           });
+
+        function refresh() {
+          getFiles($("ul.file_explorer").data('path'));
+        }
 
         function getFiles(path, cursor) {
           if (loading()) return;

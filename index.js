@@ -14,6 +14,7 @@ var sender = require('./lib/sender');
 var config = require('./config/config');
 var emailSender = require('./sender/email');
 var files = require('./lib/files');
+var multer  = require('multer');
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -52,6 +53,8 @@ app.use(['/job', '/departments', '/groups', '/template', '/settings', '/logout',
     res.redirect('/login');
 });
 
+// -- FILES -----
+
 // File Explorer
 app.get('/explorer', function (req, res) {
   res.render('file_explorer', { user: req.user, layout: false });
@@ -71,12 +74,33 @@ app.post('/files/thumbnail', function (req, res) {
     .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
 });
 
-// Delete file
+// Delete file / folder
 app.post('/files/delete', function (req, res) {
   files.deleteFile(req.body)
     .then(r => res.json(r))
     .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
 });
+
+// Create folder
+app.post('/files/create_folder', function (req, res) {
+  files.createFolder(req.body)
+    .then(r => res.json(r))
+    .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
+});
+
+// File upload
+var upload = multer({ dest: 'uploads/' });
+app.post('/files/upload', upload.array('files[]'), function (req, res) {
+  Promise.all(req.files.map(f => files.uploadFile({ path: req.body.path + '/' + f.originalname, contents: fs.readFileSync(f.path)}))).then(r => {
+    if (req.files && req.files instanceof Array) req.files.forEach(f => fs.unlinkSync(f.path));
+    res.json(r);
+  }).catch(err => {
+    if (req.files && req.files instanceof Array) req.files.forEach(f => fs.unlinkSync(f.path));
+    res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" });
+  });
+});
+
+// -- FILES -----
 
 // Super User Zone
 app.use(['/template/:id/edit', '/template/create', '/template/:id/delete'], function (req, res, next) {
