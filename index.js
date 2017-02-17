@@ -52,8 +52,23 @@ app.use(['/job', '/departments', '/groups', '/template', '/settings', '/logout',
     res.redirect('/login');
 });
 
-app.get('/files', function (req, res) {
-  files.getFiles().then(files => res.json(files)).catch(err => res.status(500).json({message: err.message }));
+// File Explorer
+app.get('/explorer', function (req, res) {
+  res.render('file_explorer', { user: req.user, layout: false });
+});
+
+// Get files
+app.post('/files', function (req, res) {
+  files.getFiles(req.body)
+    .then(files => res.json(files))
+    .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
+});
+
+// Get file thumbnail
+app.post('/files/thumbnail', function (req, res) {
+  files.getThumbnail(req.body)
+    .then(files => res.json(files))
+    .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
 });
 
 // Super User Zone

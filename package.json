@@ -14,7 +14,7 @@
     "ajv": "^4.11.2",
     "body-parser": "^1.16.0",
     "bull": "^2.1.2",
-    "dbox": "^0.6.4",
+    "dropbox": "^2.5.1",
     "encoding": "^0.1.12",
     "express": "^4.14.1",
     "express-handlebars": "^3.0.0",
