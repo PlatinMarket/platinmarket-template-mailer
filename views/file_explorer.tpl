@@ -1,33 +1,4 @@
-<html>
 
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Platinmarket Template Mailer</title>
-    <link rel="stylesheet" type="text/css" href="/assets/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/toastr/toastr.min.css" />
-    <script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
-    <script type="application/javascript" src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="application/javascript" src="/assets/handlebars/handlebars.min.js"></script>
-    <script type="application/javascript" src="/assets/toastr/toastr.min.js"></script>
-    <script>
-      toastr.options = {
-        closeButton: false,
-        newestOnTop: true,
-        showDuration: "50",
-        hideDuration: "50",
-        timeOut: "5000",
-        showEasing: "linear",
-        hideEasing: "linear",
-        showMethod: "fadeIn",
-        hideMethod: "fadeOut"
-      };
-    </script>
-</head>
-<body>
     <h3>Files</h3>
     <button data-role="create_folder">Yeni klasör</button>
     <input id="fileupload" type="file" name="files[]" data-url="/files/upload" multiple>
@@ -146,6 +117,12 @@
               $("ul.file_explorer").triggerHandler('change.path', $(e.currentTarget).attr('data-path'));
             });
 
+            // Folder click
+            $('li.file').off('click').on('click', (e) => {
+              if ($(e.target).attr('data-role')) return e.preventDefault();
+              $("body").triggerHandler('selected.file', ($("ul.file_explorer").data('path') + $(e.currentTarget).attr('data-path')));
+            });
+
             // Breadcrumb
             var paths = $("ul.file_explorer").data('path') ? $("ul.file_explorer").data('path').trim().slice(1).split('/') : [];
             paths = paths.map((p, i, items) => {
@@ -210,5 +187,3 @@
 
         getFiles();
     </script>
-</body>
-</html>

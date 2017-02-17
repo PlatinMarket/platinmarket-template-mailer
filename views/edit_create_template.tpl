@@ -467,6 +467,7 @@
         editor.setOption("fullScreen", false);
 		$("body").removeClass("codemirror_full");
       }
+      console.log(keycode);
     })
 
 	$.get('/groups').then(groups => {

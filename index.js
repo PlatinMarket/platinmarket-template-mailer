@@ -38,7 +38,7 @@ app.set('views', './views');
 app.set('view engine', 'tpl');
 
 // Login require pages
-app.use(['/job', '/departments', '/groups', '/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
+app.use(['/files', '/explorer', '/job', '/departments', '/groups', '/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
     var sess = req.session;
     if (sess && sess.user) {
       settings.get(sess.user)
@@ -53,11 +53,17 @@ app.use(['/job', '/departments', '/groups', '/template', '/settings', '/logout',
     res.redirect('/login');
 });
 
+// Super User Zone
+app.use(['/files', '/explorer', '/template/:id/edit', '/template/create', '/template/:id/delete'], function (req, res, next) {
+  if (!req.user || !req.user.isSuper) return res.status(403).send("Yetkiniz yok");
+  next();
+});
+
 // -- FILES -----
 
 // File Explorer
 app.get('/explorer', function (req, res) {
-  res.render('file_explorer', { user: req.user, layout: false });
+  res.render('file_explorer', { user: req.user });
 });
 
 // Get files
@@ -101,12 +107,6 @@ app.post('/files/upload', upload.array('files[]'), function (req, res) {
 });
 
 // -- FILES -----
-
-// Super User Zone
-app.use(['/template/:id/edit', '/template/create', '/template/:id/delete'], function (req, res, next) {
-  if (!req.user.isSuper) return res.status(403).send("Yetkiniz yok");
-  next();
-});
 
 // Get Job List by type
 app.get('/job/detail/:type/:id', (req, res) => {
