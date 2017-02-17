@@ -50,10 +50,11 @@
     <script id="template-files" type="text/x-handlebars-template">
         \{{#each entries}}
             \{{#if isFile}}
-                <li class="file">
+                <li class="file" data-path="\{{path}}">
                     <div class="thumbnail" style="width:128px; height:128px">
                         <img data-src="\{{path}}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />
                     </div>
+                    <button data-role="delete" data-path="\{{path}}">Sil</button>
                     \{{name}}
                 </li>
             \{{/if }}
@@ -62,6 +63,7 @@
                     <div class="thumbnail" style="width:128px; height:128px;text-align:center;">
                         <span class="glyphicon glyphicon-folder-close" style="font-size: 64px; line-height: 115px"></span>
                     </div>
+                    <button data-role="delete" data-path="\{{path}}">Sil</button>
                     \{{name}}
                 </li>
             \{{/if }}
@@ -69,7 +71,7 @@
             Boş
         \{{/each}}
         \{{#if has_more}}
-            <button onclick="getFiles(null, '\{{cursor}}')">Daha fazla yükle</button>
+            <button data-role="load_more" data-cursor="\{{cursor}}">Daha fazla yükle</button>
         \{{/if}}
     </script>
     <script>
@@ -89,16 +91,25 @@
             console.log('loaded');
           })
           .on('loaded.template', (e) => {
+
+            // Thumbnails
             $('[data-src]').each(function () {
               var file = $(this).attr("data-src");
               $(this).removeAttr("data-src");
               getThumbnail(file).then(thumbnail => {
-                $(this).attr('src', "data:image/jpg;base64," + btoa(thumbnail.fileBinary));
+                if (thumbnail.fileBinary) $(this).attr('src', "data:image/jpg;base64," + btoa(thumbnail.fileBinary));
+              }).catch(err => {
+
               });
             });
+
+            // Folder click
             $('li.folder').off('click').on('click', (e) => {
+              if ($(e.target).attr('data-role')) return e.preventDefault();
               $("ul.file_explorer").triggerHandler('change.path', $(e.currentTarget).attr('data-path'));
             });
+
+            // Breadcrumb
             var paths = $("ul.file_explorer").data('path') ? $("ul.file_explorer").data('path').trim().slice(1).split('/') : [];
             paths = paths.map((p, i, items) => {
               return { name: p, link: items.slice(0, i + 1).join('/') };
@@ -108,6 +119,25 @@
               e.preventDefault();
               $("ul.file_explorer").triggerHandler('change.path', $(this).attr('data-path-href'));
             });
+
+            // Load more
+            $("[data-role='load_more']").off('click').on('click', function (e) {
+              e.preventDefault();
+              getFiles(null, $(this).attr('data-cursor'));
+            });
+
+            // Delete file
+            $("[data-role='delete']").off('click').on('click', function (e) {
+              e.preventDefault();
+              if (!confirm('Emin misiniz?')) return;
+              $(this).prop('disabled', true);
+              $.post('/files/delete', { path: $(this).attr('data-path') }).then(r => {
+                $("li[data-path='" + r.path_lower + "']").remove();
+                if (!$("ul.file_explorer > li").length) $("ul.file_explorer").html(Handlebars.compile($('#template-files').html())({}));
+              }).catch(err => console.error(err));
+            });
+
+            // Set Loaded true
             loading(false);
           })
           .on('change.path', (e, path) => {
@@ -122,15 +152,17 @@
           $.post('/files', cursor ? { cursor } : { path }).then(data => {
             data.entries = data.entries.filter(e => ['file', 'folder'].indexOf(e['.tag']) > -1).map(e => { return { id: e.id, name: e.name, type: e['.tag'], path: e.path_lower, isFile: e['.tag'] == 'file', isFolder: e['.tag'] == 'folder' }; });
             if (!cursor) $("ul.file_explorer").data('path', path);
+            $("ul.file_explorer").find('button.load_more').remove();
+            if (!cursor) $("ul.file_explorer").html("");
             $("ul.file_explorer")
-              .html(Handlebars.compile($('#template-files').html())(data))
+              .append(Handlebars.compile($('#template-files').html())(data))
               .trigger('loaded.template');
           });
         }
 
         function getThumbnail(file) {
           return new Promise((resolve, reject) => {
-            if (!file) return reject(null);
+            if (!file || !file.match(/.*\.[jpg|jpeg|png|gif]/)) return reject(null);
             $.post('/files/thumbnail', { path: file }).then(data => resolve(data)).catch(err => resolve(null));
           });
         }

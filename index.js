@@ -71,6 +71,13 @@ app.post('/files/thumbnail', function (req, res) {
     .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
 });
 
+// Delete file
+app.post('/files/delete', function (req, res) {
+  files.deleteFile(req.body)
+    .then(r => res.json(r))
+    .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
+});
+
 // Super User Zone
 app.use(['/template/:id/edit', '/template/create', '/template/:id/delete'], function (req, res, next) {
   if (!req.user.isSuper) return res.status(403).send("Yetkiniz yok");
