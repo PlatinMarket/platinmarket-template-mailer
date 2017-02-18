@@ -49,8 +49,8 @@
 		\{{#if isFile}}
 			<div class="thumbnail file element" data-path="\{{path}}">
 				<div class="option-buttons btn-group option-buttons">
-					<button data-role="copy-image" class="btn btn-sm btn-default">SRC Kopyala</button>
-					<button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default">Sil</button>
+					<button data-role="copy-image" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-copy"></span></button>
+					<button data-role="delete" data-path="\{{path}}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-trash"></span></button>
 				</div>
 				<div class="img-container" data-src="\{{path}}"></div>
 				<div class="file-name" title="\{{name}}">\{{name}}</div>
@@ -59,7 +59,7 @@
 		\{{#if isFolder}}
 			<div class="thumbnail folder element" data-path="\{{path}}">
 				<div class="option-buttons btn-group option-buttons">
-					<button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default">Sil</button>
+					<button data-role="delete" data-path="\{{path}}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-trash"></span></button>
 				</div>
 				<div class="folder-container">
 					<span class="glyphicon glyphicon-folder-close" style="font-size: 64px;"></span>

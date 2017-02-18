@@ -200,7 +200,8 @@ body.files-loading .files-loader{
 	margin-bottom: 15px;
 }
 .file_explorer .thumbnail:hover{
-	border-color: #efefef;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+			box-shadow: 0 1px 1px rgba(0,0,0,.05)
 }
 .file_explorer .thumbnail.folder{	
 	cursor: pointer;
