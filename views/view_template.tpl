@@ -28,13 +28,14 @@
 			<p class="lead">E-posta</p>
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<form class="form-horizontal">
+					<form class="form-horizontal" action="/template/{{currentTemplate.id}}/send" method="post" name="send-mail">
 						<div class="form-group">
-							<label for="email" class="col-lg-2 control-label">E-posta adresi</label>
+							<label for="to" class="col-lg-2 control-label">E-posta adresi</label>
 							<div class="col-lg-10">
 								<div class="input-group">
-									<input type="email" name="email" id="email" class="form-control" required />
+									<input type="email" name="to" id="to" class="form-control" required />
 									<span class="input-group-btn">
+										<input type="hidden" name="params" />
 										<button type="submit" class="btn btn-block btn-primary">Gönder</button>
 									</span>
 								</div>
@@ -180,5 +181,16 @@
       delay(function(){
         $("form[name='render_form']").trigger("submit");
       }, 500 );
+	});
+
+    $("form[name='send-mail']").on("submit", (e) => {
+      try {
+        var params = {};
+        $("form[name='render_form']").serializeArray().forEach(p => params[p.name] = p.value);
+        $("input[name='params']").val(JSON.stringify(params));
+      } catch (err) {
+        e.preventDefault();
+	    console.error(err);
+      }
 	});
 </script>

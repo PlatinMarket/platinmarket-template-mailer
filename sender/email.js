@@ -66,7 +66,7 @@ EmailSender.prototype.getBoxes = function (user) {
     imap.once('ready', () => {
       imap.getBoxes(function (err, boxes) {
         if (err) return reject(err);
-        if (!boxes) return reject(new Error("No mailbox found"))
+        if (!boxes) return reject(new Error("No mailbox found"));
         imap.end();
         resolve(Object.keys(boxes));
       });
@@ -109,7 +109,8 @@ EmailSender.prototype.createMessage = function (message, user, to) {
     to: to,
     subject: message.subject,
     html: message.html,
-    text: message.text || null
+    text: message.text || null,
+    attachments: (message.attachments instanceof Array && message.attachments.length > 0) ? message.attachments : undefined
   };
 };
 
