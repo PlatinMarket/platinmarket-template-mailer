@@ -196,7 +196,7 @@ body.files-loading .files-loader{
 	display: table;
 }
 .file_explorer .thumbnail{
-	height: 150px;
+	height: 170px;
 	margin-bottom: 15px;
 }
 .file_explorer .thumbnail:hover{
@@ -242,7 +242,24 @@ body.files-loading .files-loader{
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
+	color: #444;
+	margin-bottom:5px;
+}
+.file_explorer .thumbnail .file-attr{
+	text-align:center;
+}
+.file_explorer .thumbnail .file-attr div{
+	display: inline-block;
+	font-size: 13px;
+}
+.file_explorer .thumbnail .file-attr .file-size{
+	color: #999;
+}
+.file_explorer .thumbnail .file-attr .file-dimensions{
 	color: #666;
+}
+.file_explorer .thumbnail .file-attr div:first-child{
+	margin-right:5px;
 }
 .file_explorer .thumbnail .option-buttons{
 	display:none;

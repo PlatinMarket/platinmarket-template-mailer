@@ -30,6 +30,7 @@
 <script src="/assets/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
 <script src="/assets/blueimp-file-upload/js/jquery.fileupload.js"></script>
 <script src="/assets/clipboard/dist/clipboard.min.js"></script>
+<script src="/assets/filesize/lib/filesize.min.js"></script>
 <script id="template-path-breadcrumb" type="text/x-handlebars-template">
 	\{{#if paths}}
 		<li><a data-path-href="" style="cursor:pointer">Root</a></li>
@@ -55,6 +56,7 @@
 				</div>
 				<div class="img-container" data-src="\{{path}}"></div>
 				<div class="file-name" title="\{{name}}">\{{name}}</div>
+				<div class="file-attr"></div>
 			</div>
 		\{{/if}}
 		\{{#if isFolder}}
@@ -139,6 +141,9 @@
 		  $(this).removeAttr("data-src");
 		  getThumbnail(file).then(thumbnail => {
 			if (thumbnail.fileBinary) $(this).css('background-image', "url(data:image/jpg;base64," + btoa(thumbnail.fileBinary) + ")");
+			if (thumbnail.size) $(this).parent().find(".file-attr").append('<div class="file-size">' + filesize(thumbnail.size) + '</div>');
+			if (thumbnail.media_info) $(this).parent().find(".file-attr").append('<div class="file-dimensions">' + thumbnail.media_info.metadata.dimensions.width + '&times;' + thumbnail.media_info.metadata.dimensions.height + '</div>');
+			//console.log(thumbnail);
 		  }).catch(err => {
 			$(this).addClass("no-thumb");
 		  });
