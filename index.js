@@ -64,6 +64,17 @@ app.use(['/files', '/explorer', '/template/:id/edit', '/template/create', '/temp
 
 // -- FILES -----
 
+// Get file from StorageService
+app.get('/s/*', function (req, res) {
+  var path = req.params['0'];
+  if (!path) return res.sendStatus(404);
+  path = "/" + path;
+  files.downloadFile({ path }).then(a => res.sendFile(a)).catch(err => {
+    if (err && err.status == 409) return res.sendStatus(404);
+    res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" });
+  });
+});
+
 // File Explorer
 app.get('/explorer', function (req, res) {
   res.render('file_explorer', { user: req.user });
