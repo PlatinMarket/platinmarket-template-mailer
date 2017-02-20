@@ -479,4 +479,4 @@ sender.getReady().then(() => {
   app.listen(process.env.PORT || 3000, function () {
     console.log("Server started on port " + (process.env.PORT || 3000).toString());
   });
-}).catch(err => console.error(err));
+}).catch(err => console.error('Redis connection error', err));

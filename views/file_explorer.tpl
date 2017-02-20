@@ -29,6 +29,7 @@
 <script src="/assets/speakingurl/speakingurl.min.js"></script>
 <script src="/assets/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
 <script src="/assets/blueimp-file-upload/js/jquery.fileupload.js"></script>
+<script src="/assets/clipboard/dist/clipboard.min.js"></script>
 <script id="template-path-breadcrumb" type="text/x-handlebars-template">
 	\{{#if paths}}
 		<li><a data-path-href="" style="cursor:pointer">Root</a></li>
@@ -117,6 +118,8 @@
 	  }).catch(err => console.error(err));
 	});
 
+	var clipboard = null;
+
 	$(".file_explorer")
 	  .on('loading.folder', (e) => {
 		$("body").addClass("files-loading");
@@ -143,13 +146,13 @@
 
 		// Folder click
 		$('.folder').off('click').on('click', (e) => {
-		  if ($(e.target).attr('data-role')) return e.preventDefault();
+		  if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
 		  $(".file_explorer").triggerHandler('change.path', $(e.currentTarget).attr('data-path'));
 		});
 
 		// Folder click
 		$('.file').off('click').on('click', (e) => {
-		  if ($(e.target).attr('data-role')) return e.preventDefault();
+		  if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
 		  $("body").triggerHandler('selected.file', ($(".file_explorer").data('path') + $(e.currentTarget).attr('data-path')));
 		});
 
@@ -179,6 +182,19 @@
 			$("div[data-path='" + r.path_lower + "']").parent().remove();
 			if (!$(".file_explorer .element").length) $(".file_explorer").html(Handlebars.compile($('#template-files').html())({}));
 		  }).catch(err => console.error(err));
+		});
+
+		// Copy image files to clipboard
+		if (clipboard) clipboard.destroy();
+		$("[data-role='copy-image']").tooltip('destroy');
+		clipboard = new Clipboard("[data-role='copy-image']", {
+		  text: function (trigger) {
+            $(trigger).tooltip({ title: 'Kopyalandı', trigger: 'manual', placement: 'bottom', container: 'body' }).tooltip('show');
+            setTimeout(() => {
+              $(trigger).tooltip('hide');
+			}, 700);
+		    return $(trigger).closest("[data-path]").attr('data-path');
+          }
 		});
 
 		// Set Loaded true
