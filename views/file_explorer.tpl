@@ -56,7 +56,7 @@
 				</div>
 				<div class="img-container" data-src="\{{path}}"></div>
 				<div class="file-name" title="\{{name}}">\{{name}}</div>
-				<div class="file-attr"></div>
+				<div class="file-attr ellipsis"></div>
 			</div>
 		\{{/if}}
 		\{{#if isFolder}}
@@ -68,6 +68,7 @@
 					<span class="glyphicon glyphicon-folder-close" style="font-size: 64px;"></span>
 				</div>
 				<div class="file-name" title="\{{name}}">\{{name}}</div>
+				<div class="file-attr"><div class="file-size">dir</div></div>
 			</div>
 		\{{/if}}
 		</div>
@@ -141,8 +142,8 @@
 		  $(this).removeAttr("data-src");
 		  getThumbnail(file).then(thumbnail => {
 			if (thumbnail.fileBinary) $(this).css('background-image', "url(data:image/jpg;base64," + btoa(thumbnail.fileBinary) + ")");
-			if (thumbnail.size) $(this).parent().find(".file-attr").append('<div class="file-size">' + filesize(thumbnail.size) + '</div>');
 			if (thumbnail.media_info) $(this).parent().find(".file-attr").append('<div class="file-dimensions">' + thumbnail.media_info.metadata.dimensions.width + '&times;' + thumbnail.media_info.metadata.dimensions.height + '</div>');
+			if (thumbnail.size) $(this).parent().find(".file-attr").append('<div class="file-size">' + filesize(thumbnail.size) + '</div>');
 			//console.log(thumbnail);
 		  }).catch(err => {
 			$(this).addClass("no-thumb");
