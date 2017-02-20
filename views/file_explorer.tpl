@@ -51,23 +51,24 @@
 		\{{#if isFile}}
 			<div class="thumbnail file element" data-path="\{{path}}">
 				<div class="option-buttons btn-group option-buttons">
-					<button data-role="copy-image" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-copy"></span></button>
-					<button data-role="delete" data-path="\{{path}}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+					<button data-role="copy-image" class="btn btn-sm btn-default">Kopyala</button>
+					<button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default btn-delete">Sil</button>
 				</div>
 				<div class="img-container" data-src="\{{path}}"></div>
 				<div class="file-name" title="\{{name}}">\{{name}}</div>
-				<div class="file-attr"></div>
+				<div class="file-attr ellipsis"></div>
 			</div>
 		\{{/if}}
 		\{{#if isFolder}}
 			<div class="thumbnail folder element" data-path="\{{path}}">
 				<div class="option-buttons btn-group option-buttons">
-					<button data-role="delete" data-path="\{{path}}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+					<button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default btn-delete">Sil</button>
 				</div>
 				<div class="folder-container">
 					<span class="glyphicon glyphicon-folder-close" style="font-size: 64px;"></span>
 				</div>
 				<div class="file-name" title="\{{name}}">\{{name}}</div>
+				<div class="file-attr"><div class="file-size">dir</div></div>
 			</div>
 		\{{/if}}
 		</div>
@@ -141,8 +142,8 @@
 		  $(this).removeAttr("data-src");
 		  getThumbnail(file).then(thumbnail => {
 			if (thumbnail.fileBinary) $(this).css('background-image', "url(data:image/jpg;base64," + btoa(thumbnail.fileBinary) + ")");
-			if (thumbnail.size) $(this).parent().find(".file-attr").append('<div class="file-size">' + filesize(thumbnail.size) + '</div>');
 			if (thumbnail.media_info) $(this).parent().find(".file-attr").append('<div class="file-dimensions">' + thumbnail.media_info.metadata.dimensions.width + '&times;' + thumbnail.media_info.metadata.dimensions.height + '</div>');
+			if (thumbnail.size) $(this).parent().find(".file-attr").append('<div class="file-size">' + filesize(thumbnail.size) + '</div>');
 			//console.log(thumbnail);
 		  }).catch(err => {
 			$(this).addClass("no-thumb");
