@@ -16,6 +16,9 @@ var emailSender = require('./sender/email');
 var files = require('./lib/files');
 var multer  = require('multer');
 
+// Set template file storage
+templateStore.setStorageService(files);
+
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
 app.use(session({

@@ -143,7 +143,13 @@
             $("form[name='render_form']").find("button").removeAttr("disabled");
             $("body").removeClass("preview_loading");
           }, 200);
-        });
+        }).catch(err => {
+          $("iframe[name='preview']").contents().find("html").html("<h3>TEMPLATE RENDER ERROR</h3><p>" + err.responseJSON.message + "</p>").find('body').css('background-color', 'white');
+          $("input[name='subject']").val("Template Render Error");
+          $("textarea[name='preview_text']").val("Template Render Error");
+          $("form[name='render_form']").find("button").removeAttr("disabled");
+          $("body").removeClass("preview_loading");
+		});
       } catch (err) {
 	    console.error(err);
       }
