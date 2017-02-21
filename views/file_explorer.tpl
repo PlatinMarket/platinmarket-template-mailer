@@ -31,6 +31,7 @@
 <script src="/assets/blueimp-file-upload/js/jquery.fileupload.js"></script>
 <script src="/assets/clipboard/dist/clipboard.min.js"></script>
 <script src="/assets/filesize/lib/filesize.min.js"></script>
+<script src="/assets/history.js/scripts/bundled/html5/jquery.history.js"></script>
 <script id="template-path-breadcrumb" type="text/x-handlebars-template">
 	\{{#if paths}}
 		<li><a data-path-href="" style="cursor:pointer">Root</a></li>
@@ -82,6 +83,7 @@
 	\{{/if}}
 </script>
 <script>
+
   $('#fileupload').fileupload({
 	dataType: 'json',
 	done: function (e, res) {
@@ -153,13 +155,15 @@
 		// Folder click
 		$('.folder').off('click').on('click', (e) => {
 		  if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
-		  $(".file_explorer").triggerHandler('change.path', $(e.currentTarget).attr('data-path'));
+		  var folder = $(e.currentTarget).attr('data-path');
+          History.pushState({ folder }, "Dosyalar: " + folder, '/explorer' + (folder ? folder.split(/\/+/).map(f => encodeURIComponent(f)).join('/') : ""));
 		});
 
-		// Folder click
+		// File click
 		$('.file').off('click').on('click', (e) => {
 		  if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
-		  $("body").triggerHandler('selected.file', ($(".file_explorer").data('path') + $(e.currentTarget).attr('data-path')));
+		  showImage($(e.currentTarget).attr('data-path'));
+		  $("body").triggerHandler('selected.file', $(e.currentTarget).attr('data-path'));
 		});
 
 		// Breadcrumb
@@ -170,7 +174,8 @@
 		$(".breadcrumb").html(Handlebars.compile($('#template-path-breadcrumb').html())({ paths }));
 		$("[data-path-href]").off('click').on('click', function (e) {
 		  e.preventDefault();
-		  $(".file_explorer").triggerHandler('change.path', $(this).attr('data-path-href'));
+          var folder = $(this).attr('data-path-href');
+          History.pushState({ folder }, "Dosyalar: " + folder, '/explorer' + (folder ? folder.split(/\/+/).map(f => encodeURIComponent(f)).join('/') : ""));
 		});
 
 		// Load more
@@ -227,6 +232,8 @@
 		$(".file_explorer")
 		  .append(Handlebars.compile($('#template-files').html())(data))
 		  .trigger('loaded.template');
+	  }).catch(err => {
+		window.location = '/explorer';
 	  });
 	}
 
@@ -237,5 +244,35 @@
 	  });
 	}
 
-	getFiles();
+	function showImage(path) {
+	  var img = new Image();
+	  img.onload = function () {
+        $("#lightbox").modal('show');
+      };
+      $(img).addClass("img-responsive");
+      $("#lightbox").find(".modal-header h4").html(path);
+      $("#lightbox").find(".modal-body").html("").append(img);
+      img.src = "/s" + path;
+    }
+
+	// Bind to StateChange Event
+	History.Adapter.bind(window, 'statechange', function() {
+		var _state = History.getState();
+      	$(".file_explorer").triggerHandler('change.path', _state.data.folder);
+	});
+
+	var _state = History.getState();
+
+	getFiles(_state.hash.replace("/explorer", "").replace(/\?.*/, ''));
 </script>
+<div class="modal fade" id="lightbox" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel"></h4>
+			</div>
+			<div class="modal-body"></div>
+		</div>
+	</div>
+</div>

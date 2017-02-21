@@ -27,6 +27,7 @@
     "moment": "^2.17.1",
     "blueimp-file-upload": "^9.16.0",
     "clipboard": "^1.6.0",
-    "filesize": "^3.5.4"
+    "filesize": "^3.5.4",
+    "history.js": "^1.8.0"
   }
 }

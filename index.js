@@ -76,7 +76,7 @@ app.get('/s/*', function (req, res) {
 });
 
 // File Explorer
-app.get('/explorer', function (req, res) {
+app.get('/explorer*', function (req, res) {
   res.render('file_explorer', { user: req.user });
 });
 
