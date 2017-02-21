@@ -255,6 +255,20 @@ app.get('/template/group/view', (req, res) => {
     });
 });
 
+// Template send
+app.post('/template/send/:guid', (req, res) => {
+  var params = req.body.params;
+  try {
+    params = JSON.parse(params);
+  } catch (err) {
+    params = {};
+  }
+  res.render('send_template', { user: req.user, params, guid: req.params.guid, template: req.body.template, to: req.body.to });
+});
+app.get('/template/send*', (req, res) => {
+  res.sendStatus(404);
+});
+
 // Template required requests
 app.use('/template/:id', function (req, res, next) {
   templateStore.get(req.params.id)
@@ -264,12 +278,6 @@ app.use('/template/:id', function (req, res, next) {
       next();
     })
     .catch(err => res.status(404).send(err ? err.message : 'Template `' + req.params.id + '` not found'));
-});
-
-// Template edit
-app.post('/template/:id/send', (req, res) => {
-  req.body.params = JSON.parse(req.body.params);
-  res.json(req.body);
 });
 
 // Template edit
@@ -312,13 +320,24 @@ app.post(['/template/:id/render', '/template/:id/render/:type'], (req, res) => {
 SEND PROCESS START
  */
 
+// 0. Check Job already add to queue
+app.use(['/send/:id', '/send'], (req, res, next) => {
+  if (!req.query.guid) return next();
+  sender.getJobFromGUID(req.query.guid).then(jobs => {
+    if (!jobs || jobs.length == 0) return next();
+    res.json(jobs.map(j => Object.assign({id: parseInt(j.jobId, 10), guid: j.data.guid || undefined, subject: j.data.message.subject, to: j.data.to, type: j.data.message.template.type })));
+  }).catch(err => res.status(500).send(err));
+});
+
 // 1. Parse template
-app.use('/send/:id', (req, res, next) => {
+app.use(['/send/:id', '/send'], (req, res, next) => {
+  req.params['id'] = req.params.id || req.query.id;
+  if (req.query.id) delete(req.query.id);
   if (!req.params.id || req.params.id.trim() == "") return res.sendStatus(404);
   req.params.id = req.params.id.trim();
   templateStore.list()
     .then(templates => {
-      var template = templates.find(t => t.folder && t.folder === req.params.id.trim()) || templates.filter(t => t.group && t.group.indexOf(req.params.id.trim()) > -1);
+      var template = templates.find(t => t.folder && t.folder.toLowerCase() === req.params.id.toLowerCase()) || templates.filter(t => t.group && t.group.map(g => g.toLowerCase()).indexOf(req.params.id.toLowerCase()) > -1);
       templates = template instanceof Array ? template : [template];
       if (templates.length == 0) return res.sendStatus(404);
       Promise.all(templates.map(t => templateStore.get(t.folder)))
@@ -328,11 +347,14 @@ app.use('/send/:id', (req, res, next) => {
         })
         .catch(err => { throw err; })
     })
-    .catch(err => res.sendStatus(500));
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err);
+    });
 });
 
 // 2. Parse params
-app.use('/send/:id', (req, res, next) => {
+app.use(['/send/:id', '/send'], (req, res, next) => {
   var params = Object.assign(req.query, req.body);
   params = Object.assign({
     from: req.user ? req.user.email : (config && config.user && config.user.default ? config.user.default.email : undefined),
@@ -350,7 +372,7 @@ app.use('/send/:id', (req, res, next) => {
 });
 
 // 3. Render templates
-app.use('/send/:id', (req, res, next) => {
+app.use(['/send/:id', '/send'], (req, res, next) => {
   Promise.all(req.templates.map(t => templateStore.render(t, req.body, { user: {name: req.user.name, email: req.user.email} })))
     .then((renderedTemplates) => {
       req.templates = renderedTemplates.map(t => Object.assign(t, { template: req.templates.find(_t => _t.folder == t.template_id), template_id: undefined })).filter(t => t.template && t.template.type);
@@ -360,7 +382,7 @@ app.use('/send/:id', (req, res, next) => {
 });
 
 // 4. Download attachments
-app.use('/send/:id', (req, res, next) => {
+app.use(['/send/:id', '/send'], (req, res, next) => {
   var attachments = [];
   req.templates
     .filter(t => (t.attachments && (t.attachments instanceof Array) && t.attachments.length > 0))
@@ -371,7 +393,8 @@ app.use('/send/:id', (req, res, next) => {
         a._path = localPath;
         resolve(a);
       }).catch(err => {
-        if (err && err.status == 409) return res.status(400).json({success: 'error', message: 'Template attachment `' + a.path + '` not found!'});
+        var templateNames = req.templates.map(t => t.template.name);
+        if (err && err.status == 409) return res.status(400).json({success: 'error', message: 'Attachment `' + a.path + '` not found! Templates `' + templateNames.join(',') + '`'});
         reject(err);
       });
     });
@@ -386,8 +409,10 @@ app.use('/send/:id', (req, res, next) => {
 });
 
 // 5. Send mail
-app.use('/send/:id', (req, res) => {
-  Promise.all(req.templates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to))).then((jobs) => res.json(jobs.map(j => parseInt(j.jobId, 10))));
+app.use(['/send/:id', '/send'], (req, res) => {
+  Promise.all(req.templates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to, (req.body.guid || null)))).then((jobs) => {
+    res.json(jobs.map(j => Object.assign({id: parseInt(j.jobId, 10), guid: j.data.guid || undefined, subject: j.data.message.subject, to: j.data.to, type: j.data.message.template.type })));
+  });
 });
 
 /*

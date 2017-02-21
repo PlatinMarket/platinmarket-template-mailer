@@ -120,6 +120,9 @@ EmailSender.prototype.process = function(message, from, to) {
     // Check user properties
     if (!from.smtp || !from.smtp.auth) return reject(new Error("Bad config for user `" + from.email + "`"));
 
+    // For Debug
+    // return setTimeout(() => resolve("success"), 5000);
+
     // Set Transport
     var transport = this.createTransport(from);
 

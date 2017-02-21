@@ -28,13 +28,14 @@
 			<p class="lead">E-posta</p>
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<form class="form-horizontal" action="/template/{{currentTemplate.id}}/send" method="post" name="send-mail">
+					<form class="form-horizontal" method="post" name="send-mail">
 						<div class="form-group">
 							<label for="to" class="col-lg-2 control-label">E-posta adresi</label>
 							<div class="col-lg-10">
 								<div class="input-group">
 									<input type="email" name="to" id="to" class="form-control" required />
 									<span class="input-group-btn">
+										<input type="hidden" name="template" />
 										<input type="hidden" name="params" />
 										<button type="submit" class="btn btn-block btn-primary">Gönder</button>
 									</span>
@@ -100,6 +101,7 @@
 	</select>
 </script>
 
+<input type="hidden" name="template_name" value="{{currentTemplate.name}}" />
 {{#if currentTemplate.isGroup}}
 	<input type="hidden" name="group_templates" value="{{currentTemplate.description}}" />
 	<input type="hidden" name="group_template_folders" value="{{currentTemplate.templateFolders}}" />
@@ -113,6 +115,7 @@
 	templates = templates.map(t => { return { name: t, folder: template_folders[templates.indexOf(t)] }; });
     var template = templates[0];
 	var isGroup = templates.length > 1;
+	var templateName = isGroup ? $("input[name='template_name']").val().trim() : $("input[name='group_template_folders']").val().trim();
 
     if (isGroup) {
       $("[data-zone='template-selector']").html(Handlebars.compile($("#template-render-selector").html())({templates: templates}));
@@ -183,8 +186,19 @@
       }, 500 );
 	});
 
+    function guid() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+      }
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+    }
+
     $("form[name='send-mail']").on("submit", (e) => {
       try {
+        $("input[name='template']").val(templateName);
         var params = {};
         $("form[name='render_form']").serializeArray().forEach(p => params[p.name] = p.value);
         $("input[name='params']").val(JSON.stringify(params));
@@ -192,5 +206,5 @@
         e.preventDefault();
 	    console.error(err);
       }
-	});
+	}).attr('action', '/template/send/' + guid());
 </script>
