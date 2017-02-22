@@ -9,7 +9,7 @@
 					</div>
 				</div>
 				<!-- Status Zone -->
-				<ul data-zone="status" class="list-group"></ul>
+				<ul data-zone="status" class="list-group list-job"></ul>
 				<!-- Status Zone -->
 			</div>
 		</div>
@@ -38,16 +38,16 @@
 </div>
 <!-- Step templates -->
 <script id="template-step-1" type="text/x-handlebars-template">
-    <li class="list-group-item">Gerekli bilgiler toplanıyor</li>
+    <li class="list-group-item text-primary">Gerekli bilgiler toplanıyor</li>
 </script>
 <script id="template-step-2" type="text/x-handlebars-template">
-    <li class="list-group-item">Kuyruğa ekleniyor</li>
+    <li class="list-group-item text-primary">Kuyruğa ekleniyor</li>
 </script>
 <script id="template-step-3" type="text/x-handlebars-template">
-    <li class="list-group-item">Kuyrukta : <b>\{{subject}}</b></li>
+    <li class="list-group-item text-primary">Kuyrukta : <b>\{{subject}}</b></li>
 </script>
 <script id="template-step-4" type="text/x-handlebars-template">
-    <li class="list-group-item">Tamamlandı : <b>\{{subject}}</b></li>
+    <li class="list-group-item text-primary">Tamamlandı : <b>\{{subject}}</b></li>
 </script>
 <script id="template-step-5" type="text/x-handlebars-template">
     \{{#if all_fail}}
@@ -101,6 +101,7 @@
 			if(event_class){
 				$(".progress-bar").removeClass("active").addClass("progress-bar-" + event_class);
 				$(".panel-jobs").addClass("panel-" + event_class);
+				$(".panel-jobs .list-group-item").addClass("text-" + event_class);
 			}
       });
     }
