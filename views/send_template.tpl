@@ -1,29 +1,62 @@
-
-<!-- Status Zone -->
-<ul data-zone="status"></ul>
-<!-- Status Zone -->
-
+<div class="container">
+	<div class="row">
+		<div class="col-lg-6 col-md-6">
+			<h3 class="page-header">İşlem bilgileri</h3>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="progress" style="margin-bottom:0;">
+						<div class="progress-bar progress-bar-striped active" role="progressbar" tyle="width: 0%"></div>
+					</div>
+				</div>
+				<!-- Status Zone -->
+				<ul data-zone="status" class="list-group"></ul>
+				<!-- Status Zone -->
+			</div>
+		</div>
+		<div class="col-lg-6 col-md-6">
+			<h3 class="page-header">Gönderi bilgileri</h3>
+			<div class="panel panel-default table-responsive">
+				<table class="table table-bordered table-striped">
+					<tbody>
+						<tr>
+							<th class="text-right">Kimden</th>
+							<td>{{user.email}}</td>
+						</tr>
+						<tr>
+							<th class="text-right">Kime</th>
+							<td>{{to}}</td>
+						</tr>
+						<tr>
+							<th class="text-right">Konu</th>
+							<td>{{guid}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
 <!-- Step templates -->
 <script id="template-step-1" type="text/x-handlebars-template">
-    <li>Gerekli bilgiler toplanıyor</li>
+    <li class="list-group-item">Gerekli bilgiler toplanıyor</li>
 </script>
 <script id="template-step-2" type="text/x-handlebars-template">
-    <li>Kuyruğa ekleniyor</li>
+    <li class="list-group-item">Kuyruğa ekleniyor</li>
 </script>
 <script id="template-step-3" type="text/x-handlebars-template">
-    <li>Kuyrukta: \{{subject}}</li>
+    <li class="list-group-item">Kuyrukta : <b>\{{subject}}</b></li>
 </script>
 <script id="template-step-4" type="text/x-handlebars-template">
-    <li>Tamamlandı: \{{subject}}</li>
+    <li class="list-group-item">Tamamlandı : <b>\{{subject}}</b></li>
 </script>
 <script id="template-step-5" type="text/x-handlebars-template">
     \{{#if all_fail}}
-    <li>Tüm görevler başarısızlıkla bitti</li>
+    <li class="list-group-item list-group-item-danger"><b>Tüm görevler başarısızlıkla bitti</b></li>
     \{{else}}
         \{{#if all_success}}
-            <li>Tümü başarıyla bitti</li>
+            <li class="list-group-item list-group-item-success"><b>Tümü başarıyla bitti</b></li>
         \{{else}}
-            <li>\{{success_count}}/\{{total}} başarıyla bitti</li>
+            <li class="list-group-item list-group-item-success">\{{success_count}}/\{{total}} başarıyla bitti</li>
         \{{/if}}
     \{{/if}}
 </script>
@@ -32,7 +65,7 @@
 
 <!-- Error step -->
 <script id="template-error" type="text/x-handlebars-template">
-    <li>Hata: \{{message}}</li>
+    <li class="list-group-item list-group-item-warning"><b>Hata : \{{message}}</b></li>
 </script>
 <!-- Error step -->
 
@@ -56,8 +89,14 @@
     function setStatus(template, data) {
       return new Promise(resolve => {
         var status = $(Handlebars.compile($("#template-" + template).html())(data || {})).fadeOut(0);
+		var status_number = template.replace("step-","")
+		$(".progress-bar").css("width", status_number * 20 + "%");
         $("[data-zone='status']").append(status);
         status.fadeIn(200, () => resolve(data));
+		if(status_number === "error") 
+			$(".progress-bar").addClass("progress-bar-danger");
+		else if(status_number === "5")
+			$(".progress-bar").removeClass("active");
       });
     }
 
