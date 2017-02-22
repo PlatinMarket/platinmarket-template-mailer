@@ -104,13 +104,12 @@ EmailSender.prototype.createImapClient = function (user) {
 
 // Create message object
 EmailSender.prototype.createMessage = function (message, user, to) {
-  console.log(message.attachments);
   return {
     from: user.email,
     to: to,
     subject: message.subject,
     html: message.html,
-    //text: message.text || null,
+    text: message.text || null,
     attachments: (message.attachments instanceof Array && message.attachments.length > 0) ? message.attachments : undefined
   };
 };
