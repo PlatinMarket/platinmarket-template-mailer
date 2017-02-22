@@ -3,7 +3,12 @@
 		<div class="col-xs-12 col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<p class="lead text-center">PlatinBOX E-mails</p>
+					<p class="lead text-center">
+						<span class="label label-default">T</span> - 
+						<span class="label label-primary">Ma</span>
+						<span class="label label-info">R</span>
+						<span class="label label-success">S</span>
+					</p>
 					<p class="alert alert-danger" style="display: none;"></p>
 					<form>
 						<div class="form-group">
@@ -18,6 +23,7 @@
 			</div>
 		</div>
 	</div>
+	<p class="text-center"><b>T</b>emplate <b class="text-primary">Ma</b>nage , <b class="text-info">R</b>ender , <b class="text-succcess">S</b>end<br/>platform by PlatinBOX</p>
 </div>
 <script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
 <script>

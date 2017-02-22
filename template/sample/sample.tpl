@@ -787,3 +787,4 @@
 	</table>
 </body>
 </html>
+{{attach '/bootstrap/style.css'}}
