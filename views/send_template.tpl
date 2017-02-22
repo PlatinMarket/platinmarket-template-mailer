@@ -17,8 +17,17 @@
     <li>Tamamlandı: \{{subject}}</li>
 </script>
 <script id="template-step-5" type="text/x-handlebars-template">
-    <li>Bitti</li>
+    \{{#if all_fail}}
+    <li>Tüm görevler başarısızlıkla bitti</li>
+    \{{else}}
+        \{{#if all_success}}
+            <li>Tümü başarıyla bitti</li>
+        \{{else}}
+            <li>\{{success_count}}/\{{total}} başarıyla bitti</li>
+        \{{/if}}
+    \{{/if}}
 </script>
+
 <!-- Step templates -->
 
 <!-- Error step -->
@@ -80,10 +89,14 @@
           checking = true;
           $.get('/job/detail/' + job.type + '/' + job.id).then(j => {
             if (j.stacktrace) {
+              job.success = false;
               clearInterval(waiter);
-              return reject(new Error(j.stacktrace instanceof Array ? j.stacktrace[0].split("\n")[0] : j.stacktrace.split("\n")[0]));
+              return reject(new Error(job.subject + ": " + (j.stacktrace instanceof Array ? j.stacktrace[0].split("\n")[0] : j.stacktrace.split("\n")[0])));
             }
-            if (!j.returnvalue) return checking = false;
+            if (!j.returnvalue) {
+              job.success = true;
+              return checking = false;
+            }
             setStatus(step, job).then(() => resolve());
           }).catch(err => {
             clearInterval(waiter);
@@ -92,6 +105,18 @@
         }, 1500);
       });
     }
+
+    Promise.prototype.finally = function (callback) {
+      let p = this.constructor;
+      // We don’t invoke the callback in here,
+      // because we want then() to handle its exceptions
+      return this.then(
+        // Callback fulfills: pass on predecessor settlement
+        // Callback rejects: pass on rejection (=omit 2nd arg.)
+        value  => p.resolve(callback()).then(() => value),
+        reason => p.resolve(callback()).then(() => { throw reason })
+      );
+    };
 
     setStatus('step-1')
       .then(() => wait(200))
@@ -106,15 +131,13 @@
       .then(() => wait(200))
       .then(() => Promise.all(jobs.map(j => waitForComplate(j, 'step-4'))))
 
-      // End
-      .then(() => setStatus('step-5', jobs))
-
       // Error
       .catch(err => {
         err = err || {};
         console.error(err);
         setStatus('error', { message: (err.responseJSON ? err.responseJSON.message : err.responseText) || (err instanceof Error ? err.message : 'Bilinmeyen hata!')});
-      });
+      })
+      .finally(() => setStatus('step-5', { jobs, all_success: !jobs.find(j => !j.success), all_fail: !jobs.find(j => j.success), success_count: jobs.filter(j => j.success).length, fail_count: jobs.filter(j => !j.success).length, total: jobs.length}));
 
 
 </script>
