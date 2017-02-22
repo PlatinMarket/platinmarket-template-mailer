@@ -137,6 +137,8 @@
         console.error(err);
         setStatus('error', { message: (err.responseJSON ? err.responseJSON.message : err.responseText) || (err instanceof Error ? err.message : 'Bilinmeyen hata!')});
       })
+
+      // End
       .finally(() => setStatus('step-5', { jobs, all_success: !jobs.find(j => !j.success), all_fail: !jobs.find(j => j.success), success_count: jobs.filter(j => j.success).length, fail_count: jobs.filter(j => !j.success).length, total: jobs.length}));
 
 
