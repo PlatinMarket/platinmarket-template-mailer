@@ -4,6 +4,8 @@ runtime: nodejs
 env: flex
 
 skip_files:
-  - ^(.*/)?.*/node_modules/.*$
-  - ^(.*/)?.*/assets/.*$
+  - node_modules/*
+  - public/assets/*
+  - cache/*
+  - uploads/*
 # [END app_yaml]
