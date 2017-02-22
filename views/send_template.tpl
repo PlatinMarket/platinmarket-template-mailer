@@ -2,10 +2,10 @@
 	<div class="row">
 		<div class="col-lg-6 col-md-6">
 			<h3 class="page-header">İşlem bilgileri</h3>
-			<div class="panel panel-default">
+			<div class="panel panel-primary panel-jobs">
 				<div class="panel-body">
 					<div class="progress" style="margin-bottom:0;">
-						<div class="progress-bar progress-bar-striped active" role="progressbar" tyle="width: 0%"></div>
+						<div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 0%"></div>
 					</div>
 				</div>
 				<!-- Status Zone -->
@@ -27,8 +27,8 @@
 							<td>{{to}}</td>
 						</tr>
 						<tr>
-							<th class="text-right">Konu</th>
-							<td>{{guid}}</td>
+							<th class="text-right">Şablon</th>
+							<td>{{template}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -51,12 +51,12 @@
 </script>
 <script id="template-step-5" type="text/x-handlebars-template">
     \{{#if all_fail}}
-    <li class="list-group-item list-group-item-danger"><b>Tüm görevler başarısızlıkla bitti</b></li>
+    <li class="list-group-item text-danger" data-progress-class="danger"><b>Tüm görevler başarısızlıkla bitti</b></li>
     \{{else}}
         \{{#if all_success}}
-            <li class="list-group-item list-group-item-success"><b>Tümü başarıyla bitti</b></li>
+            <li class="list-group-item text-success" data-progress-class="success"><b>Tümü başarıyla bitti</b></li>
         \{{else}}
-            <li class="list-group-item list-group-item-success">\{{success_count}}/\{{total}} başarıyla bitti</li>
+            <li class="list-group-item text-success">\{{success_count}}/\{{total}} başarıyla bitti</li>
         \{{/if}}
     \{{/if}}
 </script>
@@ -65,7 +65,7 @@
 
 <!-- Error step -->
 <script id="template-error" type="text/x-handlebars-template">
-    <li class="list-group-item list-group-item-warning"><b>Hata : \{{message}}</b></li>
+    <li class="list-group-item list-group-item-warning" data-progress-class="danger"><b>Hata : \{{message}}</b></li>
 </script>
 <!-- Error step -->
 
@@ -92,11 +92,16 @@
 		var status_number = template.replace("step-","")
 		$(".progress-bar").css("width", status_number * 20 + "%");
         $("[data-zone='status']").append(status);
-        status.fadeIn(200, () => resolve(data));
+        status.slideDown(200, () => resolve(data));
+		//console.log($(status).attr("data-progress-class"));
 		if(status_number === "error") 
 			$(".progress-bar").addClass("progress-bar-danger");
 		else if(status_number === "5")
-			$(".progress-bar").removeClass("active");
+			var event_class = $(status).attr("data-progress-class");
+			if(event_class){
+				$(".progress-bar").removeClass("active").addClass("progress-bar-" + event_class);
+				$(".panel-jobs").addClass("panel-" + event_class);
+			}
       });
     }
 
