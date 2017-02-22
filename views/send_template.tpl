@@ -127,10 +127,10 @@
           if (checking) return;
           checking = true;
           $.get('/job/detail/' + job.type + '/' + job.id).then(j => {
-            if (j.stacktrace) {
+            if (j.stacktrace && j.stacktrace instanceof Array && j.stacktrace.length > 0) {
               job.success = false;
               clearInterval(waiter);
-              return reject(new Error(job.subject + ": " + (j.stacktrace instanceof Array ? j.stacktrace[0].split("\n")[0] : j.stacktrace.split("\n")[0])));
+              return reject(new Error(job.subject + ": " + (j.stacktrace instanceof Array && j.stacktrace.length > 0 ? j.stacktrace[0].split("\n")[0] : (j.stacktrace ? j.stacktrace.split("\n")[0] : 'Bilinmeyen bir hata'))));
             }
             if (!j.returnvalue) {
               job.success = true;
