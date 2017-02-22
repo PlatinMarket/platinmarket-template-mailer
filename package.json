@@ -29,10 +29,10 @@
     "promised-handlebars": "^2.0.1",
     "request": "^2.79.0",
     "speakingurl": "^11.0.0",
-    "xml2js": "^0.4.17"
+    "xml2js": "^0.4.17",
+    "bower": "^1.8.0"
   },
   "devDependencies": {
-    "bower": "^1.8.0",
     "nodemon": "^1.11.0"
   }
 }
