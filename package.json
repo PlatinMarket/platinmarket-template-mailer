@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall" : "bower install --allow-root",
+    "postinstall": "bower install --allow-root",
     "start": "node index.js",
     "dev-start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,12 +14,14 @@
   "dependencies": {
     "ajv": "^4.11.2",
     "body-parser": "^1.16.0",
+    "bower": "^1.8.0",
     "bull": "^2.1.2",
+    "connect-redis": "^3.2.0",
     "dropbox": "^2.5.1",
     "encoding": "^0.1.12",
     "express": "^4.14.1",
     "express-handlebars": "^3.0.0",
-    "express-session": "^1.15.0",
+    "express-session": "^1.15.1",
     "handlebars": "^4.0.6",
     "imap": "^0.8.19",
     "mkdirp": "^0.5.1",
@@ -29,8 +31,7 @@
     "promised-handlebars": "^2.0.1",
     "request": "^2.79.0",
     "speakingurl": "^11.0.0",
-    "xml2js": "^0.4.17",
-    "bower": "^1.8.0"
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

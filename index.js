@@ -15,14 +15,19 @@ var config = require('./config/config');
 var emailSender = require('./sender/email');
 var files = require('./lib/files');
 var multer  = require('multer');
+var RedisStore = require('connect-redis')(session);
 
 // Set template file storage
 templateStore.setStorageService(files);
+
+// Get redis config
+var redisConfig = Object.assign({ port: 6379 }, (config ? config.redis : {}) || {});
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
 app.use(session({
     secret: 'keyboard cat',
+    store: new RedisStore({ pass: redisConfig.password, host: redisConfig.host, port: redisConfig.port }),
     resave: false,
     saveUninitialized: true,
     cookie: { httpOnly: false }
@@ -557,3 +562,6 @@ sender.getReady().then(() => {
     console.log("Server started on port " + (process.env.PORT || 3000).toString());
   });
 }).catch(err => console.error('Redis connection error', err));
+
+// Export App
+module.exports = app;
