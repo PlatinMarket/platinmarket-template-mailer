@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall" : "bower install",
     "start": "node index.js",
     "dev-start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -29,5 +30,9 @@
     "request": "^2.79.0",
     "speakingurl": "^11.0.0",
     "xml2js": "^0.4.17"
+  },
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "nodemon": "^1.11.0"
   }
 }

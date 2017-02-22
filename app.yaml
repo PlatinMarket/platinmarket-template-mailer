@@ -1,0 +1,8 @@
+
+# [START app_yaml]
+runtime: nodejs
+env: flex
+
+skip_files:
+  - ^(.*/)?.*/node_modules/.*$
+# [END app_yaml]
