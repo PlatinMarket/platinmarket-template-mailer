@@ -144,7 +144,7 @@ app.get('/', (req, res) => {
   templateStore.list()
     .then(templates => {
       templates = templates.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1);
-      departmentTemplates = templateStore.departments(templates).map(d => {
+      departmentTemplates = templateStore.departments(templates).filter(d => req.user.isSuper || req.user.department == d).map(d => {
         return { name: d, templates: templates.filter(t => t.department && t.department.indexOf(d) > -1) };
       });
       groupTemplates = templateStore.groups(templates).map(d => {

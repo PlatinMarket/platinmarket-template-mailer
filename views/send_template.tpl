@@ -79,6 +79,10 @@
           if (checking) return;
           checking = true;
           $.get('/job/detail/' + job.type + '/' + job.id).then(j => {
+            if (j.stacktrace) {
+              clearInterval(waiter);
+              return reject(new Error(j.stacktrace instanceof Array ? j.stacktrace[0].split("\n")[0] : j.stacktrace.split("\n")[0]));
+            }
             if (!j.returnvalue) return checking = false;
             setStatus(step, job).then(() => resolve());
           }).catch(err => {
@@ -109,7 +113,7 @@
       .catch(err => {
         err = err || {};
         console.error(err);
-        setStatus('error', { message: (err.responseJSON ? err.responseJSON.message : err.responseText) || "Bilinmeyen hata!"});
+        setStatus('error', { message: (err.responseJSON ? err.responseJSON.message : err.responseText) || (err instanceof Error ? err.message : 'Bilinmeyen hata!')});
       });
 
 
