@@ -460,13 +460,20 @@
       mode: "htmlmixed"
     });
 
+		$(window).keypress(function(event) {
+			if (!(event.which == 115 && event.ctrlKey) && !(event.which == 19)) return true;
+			event.preventDefault();
+			submit();
+			return false;
+		});
+
     $(document).on("keyup", function (e) {
-	  var keycode = e.which || e.keyCode;
-	  if (keycode === 27) {
-        editor.setOption("lineNumbers", false);
-        editor.setOption("fullScreen", false);
-		$("body").removeClass("codemirror_full");
-      }
+			var keycode = e.which || e.keyCode;
+			if (keycode === 27) {
+				editor.setOption("lineNumbers", false);
+				editor.setOption("fullScreen", false);
+				$("body").removeClass("codemirror_full");
+			}
     });
 
 	$.get('/groups').then(groups => {
