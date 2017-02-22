@@ -29,5 +29,9 @@
     "clipboard": "^1.6.0",
     "filesize": "^3.5.4",
     "history.js": "^1.8.0"
+  },
+  "resolutions": {
+    "jquery": "^3.1.1",
+    "bootstrap": "^3.3.7"
   }
 }
