@@ -202,6 +202,9 @@ body.files-loading .files-loader{
 .file_explorer .thumbnail.folder{	
 	cursor: pointer;
 }
+.file_explorer .thumbnail.file{	
+	cursor: -webkit-zoom-in;
+}
 .file_explorer .thumbnail .folder-container{
 	height: 100px;
 	margin-bottom: 5px;

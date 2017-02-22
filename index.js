@@ -30,7 +30,7 @@ app.use(session({
 
 // Set body parser
 app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(bodyParser.urlencoded({ extended: true, limit: '4MB' })); // support encoded bodies
 
 // Public folder
 app.use(express.static('public'));
