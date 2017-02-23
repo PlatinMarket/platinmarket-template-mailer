@@ -1,21 +1,31 @@
+// Globals
+global.winston = require('winston');
+
+// Set Log Level
+winston.level = process.env.LOG_LEVEL || 'info';
+winston.log('info', 'Winston Log: ready', winston.level);
+
+// Set Global Storage driver
+global.storage = require('./lib/storage');
+
 // Requirements
-var express = require('express');
-var app = express();
-var fs = require('fs');
-var expressHandlebars  = require('express-handlebars');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var templateStore = require('./lib/templates');
-var settings = require('./lib/settings');
-var ajv = new require('ajv')({allErrors: true});
-var surl = require('speakingurl');
-var handlebars = require('handlebars');
-var sender = require('./lib/sender');
-var config = require('./config/config');
-var emailSender = require('./sender/email');
-var files = require('./lib/files');
-var multer  = require('multer');
-var RedisStore = require('connect-redis')(session);
+var express = require('express'),
+    app = express(),
+    fs = require('fs'),
+    expressHandlebars  = require('express-handlebars'),
+    bodyParser = require('body-parser'),
+    session = require('express-session'),
+    templateStore = require('./lib/templates'),
+    settings = require('./lib/settings'),
+    ajv = new require('ajv')({allErrors: true}),
+    surl = require('speakingurl'),
+    handlebars = require('handlebars'),
+    sender = require('./lib/sender'),
+    config = require('./config/config'),
+    emailSender = require('./sender/email'),
+    files = require('./lib/files'),
+    multer  = require('multer'),
+    RedisStore = require('connect-redis')(session);
 
 // Set template file storage
 templateStore.setStorageService(files);
@@ -555,11 +565,9 @@ app.post('/login', (req, res) => {
 
 // Build queue & Start server
 sender.getReady().then(() => {
-  console.log("-- ACTIVE QUEUES ------");
-  sender.getQueues().forEach(q => console.log("* " + q.name + " ready"));
-  console.log("-----------------------");
+  sender.getQueues().forEach(q => winston.log('info', "Queue `" + q.name + "` ready for command."));
   app.listen(process.env.PORT || 3000, function () {
-    console.log("Server started on port " + (process.env.PORT || 3000).toString());
+    winston.log('info', "Server started on port " + (process.env.PORT || 3000).toString());
   });
 }).catch(err => console.error('Redis connection error', err));
 

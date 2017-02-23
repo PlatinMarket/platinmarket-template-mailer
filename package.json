@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^0.7.0",
     "ajv": "^4.11.2",
     "body-parser": "^1.16.0",
     "bower": "^1.8.0",
@@ -22,6 +23,7 @@
     "express": "^4.14.1",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.1",
+    "google-cloud": "^0.47.0",
     "handlebars": "^4.0.6",
     "imap": "^0.8.19",
     "mkdirp": "^0.5.1",
@@ -31,6 +33,7 @@
     "promised-handlebars": "^2.0.1",
     "request": "^2.79.0",
     "speakingurl": "^11.0.0",
+    "winston": "^2.3.1",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
