@@ -368,6 +368,10 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
     });
 });
 
+app.use('/test', function (req, res) {
+  settings.users().then(users => res.json(users));
+});
+
 // 2. Parse params
 app.use(['/send/:id', '/send'], (req, res, next) => {
   var params = Object.assign(req.query, req.body);
