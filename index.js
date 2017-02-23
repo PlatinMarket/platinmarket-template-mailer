@@ -1,5 +1,9 @@
 // Globals
-global.winston = require('winston');
+global.winston = new (require('winston').Logger)({
+  transports: [
+    new (require('winston').transports.Console)({'timestamp':true})
+  ]
+});
 
 // Set Log Level
 winston.level = process.env.LOG_LEVEL || 'info';
