@@ -509,7 +509,16 @@ app.post('/settings/imap', (req, res, next) => {
           host: { type: "string", maxLength: 128, minLength: 1 },
           sent_folder: { type: "string", maxLength: 128, minLength: 1 },
           port: { type: ["number", "string"], maxLength: 10 },
-          secure: {type: "string" }
+          secure: {type: "string" },
+          auth: {
+            type: "object",
+            required: ['user', 'pass'],
+            properties: {
+              user: { type: "string", maxLength: 128, minLength: 1 },
+              pass: { type: "string", maxLength: 128, minLength: 1 }
+            },
+            additionalProperties: false
+          }
         }
       }
     },

@@ -96,8 +96,8 @@ EmailSender.prototype.createImapClient = function (user) {
     host: user.imap.host,
     port: user.imap.port || 993,
     tls: typeof user.imap.secure == "boolean" ? user.imap.secure : false,
-    user: user.smtp.auth.user,
-    password: user.smtp.auth.pass
+    user: user.imap.auth.user,
+    password: user.imap.auth.pass
   };
   return new Imap(config);
 };

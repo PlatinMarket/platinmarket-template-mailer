@@ -69,9 +69,15 @@
 						<div class="panel-body">
 							<form name="imap" class="form-horizontal">
 								<div class="form-group">
-									<label class="col-lg-3 col-md-4 col-sm-3 control-label">Kullanıcı adı</label>
+									<label for="auth_user" class="col-lg-3 col-md-4 col-sm-3 control-label">Kullanıcı adı</label>
 									<div class="col-lg-9 col-md-8 col-sm-9">
-										<p class="form-control-static text-muted">{{user.smtp.auth.user}}</p>
+										<input type="email" name="auth_user" id="auth_user" class="form-control" value="{{user.imap.auth.user}}" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="auth_pass" class="col-lg-3 col-md-4 col-sm-3 control-label">Şifre</label>
+									<div class="col-lg-9 col-md-8 col-sm-9">
+										<input type="password" name="auth_pass" id="auth_pass" class="form-control" value="{{user.imap.auth.pass}}" />
 									</div>
 								</div>
 								<div class="form-group">
@@ -144,6 +150,10 @@
       // Für IMAP
       if (endpoint == 'imap') {
         data[endpoint] = Object.assign(data[endpoint], {
+          auth: {
+            user: $("form[name='" + endpoint + "']").find("[name='auth_user']").val(),
+            pass: $("form[name='" + endpoint + "']").find("[name='auth_pass']").val()
+          },
           sent_folder: $("form[name='" + endpoint + "']").find("[name='imap_sent_folder']").val() || $("form[name='" + endpoint + "']").find("[name='imap_sent_folder']").attr("value")
         });
       }
