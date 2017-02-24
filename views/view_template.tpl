@@ -17,7 +17,7 @@
 						{{#each currentTemplate.parameter}}
 							<div class="form-group">
 								<label for="{{name}}">{{title}}</label>
-								<input type="text" name="{{name}}" id="{{name}}" value="{{default}}" class="form-control" {{#if require}}required{{/if}} />
+								<input type="text" name="{{name}}" id="{{name}}" class="form-control" {{#if require}}required{{/if}} placeholder="{{default}}" />
 							</div>
 						{{/each}}
 					</form>
