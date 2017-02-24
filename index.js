@@ -345,7 +345,10 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
   sender.getJobFromGUID(req.query.guid).then(jobs => {
     if (!jobs || jobs.length == 0) return next();
     res.json(jobs.map(j => Object.assign({id: parseInt(j.jobId, 10), guid: j.data.guid || undefined, subject: j.data.message.subject, to: j.data.to, type: j.data.message.template.type })));
-  }).catch(err => res.status(500).send(err));
+  }).catch(err => {
+    winston.log('error', 'SEND_PROCESS_0', err);
+    res.status(500).send(err);
+  });
 });
 
 // 1. Parse template
@@ -364,11 +367,14 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
           req.templates = templates;
           next();
         })
-        .catch(err => { throw err; })
+        .catch(err => {
+          winston.log('error', 'SEND_PROCESS_1_0', err);
+          res.sendStatus(500);
+        })
     })
     .catch(err => {
-      console.log(err);
-      res.status(500).send(err);
+      winston.log('error', 'SEND_PROCESS_1_1', err);
+      res.sendStatus(500);
     });
 });
 
@@ -384,10 +390,16 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
     .then(users => {
       var defaultUser = (config && config.user && config.user && config.user.default  ? config.user.default : {});
       req.user = params.from == defaultUser.email ? Object.assign(defaultUser, { isDefault: true }) : users.find(u => u.email == params.from);
-      if (!req.user) return res.sendStatus(400);
+      if (!req.user) {
+        winston.log('warn', 'SEND_PROCESS_2_0', new Error('User ' + params.from + ' not found'));
+        res.sendStatus(400);
+      };
       next();
     })
-    .catch(err => res.status(500).send(err));
+    .catch(err => {
+      winston.log('error', 'SEND_PROCESS_2_1', err);
+      res.sendStatus(500);
+    });
 });
 
 // 3. Render templates
@@ -397,7 +409,10 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
       req.templates = renderedTemplates.map(t => Object.assign(t, { template: req.templates.find(_t => _t.folder == t.template_id), template_id: undefined })).filter(t => t.template && t.template.type);
       next();
     })
-    .catch(err => res.status(500).send(err));
+    .catch(err => {
+      winston.log('error', 'SEND_PROCESS_3', err);
+      res.sendStatus(500);
+    });
 });
 
 // 4. Download attachments
@@ -424,13 +439,19 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
       delete(a._path);
     }));
     next();
-  }).catch(err => res.status(500).send(err));
+  }).catch(err => {
+    winston.log('error', 'SEND_PROCESS_4', err);
+    res.sendStatus(500);
+  });
 });
 
 // 5. Send mail
 app.use(['/send/:id', '/send'], (req, res) => {
   Promise.all(req.templates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to, (req.body.guid || null)))).then((jobs) => {
     res.json(jobs.map(j => Object.assign({id: parseInt(j.jobId, 10), guid: j.data.guid || undefined, subject: j.data.message.subject, to: j.data.to, type: j.data.message.template.type })));
+  }).catch(err => {
+    winston.log('error', 'SEND_PROCESS_5', err);
+    res.sendStatus(500);
   });
 });
 
@@ -480,7 +501,7 @@ app.post('/settings/smtp', (req, res, next) => {
   data.imap.port = parseInt(data.imap.port, 10);
   data.imap.secure = data.imap.secure === 'true';
   emailSender.validateSMTP(data).then(valid => {
-    if (!valid) return res.status(422).json({message: "SMTP doğrulaması başarısız. " + (emailSender.lastError ? emailSender.lastError.response : ""), error: emailSender.lastError });
+    if (!valid) return res.status(422).json({message: "SMTP doğrulaması başarısız. " + (emailSender.lastError ? (emailSender.lastError.message || emailSender.lastError.response || "") : ""), error: emailSender.lastError });
     req.body = data;
     next();
   });

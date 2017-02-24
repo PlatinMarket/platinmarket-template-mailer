@@ -15,7 +15,7 @@ EmailSender.prototype.validateSMTP = function (user) {
       resolve(true);
       transport.close();
     }).catch(err => {
-      this.lastError = err;
+      this.lastError = err && err.message ? err : new Error("");
       resolve(false);
       transport.close();
     });
@@ -85,7 +85,10 @@ EmailSender.prototype.createTransport = function (user) {
     host: user.smtp.host,
     port: user.smtp.port || 465,
     secure: typeof user.smtp.secure == "boolean" ? user.smtp.secure : false,
-    auth: user.smtp.auth
+    auth: user.smtp.auth,
+    connectionTimeout: 5000,
+    socketTimeout: 5000,
+    greetingTimeout: 5000
   };
   return nodemailer.createTransport(config);
 };
