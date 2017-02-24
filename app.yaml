@@ -8,4 +8,6 @@ skip_files:
   - public/assets/*
   - cache/*
   - uploads/*
+  - template/*
+  - user/*
 # [END app_yaml]
