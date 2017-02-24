@@ -372,10 +372,6 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
     });
 });
 
-app.use('/test', function (req, res) {
-  templateStore.list().then(templates => res.json(templates));
-});
-
 // 2. Parse params
 app.use(['/send/:id', '/send'], (req, res, next) => {
   var params = Object.assign(req.query, req.body);
