@@ -158,7 +158,6 @@
 						<label for="p_default">Varsayılan değer</label>
 						<input type="text" name="p_default" id="p_default" class="form-control" data-default-value="" />
 					</div>
-					<hr/>
 					<div class="text-right">
 						<button type="button" name="cancel_parameter" class="btn btn-link" style="display: none;">İptal</button>
 						<button type="button" name="add_parameter" class="btn btn-default">Ekle</button>
@@ -395,6 +394,7 @@
       $(".new_parameter").show();
       $(".edit_parameter").hide();
       $("button[name='cancel_parameter']").hide();
+	  $("button[name='add_parameter']").text("Ekle");
     }
 
     // Fill form by parameter
@@ -409,6 +409,7 @@
       $(".new_parameter").hide();
       $(".edit_parameter").show();
       $("button[name='cancel_parameter']").show();
+      $("button[name='add_parameter']").text("Kaydet");
     }
 
     refreshListeners();
