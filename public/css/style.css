@@ -205,6 +205,9 @@ body.files-loading .files-loader{
 .file_explorer .thumbnail.file{	
 	cursor: -webkit-zoom-in;
 }
+.file_explorer .thumbnail.no-thumb{
+	cursor: default;
+}
 .file_explorer .thumbnail .folder-container{
 	height: 100px;
 	margin-bottom: 5px;
@@ -224,10 +227,10 @@ body.files-loading .files-loader{
 	background-position: center center;
 	transition: all 0.15s ease;
 }
-.file_explorer .thumbnail .img-container.no-thumb{
+.file_explorer .thumbnail.no-thumb .img-container{
 	background: #f0f0f0;
 }
-.file_explorer .thumbnail .img-container.no-thumb:after{
+.file_explorer .thumbnail.no-thumb .img-container:after{
 	content: ":(";
 	font-size:36px;
 	color:#ddd;

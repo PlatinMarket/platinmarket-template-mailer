@@ -148,7 +148,7 @@
 			if (thumbnail.size) $(this).parent().find(".file-attr").append('<div class="file-size">' + filesize(thumbnail.size) + '</div>');
 			//console.log(thumbnail);
 		  }).catch(err => {
-			$(this).addClass("no-thumb");
+			$(this).parent(".file").addClass("no-thumb");
 		  });
 		});
 
