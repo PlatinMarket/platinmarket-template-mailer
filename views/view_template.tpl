@@ -13,7 +13,7 @@
 			<p class="lead">Parametreler</p>
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<form action="/template/{{currentTemplate.id}}/render" method="post" target="preview" name="render_form">
+					<form action="/template/{{currentTemplate.id}}/render" method="post" target="preview" name="render_form" autocomplete="off">
 						{{#each currentTemplate.parameter}}
 							<div class="form-group">
 								<label for="{{name}}">{{title}} {{#if require}}*{{/if}}</label>
@@ -28,7 +28,7 @@
 			<p class="lead">E-posta</p>
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<form class="form-horizontal" method="post" name="send-mail">
+					<form class="form-horizontal" method="post" name="send-mail" autocomplete="off">
 						<div class="form-group">
 							<label for="to" class="col-lg-2 control-label">E-posta adresi</label>
 							<div class="col-lg-10">

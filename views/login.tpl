@@ -10,7 +10,7 @@
 						<span class="label label-success">S</span>
 					</p>
 					<p class="alert alert-danger" style="display: none;"></p>
-					<form>
+					<form autocomplete="off">
 						<div class="form-group">
 							<input type="email" name="email" class="form-control" placeholder="E-posta" required />
 						</div>			
