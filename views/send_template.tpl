@@ -138,16 +138,17 @@
               clearInterval(waiter);
               return reject(new Error(job.subject + ": " + (j.stacktrace instanceof Array && j.stacktrace.length > 0 ? j.stacktrace[0].split("\n")[0] : (j.stacktrace ? j.stacktrace.split("\n")[0] : 'Bilinmeyen bir hata'))));
             }
-            if (!j.returnvalue) {
-              job.success = true;
-              return checking = false;
+            if (j.returnvalue) {
+              clearInterval(waiter);
+              setStatus(step, job).then(() => resolve());
+              return job.success = true;
             }
-            setStatus(step, job).then(() => resolve());
+            return checking = false;
           }).catch(err => {
             clearInterval(waiter);
             reject(err);
           });
-        }, 1500);
+        }, 1000);
       });
     }
 
@@ -164,16 +165,13 @@
     };
 
     setStatus('step-1')
-      .then(() => wait(200))
 
       // AddQueue
       .then(() => setStatus('step-2'))
-      .then(() => wait(200))
       .then(() => sendMail())
 
       // InQueue
       .then(() => Promise.all(jobs.map(j => setStatus('step-3', j))))
-      .then(() => wait(200))
       .then(() => Promise.all(jobs.map(j => waitForComplate(j, 'step-4'))))
 
       // Error

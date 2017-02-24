@@ -12,6 +12,9 @@ winston.log('info', 'Winston Log: ready', winston.level);
 // Set Global Storage driver
 global.storage = require('./lib/storage');
 
+// Global files
+global.files = require('./lib/files');
+
 // Requirements
 var express = require('express'),
     app = express(),
@@ -27,12 +30,8 @@ var express = require('express'),
     sender = require('./lib/sender'),
     config = require('./config/config'),
     emailSender = require('./sender/email'),
-    files = require('./lib/files'),
     multer  = require('multer'),
     RedisStore = require('connect-redis')(session);
-
-// Set template file storage
-templateStore.setStorageService(files);
 
 // Get redis config
 var redisConfig = Object.assign({ port: 6379 }, (config ? config.redis : {}) || {});
@@ -44,7 +43,10 @@ app.use(session({
     store: new RedisStore({ pass: redisConfig.password, host: redisConfig.host, port: redisConfig.port }),
     resave: false,
     saveUninitialized: true,
-    cookie: { httpOnly: false }
+    maxAge: 86400000,
+    cookie: {
+      httpOnly: false
+    }
 }));
 
 // Set body parser
@@ -60,7 +62,7 @@ app.set('views', './views');
 app.set('view engine', 'tpl');
 
 // Login require pages
-app.use(['/files', '/explorer', '/job', '/departments', '/groups', '/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
+app.use(['/send', '/files', '/explorer', '/job', '/departments', '/groups', '/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
     var sess = req.session;
     if (sess && sess.user) {
       settings.get(sess.user)
@@ -389,7 +391,7 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
   settings.users()
     .then(users => {
       var defaultUser = (config && config.user && config.user && config.user.default  ? config.user.default : {});
-      req.user = params.from == defaultUser.email ? Object.assign(defaultUser, { isDefault: true }) : users.find(u => u.email == params.from);
+      req.user = params.from == defaultUser.email ? Object.assign(defaultUser, { isDefault: true }) : (users.find(u => u.email == params.from) || req.user);
       if (!req.user) {
         winston.log('warn', 'SEND_PROCESS_2_0', new Error('User ' + params.from + ' not found'));
         res.sendStatus(400);
@@ -415,6 +417,7 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
     });
 });
 
+/*
 // 4. Download attachments
 app.use(['/send/:id', '/send'], (req, res, next) => {
   var attachments = [];
@@ -444,13 +447,14 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
     res.sendStatus(500);
   });
 });
+*/
 
 // 5. Send mail
 app.use(['/send/:id', '/send'], (req, res) => {
   Promise.all(req.templates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to, (req.body.guid || null)))).then((jobs) => {
     res.json(jobs.map(j => Object.assign({id: parseInt(j.jobId, 10), guid: j.data.guid || undefined, subject: j.data.message.subject, to: j.data.to, type: j.data.message.template.type })));
   }).catch(err => {
-    winston.log('error', 'SEND_PROCESS_5', err);
+    winston.log('error', 'SEND_PROCESS_4', err);
     res.sendStatus(500);
   });
 });

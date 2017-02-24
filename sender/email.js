@@ -81,11 +81,12 @@ EmailSender.prototype.getBoxes = function (user) {
 
 // Create transport opject
 EmailSender.prototype.createTransport = function (user) {
+  var _user = user && user.smtp && user.smtp.host ? user : require('../config/config').user.default;
   var config = {
-    host: user.smtp.host,
-    port: user.smtp.port || 465,
-    secure: typeof user.smtp.secure == "boolean" ? user.smtp.secure : false,
-    auth: user.smtp.auth,
+    host: _user.smtp.host,
+    port: _user.smtp.port || 2525,
+    secure: typeof _user.smtp.secure == "boolean" ? _user.smtp.secure : false,
+    auth: _user.smtp.auth,
     connectionTimeout: 5000,
     socketTimeout: 5000,
     greetingTimeout: 5000
@@ -105,16 +106,20 @@ EmailSender.prototype.createImapClient = function (user) {
   return new Imap(config);
 };
 
+EmailSender.prototype.saveAttachments = function (message) {
+  return Promise.all(message.attachments.map(a => files.downloadFile({ path: a.path }).then(p => Promise.resolve(Object.assign(a, { path: p })))));
+};
+
 // Create message object
 EmailSender.prototype.createMessage = function (message, user, to) {
-  return {
+  return this.saveAttachments(message).then(attachments => Promise.resolve({
     from: user.email,
     to: to,
     subject: message.subject,
     html: message.html,
     text: message.text || null,
-    attachments: (message.attachments instanceof Array && message.attachments.length > 0) ? message.attachments : undefined
-  };
+    attachments: (attachments instanceof Array && attachments.length > 0) ? attachments : undefined
+  }));
 };
 
 // Handle mail send
@@ -140,10 +145,10 @@ EmailSender.prototype.process = function(message, from, to) {
     });
 
     // Send message
-    transport.sendMail(this.createMessage(message, from, to))
-      .then(result => {
+    this.createMessage(message, from, to)
+      .then(m => transport.sendMail(m))
+      .then((result) => {
         transport.close();
-        // Save message to sent_folder
         return this.saveSentFolder(rawMessage, from).then(() => resolve(result));
       })
       .catch(err => {

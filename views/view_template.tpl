@@ -16,8 +16,8 @@
 					<form action="/template/{{currentTemplate.id}}/render" method="post" target="preview" name="render_form">
 						{{#each currentTemplate.parameter}}
 							<div class="form-group">
-								<label for="{{name}}">{{title}}</label>
-								<input type="text" name="{{name}}" id="{{name}}" class="form-control" {{#if require}}required{{/if}} placeholder="{{default}}" />
+								<label for="{{name}}">{{title}} {{#if require}}*{{/if}}</label>
+								<input type="text" name="{{name}}" id="{{name}}" placeholder="{{default}}" class="form-control" {{#if require}}required{{/if}} />
 							</div>
 						{{/each}}
 					</form>
@@ -198,13 +198,17 @@
 
     $("form[name='send-mail']").on("submit", (e) => {
       try {
+        if ($("form[name='render_form']")[0].checkValidity && !$("form[name='render_form']")[0].checkValidity()) {
+          toastr.error('Zorunlu parametreler boş bırakılamaz');
+          return e.preventDefault();
+        }
         $("input[name='template']").val(templateName);
         var params = {};
         $("form[name='render_form']").serializeArray().forEach(p => params[p.name] = p.value);
         $("input[name='params']").val(JSON.stringify(params));
       } catch (err) {
         e.preventDefault();
-	    console.error(err);
+	    	console.error(err);
       }
 	}).attr('action', '/template/send/' + guid());
 </script>
