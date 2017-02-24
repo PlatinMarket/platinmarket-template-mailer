@@ -45,7 +45,7 @@
 						<div class="form-group">
 							<label for="subject" class="col-lg-2 control-label">Konu</label>
 							<div class="col-lg-10">
-								<input type="text" name="subject" id="subject" class="form-control" value="" readonly />
+								<p id="subject" class="form-control-static" style="font-weight:bold;"></p>
 							</div>
 						</div>
 					</form>
@@ -131,7 +131,7 @@
 	  e.preventDefault();
 	  try {
         $("iframe[name='preview']").contents().find("html").html("");
-        $("input[name='subject']").val("");
+        $("#subject").html("");
         $("textarea[name='preview_text']").val("");
         $("form[name='render_form']").find("button").attr("disabled", "disabled");
         $("body").addClass("preview_loading");
@@ -140,7 +140,7 @@
         $(e.target).serializeArray().forEach(p => params[p.name] = p.value);
         $.post('/template/' + template.folder + '/render', params).then(result => {
           $("iframe[name='preview']").contents().find("html").html(result.html);
-          $("input[name='subject']").val(result.subject);
+          $("#subject").html(result.subject);
           $("textarea[name='preview_text']").val(result.text || "Text şablonu kaydedilmemiş");
 
           setTimeout(() => {
@@ -149,7 +149,7 @@
           }, 200);
         }).catch(err => {
           $("iframe[name='preview']").contents().find("html").html("<h3>TEMPLATE RENDER ERROR</h3><p>" + err.responseJSON.message + "</p>").find('body').css('background-color', 'white');
-          $("input[name='subject']").val("Template Render Error");
+          $("#subject").html("Template Render Error");
           $("textarea[name='preview_text']").val("Template Render Error");
           $("form[name='render_form']").find("button").removeAttr("disabled");
           $("body").removeClass("preview_loading");
