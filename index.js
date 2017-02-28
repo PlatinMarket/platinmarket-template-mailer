@@ -30,11 +30,30 @@ var express = require('express'),
     sender = require('./lib/sender'),
     config = require('./config/config'),
     emailSender = require('./sender/email'),
+    redis = require('redis'),
     multer  = require('multer'),
     RedisStore = require('connect-redis')(session);
 
 // Get redis config
 var redisConfig = Object.assign({ port: 6379 }, (config ? config.redis : {}) || {});
+var redisClient = redis.createClient(Object.assign({ host: redisConfig.host, port: redisConfig.port }, (redisConfig.password ? {password: redisConfig.password} : {})));
+
+// Set publish state
+global.isPublished = function () {
+  return new Promise((resolve, reject) => {
+    redisClient.get('published', (err, val) => {
+      if (err) return reject(err);
+      resolve(val ? val == 'true' : true);
+    });
+  });
+};
+global.setPublish = function (state) {
+  return new Promise((resolve, reject) => {
+    redisClient.set('published', state ? "true" : "false");
+  });
+};
+global.setPublish(false);
+isPublished().then(result => winston.log('info', "Publish: " + (result ? "true" : "false")));
 
 // Session middleware
 app.set('trust proxy', 1); // trust first proxy
@@ -78,7 +97,7 @@ app.use(['/send', '/files', '/explorer', '/job', '/departments', '/groups', '/te
 });
 
 // Super User Zone
-app.use(['/files', '/explorer', '/template/:id/edit', '/template/create', '/template/:id/delete'], function (req, res, next) {
+app.use(['/files', '/explorer', '/template/:id/edit', '/template/create', '/template/:id/delete', '/settings/publish'], function (req, res, next) {
   if (!req.user || !req.user.isSuper) return res.status(403).send("Yetkiniz yok");
   next();
 });
@@ -417,38 +436,6 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
     });
 });
 
-/*
-// 4. Download attachments
-app.use(['/send/:id', '/send'], (req, res, next) => {
-  var attachments = [];
-  req.templates
-    .filter(t => (t.attachments && (t.attachments instanceof Array) && t.attachments.length > 0))
-    .forEach(t => t.attachments.filter(a => !attachments.find(_a => _a.path != a.path)).forEach(a => attachments.push(a)));
-  Promise.all(attachments.map(a => {
-    return new Promise((resolve, reject) => {
-      files.downloadFile({ path: a.path }).then(localPath => {
-        a._path = localPath;
-        resolve(a);
-      }).catch(err => {
-        var templateNames = req.templates.map(t => t.template.name);
-        if (err && err.status == 409) return res.status(400).json({success: 'error', message: 'Attachment `' + a.path + '` not found! Templates `' + templateNames.join(',') + '`'});
-        reject(err);
-      });
-    });
-  })).then(attachments => {
-    attachments.forEach(a => req.templates.filter(t => t.attachments.find(_a => _a.path == a.path)).forEach(t => t.attachments.filter(_a => _a.path == a.path).forEach(_a => _a.path = a.path)));
-    req.templates.forEach(t => t.attachments.forEach(a => {
-      a.path = a._path.slice(0);
-      delete(a._path);
-    }));
-    next();
-  }).catch(err => {
-    winston.log('error', 'SEND_PROCESS_4', err);
-    res.sendStatus(500);
-  });
-});
-*/
-
 // 5. Send mail
 app.use(['/send/:id', '/send'], (req, res) => {
   Promise.all(req.templates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to, (req.body.guid || null)))).then((jobs) => {
@@ -471,6 +458,19 @@ app.get('/template/create', (req, res) => {
 // Settings
 app.get('/settings', (req, res) => {
     res.render('settings', { user: req.user });
+});
+
+// Publish State
+app.get('/settings/publish', (req, res) => {
+  isPublished().then(r => res.json({ published: r }));
+});
+app.get('/settings/publish/1', (req, res) => {
+  setPublish(true);
+  res.sendStatus(200);
+});
+app.get('/settings/publish/0', (req, res) => {
+  setPublish(false);
+  res.sendStatus(200);
 });
 
 // SMTP Validation
