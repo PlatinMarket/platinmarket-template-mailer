@@ -17,7 +17,7 @@
 						{{#each currentTemplate.parameter}}
 							<div class="form-group">
 								<label for="{{name}}">{{title}} {{#if require}}*{{/if}}</label>
-								<input type="text" name="{{name}}" id="{{name}}" placeholder="{{default}}" class="form-control" {{#if require}}required{{/if}} />
+								<input type="text" data-type="{{type}}" name="{{name}}" id="{{name}}" placeholder="{{default}}" class="form-control" {{#if require}}required{{/if}} {{#if default}}checked{{/if}} />
 							</div>
 						{{/each}}
 					</form>
@@ -211,4 +211,11 @@
 	    	console.error(err);
       }
 	}).attr('action', '/template/send/' + guid());
+	
+	$("[data-type = 'boolean']").toArray().forEach(e => {
+		var this_id = $(e).attr("id");
+		$(e).attr("type","checkbox").removeClass("form-control").wrap('<div class="'+ this_id +' form-switcher form-switcher-lg"></div>');
+		$("." + this_id).append('<label class="switcher" for="'+ this_id +'"></label>');
+	});
+	$("form[name='render_form']").find("input[type='checkbox']").off("change").on("change", (e) => $("form[name='render_form']").trigger("submit"));
 </script>
