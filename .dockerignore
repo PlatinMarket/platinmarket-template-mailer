@@ -2,7 +2,7 @@ node_modules/*
 .idea/*
 template/*
 public/assets/*
-config/config.js.default
+config/*
 user/*
 uploads/*
 cache/*
