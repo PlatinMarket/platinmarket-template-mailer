@@ -81,7 +81,7 @@ EmailSender.prototype.getBoxes = function (user) {
 
 // Create transport opject
 EmailSender.prototype.createTransport = function (user) {
-  var _user = user && user.smtp && user.smtp.host ? user : require('../config/config').user.default;
+  var _user = user && user.smtp && user.smtp.host ? user : options.user.default;
   var config = {
     host: _user.smtp.host,
     port: _user.smtp.port || 2525,
