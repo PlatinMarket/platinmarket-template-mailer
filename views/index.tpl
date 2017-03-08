@@ -98,8 +98,8 @@
 <script id="template-job-item" type="text/x-handlebars-template">
 	\{{#each jobs}}
 		<tr data-job-id="\{{id}}">
-			<td>
-				<a href="javascript:showJobDetails(\{{id}});"><b>\{{subject}}</b></a>
+			<td class="ellipsis" style="max-width:300px;">
+				<a href="javascript:showJobDetails(\{{id}});" title="\{{subject}}"><b>\{{subject}}</b></a>
 			</td>
 			<td>\{{from}}</td>
 			<td>\{{to}}</td>
