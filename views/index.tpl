@@ -73,17 +73,7 @@
 					<div class="clearfix"></div>
 				</div>
 				<div class="panel panel-default table-responsive">
-					<table class="table table-striped table-hover">
-						<thead>
-							<tr>
-								<th>Konu</th>
-								<th>Kimden</th>
-								<th>Kime</th>
-								<th>Tarih</th>
-							</tr>
-						</thead>
-						<tbody data-zone="jobs"></tbody>
-					</table>
+					<div class="list-group sents" data-zone="jobs"></div>
 				</div>
 			</div>
 		</div>
@@ -97,18 +87,17 @@
 <script type="application/javascript" src="/assets/lodash/dist/lodash.min.js"></script>
 <script id="template-job-item" type="text/x-handlebars-template">
 	\{{#each jobs}}
-		<tr data-job-id="\{{id}}">
-			<td class="ellipsis" style="max-width:300px;">
-				<a href="javascript:showJobDetails(\{{id}});" title="\{{subject}}"><b>\{{subject}}</b></a>
-			</td>
-			<td>\{{from}}</td>
-			<td>\{{to}}</td>
-			<td class="text-muted">\{{fromNow timestamp}}</td>
-		</tr>
+		<a class="list-group-item" href="javascript:showJobDetails(\{{id}});" data-job-id="\{{id}}">
+			<h4 class="list-group-item-heading">
+				<b>\{{subject}}</b>
+				<small class="text-muted pull-right">\{{fromNow timestamp}}</small>
+			</h4>
+			<p class="list-group-item-text">\{{from}} &rarr; \{{to}}</p>
+		</a>
 		\{{else}}
-		<tr>
-			<td colspan="4" class="text-muted">Gönderi bulunamadı</td>
-		</tr>
+		<div class="list-group-item text-muted">
+			Gönderi bulunamadı
+		</div>
 	\{{/each}}
 </script>
 <script>
