@@ -253,9 +253,8 @@ app.get('/template/create', (req, res) => {
 
 // Template post
 app.post('/template/create', function (req, res) {
-  var id = surl(req.body.name.trim().slice(0, 15), {separator: '_', lang: 'tr'});
-  templateStore.create(id, req.body)
-    .then(success => res.status(200).json({ id }))
+  templateStore.create(req.body)
+    .then(template => res.status(200).json({ id: template.id }))
     .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 

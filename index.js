@@ -17,8 +17,7 @@ configManager.ready().then((data) => {
   global.options = data;
   // Set Global Storage driver
   global.storage = require('./lib/storage');
-
   // Global files
   global.files = require('./lib/files');
   require('./app');
-}).catch(err => console.error(err));
+}).catch(err => winston.log('error', err));
