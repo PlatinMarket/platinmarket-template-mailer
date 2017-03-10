@@ -200,7 +200,7 @@
 		<h4 class="modal-title">Gönderi bilgileri</h4>
 	</div>
 	<div class="modal-body">
-		<div class="panel panel-default">
+		<div class="panel panel-default" style="margin-bottom:0; overflow-x: auto;">
 			<table class="table table-bordered table-striped">
 				<tbody>
 					<tr>
