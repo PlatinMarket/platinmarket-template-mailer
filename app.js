@@ -64,6 +64,10 @@ app.engine('tpl', expressHandlebars({defaultLayout: 'default'}));
 app.set('views', './views');
 app.set('view engine', 'tpl');
 
+app.get('/test', function (req, res) {
+  settings.users().then(users => res.json(users));
+});
+
 // Login require pages
 app.use(['/send', '/files', '/explorer', '/job', '/departments', '/groups', '/template', '/settings', '/logout', /^\/$/], function (req, res, next) {
   var sess = req.session;
