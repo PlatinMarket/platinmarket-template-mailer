@@ -200,7 +200,7 @@ app.get('/departments', function (req, res) {
 // Get template list
 app.get('/template', (req, res) => {
   templateStore.list()
-    .then(list => res.json(list.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1).map(l => Object.assign({folder: l.folder, name: l.name}))))
+    .then(list => res.json(list.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1).map(l => Object.assign({id: l.id, name: l.name}))))
     .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
 });
 
@@ -269,7 +269,7 @@ app.get('/template/group/view', (req, res) => {
           templates = templates.filter(t => (req.user.isSuper || t.department.indexOf(req.user.department) > -1) && t.group && t.group.indexOf(group) > -1);
           var parameters = [];
           templates.forEach(t => t.parameter.filter(p => parameters.find(_p => _p.name == p.name) == null).forEach(p => parameters.push(p)));
-          res.render('view_template', { currentTemplate: { name: group, description: templates.map(t => t.name), templateFolders: templates.map(t => t.folder), subTemplates: templates, parameter: parameters, isGroup: true }, user: req.user });
+          res.render('view_template', { currentTemplate: { name: group, description: templates.map(t => t.name), templateIds: templates.map(t => t.id), subTemplates: templates, parameter: parameters, isGroup: true }, user: req.user });
         })
         .catch(err => {
           res.status(500).send("Hata oluştu");
@@ -367,10 +367,10 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
   req.params.id = req.params.id.trim();
   templateStore.list()
     .then(templates => {
-      var template = templates.find(t => t.folder && t.folder.toLowerCase() === req.params.id.toLowerCase()) || templates.filter(t => t.group && t.group.map(g => g.toLowerCase()).indexOf(req.params.id.toLowerCase()) > -1);
+      var template = templates.find(t => t.id && t.id.toString() === req.params.id.toString()) || templates.filter(t => t.group && t.group.map(g => g.toLowerCase()).indexOf(req.params.id.toLowerCase()) > -1);
       templates = template instanceof Array ? template : [template];
       if (templates.length == 0) return res.sendStatus(404);
-      Promise.all(templates.map(t => templateStore.get(t.folder)))
+      Promise.all(templates.map(t => templateStore.get(t.id)))
         .then(templates => {
           req.templates = templates;
           next();
@@ -414,7 +414,7 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
 app.use(['/send/:id', '/send'], (req, res, next) => {
   Promise.all(req.templates.map(t => templateStore.render(t, req.body, { user: {name: req.user.name, email: req.user.email} })))
     .then((renderedTemplates) => {
-      req.templates = renderedTemplates.map(t => Object.assign(t, { template: req.templates.find(_t => _t.folder == t.template_id), template_id: undefined })).filter(t => t.template && t.template.type);
+      req.templates = renderedTemplates.map(t => Object.assign(t, { template: req.templates.find(_t => _t.id.toString() == t.id.toString()) })).filter(t => t.template && t.template.type);
       next();
     })
     .catch(err => {
@@ -425,6 +425,7 @@ app.use(['/send/:id', '/send'], (req, res, next) => {
 
 // 5. Send mail
 app.use(['/send/:id', '/send'], (req, res) => {
+  console.log(req.user);
   Promise.all(req.templates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to, (req.body.guid || null)))).then((jobs) => {
     res.json(jobs.map(j => Object.assign({id: parseInt(j.jobId, 10), guid: j.data.guid || undefined, subject: j.data.message.subject, to: j.data.to, type: j.data.message.template.type })));
   }).catch(err => {

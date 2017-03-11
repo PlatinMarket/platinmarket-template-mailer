@@ -11,7 +11,7 @@
 				<div class="panel panel-default">
 					<div class="list-group">
 						{{#each templates}}
-						<a href="/template/{{folder}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{description}}">
+						<a href="/template/{{id}}/view" class="list-group-item" data-toggle="tooltip" data-placement="right" title="{{description}}">
 							<h4 class="list-group-item-heading">{{name}}</h4>
 							<p class="list-group-item-text ellipsis text-muted">{{description}}</p>
 						</a>

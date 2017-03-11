@@ -96,7 +96,7 @@
 <script id="template-render-selector" type="text/x-handlebars-template">
 	<select id="template-selector" name="template-selector" class="form-control">
 		\{{#each templates}}
-		<option value="\{{folder}}">\{{name}}</option>
+		<option value="\{{id}}">\{{name}}</option>
 		\{{/each}}
 	</select>
 </script>
@@ -104,26 +104,26 @@
 <input type="hidden" name="template_name" value="{{currentTemplate.name}}" />
 {{#if currentTemplate.isGroup}}
 	<input type="hidden" name="group_templates" value="{{currentTemplate.description}}" />
-	<input type="hidden" name="group_template_folders" value="{{currentTemplate.templateFolders}}" />
+	<input type="hidden" name="group_template_ids" value="{{currentTemplate.templateIds}}" />
 {{else}}
 	<input type="hidden" name="group_templates" value="{{currentTemplate.name}}" />
-	<input type="hidden" name="group_template_folders" value="{{currentTemplate.folder}}" />
+	<input type="hidden" name="group_template_ids" value="{{currentTemplate.id}}" />
 {{/if}}
 <script>
 	var templates = $("input[name='group_templates']").val().trim() ? $("input[name='group_templates']").val().trim().split(",") : [];
-	var template_folders = $("input[name='group_template_folders']").val().trim() ? $("input[name='group_template_folders']").val().trim().split(",") : [];
-	templates = templates.map(t => { return { name: t, folder: template_folders[templates.indexOf(t)] }; });
-    var template = templates[0];
+	var template_ids = $("input[name='group_template_ids']").val().trim() ? $("input[name='group_template_ids']").val().trim().split(",") : [];
+	templates = templates.map(t => { return { name: t, id: template_ids[templates.indexOf(t)] }; });
+	var template = templates[0];
 	var isGroup = templates.length > 1;
-	var templateName = isGroup ? $("input[name='template_name']").val().trim() : $("input[name='group_template_folders']").val().trim();
+	var templateName = isGroup ? $("input[name='template_name']").val().trim() : $("input[name='group_template_ids']").val().trim();
 
     if (isGroup) {
       $("[data-zone='template-selector']").html(Handlebars.compile($("#template-render-selector").html())({templates: templates}));
       $("select[name='template-selector']").on('change', (e) => {
-        template = templates.find(t => t.folder == e.target.value);
-        $("form[name='render_form']").trigger("submit");
-	  });
-      $("select[name='template-selector']").val(template.folder);
+				template = templates.find(t => t.id == e.target.value);
+				$("form[name='render_form']").trigger("submit");
+			});
+      $("select[name='template-selector']").val(template.id);
     }
 
 	// Before Load
@@ -138,7 +138,7 @@
 
         var params = {};
         $(e.target).serializeArray().forEach(p => params[p.name] = p.value);
-        $.post('/template/' + template.folder + '/render', params).then(result => {
+        $.post('/template/' + template.id + '/render', params).then(result => {
           $("iframe[name='preview']").contents().find("html").html(result.html);
           $("#subject").html(result.subject);
           $("textarea[name='preview_text']").val(result.text || "Text şablonu kaydedilmemiş");
