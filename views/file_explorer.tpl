@@ -142,11 +142,8 @@
 		$('[data-src]').each(function () {
 		  var file = $(this).attr("data-src");
 		  $(this).removeAttr("data-src");
-		  getThumbnail(file).then(thumbnail => {
-			if (thumbnail.fileBinary) $(this).css('background-image', "url(data:image/jpg;base64," + btoa(thumbnail.fileBinary) + ")");
-			if (thumbnail.media_info) $(this).parent().find(".file-attr").append('<div class="file-dimensions">' + thumbnail.media_info.metadata.dimensions.width + '&times;' + thumbnail.media_info.metadata.dimensions.height + '</div>');
-			if (thumbnail.size) $(this).parent().find(".file-attr").append('<div class="file-size">' + filesize(thumbnail.size) + '</div>');
-			//console.log(thumbnail);
+		  getLink(file).then(url => {
+			$(this).css('background-image', "url(" + url + ")");
 		  }).catch(err => {
 			$(this).parent(".file").addClass("no-thumb");
 		  });
@@ -224,11 +221,12 @@
 	  if (loading()) return;
 	  loading(true);
 	  path = path || '';
-	  $.post('/files', cursor ? { cursor } : { path }).then(data => {
-		data.entries = data.entries.filter(e => ['file', 'folder'].indexOf(e['.tag']) > -1).map(e => { return { id: e.id, name: e.name, type: e['.tag'], path: e.path_lower, isFile: e['.tag'] == 'file', isFolder: e['.tag'] == 'folder' }; });
-		if (!cursor) $(".file_explorer").data('path', path);
+	  $.post('/files', { path }).then(files => {
+		data = files.filter(e => e.kind == 'storage#object').map(e => { return { id: e.id, name: e.name, type: e['contentType'], path: e.path, isFile: e['contentType'] != 'application/x-directory', isFolder: e['contentType'] == 'application/x-directory', mime: e['contentType'] }; });
+		data = { entries: data };
+		$(".file_explorer").data('path', path);
 		$(".file_explorer").find('button.load_more').remove();
-		if (!cursor) $(".file_explorer").html("");
+		$(".file_explorer").html("");
 		$(".file_explorer")
 		  .append(Handlebars.compile($('#template-files').html())(data))
 		  .trigger('loaded.template');
@@ -237,22 +235,24 @@
 	  });
 	}
 
-	function getThumbnail(file) {
+	function getLink(file) {
 	  return new Promise((resolve, reject) => {
 		if (!file || !file.match(/.*\.[jpg|jpeg|png|gif]/)) return reject(null);
-		$.post('/files/thumbnail', { path: file }).then(data => resolve(data)).catch(err => resolve(null));
+		$.post('/files/link', { path: file }).then(data => resolve(data.url)).catch(err => resolve(null));
 	  });
 	}
 
 	function showImage(path) {
-	  var img = new Image();
-	  img.onload = function () {
-        $("#lightbox").modal('show');
-      };
-      $(img).addClass("img-responsive");
-      $("#lightbox").find(".modal-header h4").html(path);
-      $("#lightbox").find(".modal-body").html("").append(img);
-      img.src = "/s" + path;
+	  getLink(path).then(url => {
+        var img = new Image();
+        img.onload = function () {
+          $("#lightbox").modal('show');
+        };
+        $(img).addClass("img-responsive");
+        $("#lightbox").find(".modal-header h4").html(path);
+        $("#lightbox").find(".modal-body").html("").append(img);
+        img.src = url;
+	  });
     }
 
 	// Bind to StateChange Event

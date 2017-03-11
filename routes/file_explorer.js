@@ -5,6 +5,7 @@ module.exports = (function() {
   const router = require('express').Router();
   const multer = require('multer');
   const mime = require('mime');
+  const storage = require('../lib/storage');
 
   // File Explorer
   router.get('/explorer*', function (req, res) {
@@ -13,23 +14,15 @@ module.exports = (function() {
 
   // Get files
   router.post('/files', function (req, res) {
-    storage.readdir
-    return res.json([]);
-    files.getFiles(req.body)
+    storage.readdir(req.body.path)
       .then(files => res.json(files))
       .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
   });
 
   // Get file thumbnail
-  router.post('/files/thumbnail', function (req, res) {
-    return res.sendStatus(404);
+  router.post('/files/link', function (req, res) {
     if (mime.lookup(req.body.path).indexOf('image') !== 0) return res.sendStatus(404);
-
-    files.getThumbnail(req.body)
-      .then(files => res.json(files))
-      .catch(err => {
-        res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" });
-      });
+    return res.json({ url: 'https://storage.googleapis.com/' + process.env.BUCKET + req.body.path });
   });
 
   // Delete file / folder
