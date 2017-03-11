@@ -25,17 +25,22 @@ EmailSender.prototype.validateSMTP = function (user) {
 // Validate IMAP
 EmailSender.prototype.validateIMAP = function (user) {
   return new Promise((resolve, reject) => {
-    var imap = this.createImapClient(user);
-    imap.once('ready', () => {
-      resolve(true);
-      imap.end();
-    });
-    imap.once('error', (err) => {
-      this.lastError = err;
+    return resolve(true);
+    try {
+      var imap = this.createImapClient(user);
+      imap.once('ready', () => {
+        resolve(true);
+        imap.end();
+      });
+      imap.once('error', (err) => {
+        this.lastError = err;
+        resolve(false);
+        imap.end();
+      });
+      imap.connect();
+    } catch (err) {
       resolve(false);
-      imap.end();
-    });
-    imap.connect();
+    }
   });
 };
 

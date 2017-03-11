@@ -9,15 +9,67 @@ global.winston = new (require('winston').Logger)({
 winston.level = process.env.LOG_LEVEL || 'info';
 winston.log('info', 'Winston Log: ready', winston.level);
 
-// Config manager
-var configManager = require('./lib/config');
-global.options = {};
+global.sender = require('./lib/sender');
+global.settings = require('./lib/settings');
+global.templateStore = require('./lib/templates');
 
-configManager.ready().then((data) => {
-  global.options = data;
-  // Set Global Storage driver
-  global.storage = require('./lib/storage');
-  // Global files
-  global.files = require('./lib/files');
-  require('./app');
-}).catch(err => winston.log('error', err));
+// Set redis options
+global.redisConfig = {
+  host: process.env.REDIS_HOST || "localhost",
+  port: process.env.REDIS_PORT || 6379,
+  pass: process.env.REDIS_PASS || undefined
+};
+
+// Requirements
+const express = require('express');
+const app = express();
+
+// Session middleware
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+app.set('trust proxy', 1); // trust first proxy
+app.use(session({
+  secret: 'keyboard cat',
+  store: new RedisStore(redisConfig),
+  resave: false,
+  saveUninitialized: true,
+  maxAge: 86400000,
+  cookie: {
+    httpOnly: false
+  }
+}));
+
+// Set body parser
+const bodyParser = require('body-parser');
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true, limit: '4MB' })); // support encoded bodies
+
+// Set Static Public folder
+app.use(express.static('public'));
+
+// Page Template Engine
+const expressHandlebars  = require('express-handlebars');
+app.engine('tpl', expressHandlebars({defaultLayout: 'default'}));
+app.set('views', './views');
+app.set('view engine', 'tpl');
+
+// Child Routes
+app.use('/', require('./routes/auth'));
+app.use('/', require('./routes/index'));
+app.use('/', require('./routes/file_explorer'));
+app.use('/', require('./routes/job'));
+app.use('/', require('./routes/settings'));
+app.use('/', require('./routes/template'));
+app.use('/', require('./routes/ajax'));
+app.use('/', require('./routes/send'));
+
+// Build queue & Start server
+sender.getReady().then(() => {
+  sender.getQueues().forEach(q => winston.log('info', "Queue `" + q.name + "` ready for command."));
+  app.listen(process.env.PORT || 3000, function () {
+    winston.log('info', "Server started on port " + (process.env.PORT || 3000).toString());
+  });
+}).catch(err => console.error('Redis connection error', err));
+
+// Export App
+module.exports = app;
