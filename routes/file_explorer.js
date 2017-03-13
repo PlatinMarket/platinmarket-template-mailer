@@ -4,7 +4,6 @@
 module.exports = (function() {
   const router = require('express').Router();
   const multer = require('multer');
-  const mime = require('mime');
   const storage = require('../lib/storage');
 
   // File Explorer
@@ -21,8 +20,9 @@ module.exports = (function() {
 
   // Get file thumbnail
   router.post('/files/link', function (req, res) {
-    if (mime.lookup(req.body.path).indexOf('image') !== 0) return res.sendStatus(404);
-    return res.json({ url: 'https://storage.googleapis.com/' + process.env.BUCKET + req.body.path });
+    return storage.makePublic(req.body.path)
+      .then(() => res.json({ url: storage.publicUrl(req.body.path) }))
+      .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
   });
 
   // Delete file / folder

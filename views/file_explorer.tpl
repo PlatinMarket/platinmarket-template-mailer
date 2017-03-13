@@ -26,6 +26,8 @@
 	</div>
 </div>
 
+<link rel="stylesheet" type="text/css" href="/assets/font-awesome/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="/css/mime.css" />
 <script src="/assets/speakingurl/speakingurl.min.js"></script>
 <script src="/assets/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
 <script src="/assets/blueimp-file-upload/js/jquery.fileupload.js"></script>
@@ -55,7 +57,9 @@
 					<button data-role="copy-image" class="btn btn-sm btn-default">Kopyala</button>
 					<button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default btn-delete">Sil</button>
 				</div>
-				<div class="img-container" data-src="\{{path}}"></div>
+				<div class="file-container">
+					<i class="fa mime ext-\{{ext}}" style="font-size: 64px;"></i>
+				</div>
 				<div class="file-name" title="\{{name}}">\{{name}}</div>
 				<div class="file-attr ellipsis"></div>
 			</div>
@@ -138,17 +142,6 @@
 		// Set base folder for file upload
 		$('#fileupload').fileupload({ formData: { path: $(".file_explorer").data('path') } });
 
-		// Thumbnails
-		$('[data-src]').each(function () {
-		  var file = $(this).attr("data-src");
-		  $(this).removeAttr("data-src");
-		  getLink(file).then(url => {
-			$(this).css('background-image', "url(" + url + ")");
-		  }).catch(err => {
-			$(this).parent(".file").addClass("no-thumb");
-		  });
-		});
-
 		// Folder click
 		$('.folder').off('click').on('click', (e) => {
 		  if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
@@ -159,7 +152,7 @@
 		// File click
 		$('.file').off('click').on('click', (e) => {
 		  if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
-		  showImage($(e.currentTarget).attr('data-path'));
+		  showFile($(e.currentTarget).attr('data-path'));
 		  $("body").triggerHandler('selected.file', $(e.currentTarget).attr('data-path'));
 		});
 
@@ -222,7 +215,7 @@
 	  loading(true);
 	  path = path || '';
 	  $.post('/files', { path }).then(files => {
-		data = files.filter(e => e.kind == 'storage#object').map(e => { return { id: e.id, name: e.name, type: e['contentType'], path: e.path, isFile: e['contentType'] != 'application/x-directory', isFolder: e['contentType'] == 'application/x-directory', mime: e['contentType'] }; });
+		data = files.filter(e => e.kind == 'storage#object').map(e => { return { id: e.id, name: e.name, type: e['contentType'], ext: e.name.replace(/.*\.(\w+)/, '$1'), path: e.path, isFile: e['contentType'] != 'application/x-directory', isFolder: e['contentType'] == 'application/x-directory', mime: e['contentType'] }; });
 		data = { entries: data };
 		$(".file_explorer").data('path', path);
 		$(".file_explorer").find('button.load_more').remove();
@@ -236,22 +229,22 @@
 	}
 
 	function getLink(file) {
-	  return new Promise((resolve, reject) => {
-		if (!file || !file.match(/.*\.[jpg|jpeg|png|gif]/)) return reject(null);
-		$.post('/files/link', { path: file }).then(data => resolve(data.url)).catch(err => resolve(null));
+	  return new Promise((resolve) => {
+      $.post('/files/link', { path: file }).then(data => resolve(data.url)).catch(err => resolve(null));
 	  });
 	}
 
-	function showImage(path) {
+	function showFile(path) {
 	  getLink(path).then(url => {
-        var img = new Image();
-        img.onload = function () {
-          $("#lightbox").modal('show');
-        };
-        $(img).addClass("img-responsive");
-        $("#lightbox").find(".modal-header h4").html(path);
-        $("#lightbox").find(".modal-body").html("").append(img);
-        img.src = url;
+      var container = document.createElement('div');
+      $(container).addClass('embed-responsive embed-responsive-4by3');
+      var iframe = document.createElement('iframe');
+      $(iframe).addClass('embed-responsive-item');
+      $(container).append(iframe);
+      $("#lightbox").find(".modal-header h4").html(path);
+      $("#lightbox").find(".modal-body").html("").append(container);
+      $("#lightbox").modal('show');
+      iframe.src = url;
 	  });
     }
 

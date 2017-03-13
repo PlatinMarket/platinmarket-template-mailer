@@ -1,0 +1,171 @@
+/*
+FILE FORMAT ICONS
+by Greg Schoppe (http://gschoppe.com)
+USAGE: include FontAwesome on page, as shown on http://fontawesome.io
+       then include this css file, and target links by adding the link-icon
+       class.  Note: try to avoid or manually label links to websites, as that
+       detection code is necessarily janky. when in doubt, just end all external
+       links with a trailing slash (/), a query string (?), or a link target (#)
+*/
+i.mime:before {
+  content: "\f016"; /* generic file icon */
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translate(0, 0);
+  width: 20px;
+  text-align: right;
+  margin-right: 10px;
+}
+i.mime.ext-txt:before,
+i.mime.link-text:before {
+  content: "\f0f6"; /*Text*/
+}
+i.mime.ext-pdf:before,
+i.mime.link-pdf:before {
+  content: "\f1c1"; /*PDF*/
+}
+i.mime.ext-doc:before,
+i.mime.ext-docx:before,
+i.mime.link-word:before {
+  content: "\f1c2"; /*Word*/
+}
+i.mime.ext-xls:before,
+i.mime.ext-xlsx:before,
+i.mime.link-excel:before {
+  content: "\f1c3"; /*Excel*/
+}
+i.mime.ext-ppt:before,
+i.mime.ext-pptx:before,
+i.mime.link-powerpoint:before {
+  content: "\f1c4"; /*Powerpoint*/
+}
+i.mime.ext-gif:before,
+i.mime.ext-jpg:before,
+i.mime.ext-jpeg:before,
+i.mime.ext-png:before,
+i.mime.ext-bmp:before,
+i.mime.ext-tif:before,
+i.mime.link-image:before {
+  content: "\f1c5"; /*Image*/
+}
+i.mime.ext-zip:before,
+i.mime.ext-zipx:before,
+i.mime.ext-rar:before,
+i.mime.ext-tar:before,
+i.mime.ext-gz:before,
+i.mime.ext-dmg:before,
+i.mime.ext-iso:before,
+i.mime.link-archive:before {
+  content: "\f1c6"; /*Archive*/
+}
+i.mime.ext-wav:before,
+i.mime.ext-mp3:before,
+i.mime.ext-fla:before,
+i.mime.ext-flac:before,
+i.mime.ext-ra:before,
+i.mime.ext-rma:before,
+i.mime.ext-aif:before,
+i.mime.ext-aiff:before,
+i.mime.ext-aa:before,
+i.mime.ext-aac:before,
+i.mime.ext-aax:before,
+i.mime.ext-ac3:before,
+i.mime.ext-au:before,
+i.mime.ext-ogg:before,
+i.mime.ext-avr:before,
+i.mime.ext-3ga:before,
+i.mime.ext-flac:before,
+i.mime.ext-mid:before,
+i.mime.ext-midi:before,
+i.mime.ext-m4a:before,
+i.mime.ext-mp4a:before,
+i.mime.ext-amz:before,
+i.mime.ext-mka:before,
+i.mime.ext-asx:before,
+i.mime.ext-pcm:before,
+i.mime.ext-m3u:before,
+i.mime.ext-wma:before,
+i.mime.ext-xwma:before,
+i.mime.link-audio:before {
+  content: "\f1c7"; /*Audio*/
+}
+i.mime.ext-avi:before,
+i.mime.ext-mpg:before,
+i.mime.ext-mp4:before,
+i.mime.ext-mkv:before,
+i.mime.ext-mov:before,
+i.mime.ext-wmv:before,
+i.mime.ext-vp6:before,
+i.mime.ext-264:before,
+i.mime.ext-vid:before,
+i.mime.ext-rv:before,
+i.mime.ext-webm:before,
+i.mime.ext-swf:before,
+i.mime.ext-h264:before,
+i.mime.ext-flv:before,
+i.mime.ext-mk3d:before,
+i.mime.ext-gifv:before,
+i.mime.ext-oggv:before,
+i.mime.ext-3gp:before,
+i.mime.ext-m4v:before,
+i.mime.ext-movie:before,
+i.mime.ext-divx:before,
+i.mime.link-video:before {
+  content: "\f1c8"; /*Video*/
+}
+i.mime.ext-css:before,
+i.mime.ext-js:before,
+i.mime.ext-py:before,
+i.mime.ext-git:before,
+i.mime.ext-py:before,
+i.mime.ext-cpp:before,
+i.mime.ext-h:before,
+i.mime.ext-ini:before,
+i.mime.ext-config:before,
+i.mime.link-code:before {
+  content: "\f1c9"; /*code*/
+}
+i.mime.ext-exe:before,
+i.mime.ext-jar:before,
+i.mime.ext-dll:before,
+i.mime.ext-bat:before,
+i.mime.ext-pl:before,
+i.mime.ext-scr:before,
+i.mime.ext-msi:before,
+i.mime.ext-app:before,
+i.mime.ext-deb:before,
+i.mime.ext-apk:before,
+i.mime.ext-jar:before,
+i.mime.ext-vb:before,
+i.mime.ext-prg:before,
+i.mime.ext-sh:before,
+i.mime.link-exe:before {
+  content: "\f085"; /*Executable*/
+}
+
+i.mime.ext-com:before,
+i.mime.ext-net:before,
+i.mime.ext-org:before,
+i.mime.ext-edu:before,
+i.mime.ext-gov:before,
+i.mime.ext-mil:before,
+i.mime.ext-:before,
+i.mime.ext-html:before,
+i.mime.ext-htm:before,
+i.mime.ext-xhtml:before,
+i.mime.ext-jhtml:before,
+i.mime.ext-php:before,
+i.mime.ext-php3:before,
+i.mime.ext-php4:before,
+i.mime.ext-php5:before,
+i.mime.ext-phtml:before,
+i.mime.ext-asp:before,
+i.mime.ext-aspx:before,
+i.mime.ext-cfm:before,
+i.mime.link:before {
+  content: "\f0c1"; /*link*/
+}

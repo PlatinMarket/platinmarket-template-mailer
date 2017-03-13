@@ -28,7 +28,8 @@
     "blueimp-file-upload": "^9.16.0",
     "clipboard": "^1.6.0",
     "filesize": "^3.5.4",
-    "history.js": "^1.8.0"
+    "history.js": "^1.8.0",
+    "font-awesome": "fontawesome#^4.7.0"
   },
   "resolutions": {
     "jquery": "^3.1.1",
