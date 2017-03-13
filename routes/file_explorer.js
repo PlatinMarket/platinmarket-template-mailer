@@ -20,25 +20,21 @@ module.exports = (function() {
 
   // Get file thumbnail
   router.post('/files/link', function (req, res) {
-    return storage.makePublic(req.body.path)
-      .then(() => res.json({ url: storage.publicUrl(req.body.path) }))
+    return storage.publicUrl(req.body.path)
+      .then((url) => res.json({ url }))
       .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
   });
 
   // Delete file / folder
   router.post('/files/delete', function (req, res) {
-    return res.sendStatus(404);
-    files.deleteFile(req.body)
-      .then(r => res.json(r))
+    storage.rmdir(req.body.path)
+      .then(a => res.json(a))
       .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
   });
 
   // Create folder
   router.post('/files/create_folder', function (req, res) {
-    return res.sendStatus(404);
-    files.createFolder(req.body)
-      .then(r => res.json(r))
-      .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
+    storage.mkdir(req.body.path).then(d => res.json(d)).catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
   });
 
   // File upload

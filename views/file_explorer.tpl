@@ -49,55 +49,56 @@
 	\{{/each}}
 </script>
 <script id="template-files" type="text/x-handlebars-template">
-	\{{#each entries}}
+  \{{#each dirs}}
+  <div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">
+    <div class="thumbnail folder element" data-path="\{{path}}">
+      <div class="option-buttons btn-group option-buttons">
+        <button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default btn-delete">Sil</button>
+      </div>
+      <div class="folder-container">
+        <span class="glyphicon glyphicon-folder-close" style="font-size: 64px;"></span>
+      </div>
+      <div class="file-name" title="\{{title}}">\{{title}}</div>
+      <div class="file-attr"><div class="file-size">dir</div></div>
+    </div>
+  </div>
+  \{{/each}}
+	\{{#each files}}
 		<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">
-		\{{#if isFile}}
-			<div class="thumbnail file element" data-path="\{{path}}">
+			<div class="thumbnail file element" data-path="\{{name}}">
 				<div class="option-buttons btn-group option-buttons">
 					<button data-role="copy-image" class="btn btn-sm btn-default">Kopyala</button>
-					<button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default btn-delete">Sil</button>
+					<button data-role="delete" data-path="\{{name}}" class="btn btn-sm btn-default btn-delete">Sil</button>
 				</div>
 				<div class="file-container">
 					<i class="fa mime ext-\{{ext}}" style="font-size: 64px;"></i>
 				</div>
-				<div class="file-name" title="\{{name}}">\{{name}}</div>
+				<div class="file-name" title="\{{title}}">\{{title}}</div>
 				<div class="file-attr ellipsis"></div>
 			</div>
-		\{{/if}}
-		\{{#if isFolder}}
-			<div class="thumbnail folder element" data-path="\{{path}}">
-				<div class="option-buttons btn-group option-buttons">
-					<button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default btn-delete">Sil</button>
-				</div>
-				<div class="folder-container">
-					<span class="glyphicon glyphicon-folder-close" style="font-size: 64px;"></span>
-				</div>
-				<div class="file-name" title="\{{name}}">\{{name}}</div>
-				<div class="file-attr"><div class="file-size">dir</div></div>
-			</div>
-		\{{/if}}
 		</div>
-	\{{else}}
-		<div class="col-xs-12 text-muted" style="margin-bottom:15px;">Dosya bulunamadı</div>
 	\{{/each}}
-	\{{#if has_more}}
+  \{{#unless has_object}}
+    <div class="col-xs-12 text-muted" style="margin-bottom:15px;">Dosya bulunamadı</div>
+  \{{/unless}}
+	\{{#if token}}
 		<div class="col-xs-12 text-center">
-			<button data-role="load_more" data-cursor="\{{cursor}}" class="btn btn-link">Daha fazla yükle</button>
+			<button data-role="load_more" data-cursor="\{{token}}" class="btn btn-link">Daha fazla yükle</button>
 		</div>
 	\{{/if}}
 </script>
 <script>
 
   $('#fileupload').fileupload({
-	dataType: 'json',
-	done: function (e, res) {
-	  if (res.result && res.result instanceof Array) {
-		var data = { entries: res.result.map(e => { return { id: e.id, name: e.name, type: 'file', path: e.path_lower, isFile: true, isFolder: false }; }) };
-		var _file = Handlebars.compile($('#template-files').html())(data);
-		if ($(".file_explorer .element").length == 0) $(".file_explorer").html("");
-		$(".file_explorer").append(_file).triggerHandler('loaded.template');
-	  }
-	}
+    dataType: 'json',
+    done: function (e, res) {
+      if (res.result && res.result instanceof Array) {
+      var data = { entries: res.result.map(e => { return { id: e.id, name: e.name, type: 'file', path: e.path_lower, isFile: true, isFolder: false }; }) };
+      var _file = Handlebars.compile($('#template-files').html())(data);
+      if ($(".file_explorer .element").length == 0) $(".file_explorer").html("");
+      $(".file_explorer").append(_file).triggerHandler('loaded.template');
+      }
+    }
   });
 
 	function loading(state) {
@@ -114,16 +115,16 @@
 	  folder = getSlug(folder.trim().slice(0, 30), "_");
 	  if (!folder) return;
 	  if (folder.trim().indexOf('/') > -1) return;
-	  folder = $(".file_explorer").data('path') + '/' + folder;
+	  folder = $(".file_explorer").data('path') + folder + '/';
 	  $.post('/files/create_folder', { path: folder }).then(folder => {
-		var data = { entries: [{ id: folder.id, name: folder.name, type: 'folder', path: folder.path_lower, isFile: false, isFolder: true }] };
-		var _folder = Handlebars.compile($('#template-files').html())(data);
-		if ($(".file_explorer .element").length == 0) $(".file_explorer").html("");
-		if ($(".file_explorer .folder").length > 0)
-		  $(".file_explorer .folder").last().parent().after(_folder);
-		else
-		  $(".file_explorer").append(_folder);
-		$(".file_explorer").triggerHandler('loaded.template');
+	    var dirs = [ { title: folder.name.split(/\/+/).filter(p => p && p != "").pop(), path: folder.name } ];
+      var _folder = Handlebars.compile($('#template-files').html())({ files: [], dirs, token: null, has_object: true});
+      if ($(".file_explorer .element").length == 0) $(".file_explorer").html("");
+      if ($(".file_explorer .folder").length > 0)
+        $(".file_explorer .folder").last().parent().after(_folder);
+      else
+        $(".file_explorer").append(_folder);
+      $(".file_explorer").triggerHandler('loaded.template');
 	  }).catch(err => console.error(err));
 	});
 
@@ -139,93 +140,94 @@
 		//console.log('loaded');
 	  })
 	  .on('loaded.template', (e) => {
-		// Set base folder for file upload
-		$('#fileupload').fileupload({ formData: { path: $(".file_explorer").data('path') } });
+      // Set base folder for file upload
+      $('#fileupload').fileupload({ formData: { path: $(".file_explorer").data('path') } });
 
-		// Folder click
-		$('.folder').off('click').on('click', (e) => {
-		  if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
-		  var folder = $(e.currentTarget).attr('data-path');
-          History.pushState({ folder }, "Dosyalar: " + folder, '/explorer' + (folder ? folder.split(/\/+/).map(f => encodeURIComponent(f)).join('/') : ""));
-		});
+      // Folder click
+      $('.folder').off('click').on('click', (e) => {
+        if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
+        var folder = $(e.currentTarget).attr('data-path');
+            History.pushState({ folder }, "Dosyalar: " + folder, '/explorer/' + (folder ? folder.split(/\/+/).map(f => encodeURIComponent(f)).join('/') : ""));
+      });
 
-		// File click
-		$('.file').off('click').on('click', (e) => {
-		  if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
-		  showFile($(e.currentTarget).attr('data-path'));
-		  $("body").triggerHandler('selected.file', $(e.currentTarget).attr('data-path'));
-		});
+      // File click
+      $('.file').off('click').on('click', (e) => {
+        if ($(e.target).attr('data-role') || $(e.target).closest('button').attr('data-role')) return e.preventDefault();
+        showFile($(e.currentTarget).attr('data-path'));
+        $("body").triggerHandler('selected.file', $(e.currentTarget).attr('data-path'));
+      });
 
-		// Breadcrumb
-		var paths = $(".file_explorer").data('path') ? $(".file_explorer").data('path').trim().slice(1).split('/') : [];
-		paths = paths.map((p, i, items) => {
-		  return { name: p, link: items.slice(0, i + 1).join('/') };
-		});
-		$(".breadcrumb").html(Handlebars.compile($('#template-path-breadcrumb').html())({ paths }));
-		$("[data-path-href]").off('click').on('click', function (e) {
-		  e.preventDefault();
-          var folder = $(this).attr('data-path-href');
-          History.pushState({ folder }, "Dosyalar: " + folder, '/explorer' + (folder ? folder.split(/\/+/).map(f => encodeURIComponent(f)).join('/') : ""));
-		});
+      // Breadcrumb
+      var paths = $(".file_explorer").data('path') ? $(".file_explorer").data('path').trim().split('/').filter(p => p && p != "") : [];
+      paths = paths.map((p, i, items) => {
+        return { name: p, link: items.slice(0, i + 1).join('/') };
+      });
+      $(".breadcrumb").html(Handlebars.compile($('#template-path-breadcrumb').html())({ paths }));
+      $("[data-path-href]").off('click').on('click', function (e) {
+        e.preventDefault();
+            var folder = $(this).attr('data-path-href');
+            History.pushState({ folder }, "Dosyalar: " + folder, '/explorer' + (folder ? folder.split(/\/+/).map(f => encodeURIComponent(f)).join('/') : ""));
+      });
 
-		// Load more
-		$("[data-role='load_more']").off('click').on('click', function (e) {
-		  e.preventDefault();
-		  getFiles(null, $(this).attr('data-cursor'));
-		});
+      // Load more
+      $("[data-role='load_more']").off('click').on('click', function (e) {
+        e.preventDefault();
+        getFiles(null, $(this).attr('data-cursor'));
+      });
 
-		// Delete file
-		$("[data-role='delete']").off('click').on('click', function (e) {
-		  e.preventDefault();
-		  if (!confirm('Emin misiniz?')) return;
-		  $(this).prop('disabled', true);
-		  $.post('/files/delete', { path: $(this).attr('data-path') }).then(r => {
-			$("div[data-path='" + r.path_lower + "']").parent().remove();
-			if (!$(".file_explorer .element").length) $(".file_explorer").html(Handlebars.compile($('#template-files').html())({}));
-		  }).catch(err => console.error(err));
-		});
+      // Delete file
+      $("[data-role='delete']").off('click').on('click', function (e) {
+        e.preventDefault();
+        if (!confirm('Emin misiniz?')) return;
+        $(this).prop('disabled', true);
+        var path = $(this).attr('data-path');
+        $.post('/files/delete', { path }).then(r => {
+          $("div[data-path='" + path + "']").parent().remove();
+          if (!$(".file_explorer .element").length) $(".file_explorer").html(Handlebars.compile($('#template-files').html())({ files: [], dirs: [], token: null, has_object: false}));
+        }).catch(err => console.error(err));
+      });
 
-		// Copy image files to clipboard
-		if (clipboard) clipboard.destroy();
-		$("[data-role='copy-image']").tooltip('destroy');
-		clipboard = new Clipboard("[data-role='copy-image']", {
-		  text: function (trigger) {
-            $(trigger).tooltip({ title: 'Kopyalandı', trigger: 'manual', placement: 'bottom', container: 'body' }).tooltip('show');
-            setTimeout(() => {
-              $(trigger).tooltip('hide');
-			}, 700);
-		    return $(trigger).closest("[data-path]").attr('data-path');
-          }
-		});
+      // Copy image files to clipboard
+      if (clipboard) clipboard.destroy();
+      $("[data-role='copy-image']").tooltip('destroy');
+      clipboard = new Clipboard("[data-role='copy-image']", {
+        text: function (trigger) {
+              $(trigger).tooltip({ title: 'Kopyalandı', trigger: 'manual', placement: 'bottom', container: 'body' }).tooltip('show');
+              setTimeout(() => {
+                $(trigger).tooltip('hide');
+        }, 700);
+          return $(trigger).closest("[data-path]").attr('data-path');
+            }
+      });
 
-		// Set Loaded true
-		loading(false);
+      // Set Loaded true
+      loading(false);
 	  })
 	  .on('change.path', (e, path) => {
-		if (e.defaultPrevented) return;
-		getFiles(path);
+      if (e.defaultPrevented) return;
+      getFiles(path);
 	  });
 
 	function refresh() {
 	  getFiles($(".file_explorer").data('path'));
 	}
 
-	function getFiles(path, cursor) {
+	function getFiles(path, token) {
 	  if (loading()) return;
-	  loading(true);
-	  path = path || '';
-	  $.post('/files', { path }).then(files => {
-		data = files.filter(e => e.kind == 'storage#object').map(e => { return { id: e.id, name: e.name, type: e['contentType'], ext: e.name.replace(/.*\.(\w+)/, '$1'), path: e.path, isFile: e['contentType'] != 'application/x-directory', isFolder: e['contentType'] == 'application/x-directory', mime: e['contentType'] }; });
-		data = { entries: data };
-		$(".file_explorer").data('path', path);
-		$(".file_explorer").find('button.load_more').remove();
-		$(".file_explorer").html("");
-		$(".file_explorer")
-		  .append(Handlebars.compile($('#template-files').html())(data))
-		  .trigger('loaded.template');
-	  }).catch(err => {
-		window.location = '/explorer';
-	  });
+      loading(true);
+      path = path || '';
+      $.post('/files', Object.assign(token ? { token } : { path })).then(result => {
+        var _files = result.files.map(f => Object.assign(f, { ext: f.name.replace(/.*\.(\w+)/, '$1'), title: f.name.split(/\/+/).filter(p => p && p != "").pop()}));
+        var _dirs = (result.dirs || []).map(d => Object.assign({ title: d.split(/\/+/).filter(p => p && p != "").pop(), path: d }));
+        var _token = result.token || null;
+        if (!token) $(".file_explorer").html("");
+        $(".file_explorer").data('path', path);
+        $(".file_explorer")
+          .append(Handlebars.compile($('#template-files').html())({ files: _files, dirs: _dirs, token: _token, has_object: !!(_dirs || _files.length > 0) }))
+          .trigger('loaded.template');
+      }).catch(err => {
+        //window.location = '/explorer';
+      });
 	}
 
 	function getLink(file) {
@@ -235,7 +237,7 @@
 	}
 
 	function showFile(path) {
-	  getLink(path).then(url => {
+	  getLink(path).then((url) => {
       var container = document.createElement('div');
       $(container).addClass('embed-responsive embed-responsive-4by3');
       var iframe = document.createElement('iframe');
@@ -251,7 +253,7 @@
 	// Bind to StateChange Event
 	History.Adapter.bind(window, 'statechange', function() {
 		var _state = History.getState();
-      	$(".file_explorer").triggerHandler('change.path', _state.data.folder);
+    $(".file_explorer").triggerHandler('change.path', _state.data.folder);
 	});
 
 	var _state = History.getState();
