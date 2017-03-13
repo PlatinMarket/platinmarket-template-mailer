@@ -223,10 +223,10 @@
         if (!token) $(".file_explorer").html("");
         $(".file_explorer").data('path', path);
         $(".file_explorer")
-          .append(Handlebars.compile($('#template-files').html())({ files: _files, dirs: _dirs, token: _token, has_object: !!(_dirs || _files.length > 0) }))
+          .append(Handlebars.compile($('#template-files').html())({ files: _files, dirs: _dirs, token: _token, has_object: !((!_dirs || _dirs.length == 0) && (!_files || _files.length == 0)) }))
           .trigger('loaded.template');
       }).catch(err => {
-        //window.location = '/explorer';
+        console.error(err);
       });
 	}
 

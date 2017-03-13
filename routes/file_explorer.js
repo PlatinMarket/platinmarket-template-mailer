@@ -3,7 +3,7 @@
 // Routes
 module.exports = (function() {
   const router = require('express').Router();
-  const multer = require('multer');
+  const Multer = require('multer');
   const storage = require('../lib/storage');
 
   // File Explorer
@@ -38,15 +38,16 @@ module.exports = (function() {
   });
 
   // File upload
-  var upload = multer({ dest: 'uploads/' });
-  router.post('/files/upload', upload.array('files[]'), function (req, res) {
-    Promise.all(req.files.map(f => files.uploadFile({ path: req.body.path + '/' + f.originalname, contents: fs.readFileSync(f.path)}))).then(r => {
-      if (req.files && req.files instanceof Array) req.files.forEach(f => fs.unlinkSync(f.path));
-      res.json(r);
-    }).catch(err => {
-      if (req.files && req.files instanceof Array) req.files.forEach(f => fs.unlinkSync(f.path));
-      res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" });
-    });
+  var multer = Multer({
+    storage: Multer.MemoryStorage,
+    limits: {
+      fileSize: parseInt((process.env.MAX_UPLOAD || 10), 10) * 1024 * 1024
+    }
+  });
+  router.post('/files/upload', multer.array('files[]'), function (req, res) {
+    return storage.directUpload(req, req.body.path)
+      .then(files => res.json(files))
+      .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
   });
 
   return router;
