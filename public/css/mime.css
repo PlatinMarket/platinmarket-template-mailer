@@ -16,9 +16,6 @@ i.mime:before {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transform: translate(0, 0);
-  width: 20px;
-  text-align: right;
-  margin-right: 10px;
 }
 i.mime.ext-txt:before,
 i.mime.link-text:before {

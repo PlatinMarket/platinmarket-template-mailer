@@ -56,7 +56,7 @@
         <button data-role="delete" data-path="\{{path}}" class="btn btn-sm btn-default btn-delete">Sil</button>
       </div>
       <div class="folder-container">
-        <span class="glyphicon glyphicon-folder-close" style="font-size: 64px;"></span>
+        <i class="fa fa-folder" style="font-size: 64px;"></i>
       </div>
       <div class="file-name" title="\{{title}}">\{{title}}</div>
       <div class="file-attr"><div class="file-size">dir</div></div>
@@ -74,7 +74,7 @@
 					<i class="fa mime ext-\{{ext}}" style="font-size: 64px;"></i>
 				</div>
 				<div class="file-name" title="\{{title}}">\{{title}}</div>
-				<div class="file-attr ellipsis"></div>
+				<div class="file-attr ellipsis"><div class="file-size">\{{size}}</div></div>
 			</div>
 		</div>
 	\{{/each}}
@@ -93,7 +93,7 @@
     dataType: 'json',
     done: function (e, res) {
       if (res.result && res.result instanceof Array) {
-        var _files = res.result.map(f => Object.assign(f, { ext: f.name.replace(/.*\.(\w+)/, '$1'), title: f.name.split(/\/+/).filter(p => p && p != "").pop()}));
+        var _files = res.result.map(f => Object.assign(f, { size: filesize(f.size), ext: f.name.replace(/.*\.(\w+)/, '$1'), title: f.name.split(/\/+/).filter(p => p && p != "").pop()}));
         if ($(".file_explorer .element").length == 0) $(".file_explorer").html("");
         var _file = Handlebars.compile($('#template-files').html())({ files: _files, has_object: true });
         $(".file_explorer").append(_file).triggerHandler('loaded.template');
@@ -217,7 +217,7 @@
       loading(true);
       path = path || '';
       $.post('/files', Object.assign(token ? { token } : { path })).then(result => {
-        var _files = result.files.map(f => Object.assign(f, { ext: f.name.replace(/.*\.(\w+)/, '$1'), title: f.name.split(/\/+/).filter(p => p && p != "").pop()}));
+        var _files = result.files.map(f => Object.assign(f, { size: filesize(f.size), ext: f.name.replace(/.*\.(\w+)/, '$1'), title: f.name.split(/\/+/).filter(p => p && p != "").pop()}));
         var _dirs = (result.dirs || []).map(d => Object.assign({ title: d.split(/\/+/).filter(p => p && p != "").pop(), path: d }));
         var _token = result.token || null;
         if (!token) $(".file_explorer").html("");
