@@ -9,9 +9,11 @@ global.winston = new (require('winston').Logger)({
 winston.level = process.env.LOG_LEVEL || 'info';
 winston.log('info', 'Winston Log: ready', winston.level);
 
+// Global lib
 global.sender = require('./lib/sender');
 global.settings = require('./lib/settings');
 global.templateStore = require('./lib/templates');
+global.storage = require('./lib/storage');
 
 // Set redis options
 global.redisConfig = {

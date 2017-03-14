@@ -4,7 +4,6 @@
 module.exports = (function() {
   const router = require('express').Router();
   const Multer = require('multer');
-  const storage = require('../lib/storage');
 
   // File Explorer
   router.get('/explorer*', function (req, res) {
@@ -41,12 +40,12 @@ module.exports = (function() {
   var multer = Multer({
     storage: Multer.MemoryStorage,
     limits: {
-      fileSize: parseInt((process.env.MAX_UPLOAD || 10), 10) * 1024 * 1024
+      fileSize: parseInt((process.env.MAX_UPLOAD || 10), 10) * 1024 * 1024 // 10 MB for standart
     }
   });
   router.post('/files/upload', multer.array('files[]'), function (req, res) {
     return storage.directUpload(req, req.body.path)
-      .then(files => res.json(files))
+      .then(files => Promise.all(files.map(f => storage.makePublic(f.name))).then(() => res.json(files)))
       .catch(err => res.status(500).json({message: err.error || err.message || "Bilinmeyen bir hata", success: "error" }));
   });
 

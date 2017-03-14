@@ -93,10 +93,10 @@
     dataType: 'json',
     done: function (e, res) {
       if (res.result && res.result instanceof Array) {
-      var data = { entries: res.result.map(e => { return { id: e.id, name: e.name, type: 'file', path: e.path_lower, isFile: true, isFolder: false }; }) };
-      var _file = Handlebars.compile($('#template-files').html())(data);
-      if ($(".file_explorer .element").length == 0) $(".file_explorer").html("");
-      $(".file_explorer").append(_file).triggerHandler('loaded.template');
+        var _files = res.result.map(f => Object.assign(f, { ext: f.name.replace(/.*\.(\w+)/, '$1'), title: f.name.split(/\/+/).filter(p => p && p != "").pop()}));
+        if ($(".file_explorer .element").length == 0) $(".file_explorer").html("");
+        var _file = Handlebars.compile($('#template-files').html())({ files: _files, has_object: true });
+        $(".file_explorer").append(_file).triggerHandler('loaded.template');
       }
     }
   });

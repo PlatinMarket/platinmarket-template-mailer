@@ -57,8 +57,8 @@ module.exports = (function() {
     if (!params || !params.from || !params.to) return res.sendStatus(400);
     settings.users()
       .then(users => {
-        var defaultUser = (options && options.user && options.user && options.user.default  ? options.user.default : {});
-        req.user = params.from == defaultUser.email ? Object.assign(defaultUser, { isDefault: true }) : (users.find(u => u.email == params.from) || req.user);
+        const defaultSmtpUser = settings.defaultSmtpUser();
+        req.user = params.from == defaultSmtpUser.email ? Object.assign(defaultSmtpUser, { isDefault: true }) : (users.find(u => u.email == params.from) || req.user);
         if (!req.user) {
           winston.log('warn', 'SEND_PROCESS_2_0', new Error('User ' + params.from + ' not found'));
           res.sendStatus(400);

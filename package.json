@@ -25,6 +25,7 @@
     "express": "^4.14.1",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.1",
+    "fast-crc32c": "^1.0.4",
     "google-cloud": "^0.47.0",
     "handlebars": "^4.0.6",
     "imap": "^0.8.19",

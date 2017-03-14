@@ -1,5 +1,6 @@
-var nodemailer = require('nodemailer');
-var Imap = require('imap');
+const nodemailer = require('nodemailer');
+const Imap = require('imap');
+const Transform = require('stream').Transform;
 
 // Default inheritance
 function EmailSender() {}
@@ -85,8 +86,8 @@ EmailSender.prototype.getBoxes = function (user) {
 };
 
 // Create transport opject
-EmailSender.prototype.createTransport = function (user) {
-  var _user = user && user.smtp && user.smtp.host ? user : options.user.default;
+EmailSender.prototype.createTransport = function (user, sendCallback) {
+  var _user = user && user.smtp && user.smtp.host ? user : settings.defaultSmtpUser();
   var config = {
     host: _user.smtp.host,
     port: _user.smtp.port || 2525,
@@ -94,7 +95,8 @@ EmailSender.prototype.createTransport = function (user) {
     auth: _user.smtp.auth,
     connectionTimeout: 5000,
     socketTimeout: 5000,
-    greetingTimeout: 5000
+    greetingTimeout: 5000,
+    send: sendCallback
   };
   return nodemailer.createTransport(config);
 };
@@ -111,20 +113,20 @@ EmailSender.prototype.createImapClient = function (user) {
   return new Imap(config);
 };
 
-EmailSender.prototype.saveAttachments = function (message) {
-  return Promise.all(message.attachments.map(a => files.downloadFile({ path: a.path }).then(p => Promise.resolve(Object.assign(a, { path: p })))));
+EmailSender.prototype.getAttachments = function (attachments) {
+  return attachments ? attachments.map(a => ({filename: a.filename, cid: a.cid, content: storage.createReadStream(a.path)})) : undefined;
 };
 
 // Create message object
 EmailSender.prototype.createMessage = function (message, user, to) {
-  return this.saveAttachments(message).then(attachments => Promise.resolve({
+  return Promise.resolve({
     from: user.email,
     to: to,
     subject: message.subject,
     html: message.html,
     text: message.text || null,
-    attachments: (attachments instanceof Array && attachments.length > 0) ? attachments : undefined
-  }));
+    attachments: this.getAttachments(message.attachments)
+  });
 };
 
 // Handle mail send
@@ -133,20 +135,22 @@ EmailSender.prototype.process = function(message, from, to) {
     // Check user properties
     if (!from.smtp || !from.smtp.auth) return reject(new Error("Bad config for user `" + from.email + "`"));
 
-    // For Debug
-    // return setTimeout(() => resolve("success"), 5000);
-
-    // Set Transport
-    var transport = this.createTransport(from);
-
     // Get raw message
-    var rawMessage = null;
-    transport.use('stream', (mail, cb) => {
-      mail.message.build((err, data) => {
-        if (err) return cb(err);
-        rawMessage = data.toString();
-        cb();
-      });
+    const transformer = new Transform();
+    const rawMessage = [];
+    transformer._transform = function(chunk, encoding, done) {
+      rawMessage.push(chunk);
+      this.push(chunk);
+      done();
+    };
+
+    // Create transporter
+    const transport = this.createTransport(from);
+
+    // Listen on stream
+    transport.use('stream', (mail, callback) => {
+      mail.message.transform(transformer);
+      callback();
     });
 
     // Send message
@@ -154,7 +158,7 @@ EmailSender.prototype.process = function(message, from, to) {
       .then(m => transport.sendMail(m))
       .then((result) => {
         transport.close();
-        return this.saveSentFolder(rawMessage, from).then(() => resolve(result));
+        return this.saveSentFolder(Buffer.concat(rawMessage), from).then(() => resolve(result));
       })
       .catch(err => {
         transport.close();
