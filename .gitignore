@@ -12,3 +12,5 @@ uploads/*
 cache/*
 
 npm-debug.log
+
+migrate.js
