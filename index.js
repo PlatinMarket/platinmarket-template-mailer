@@ -1,15 +1,7 @@
-// Globals
-global.winston = new (require('winston').Logger)({
-  transports: [
-    new (require('winston').transports.Console)({'timestamp':true})
-  ]
-});
-
-// Set Log Level
-winston.level = process.env.LOG_LEVEL || 'info';
-winston.log('info', 'Winston Log: ready', winston.level);
+'use strict';
 
 // Global lib
+global.logging = require('./lib/logging');
 global.sender = require('./lib/sender');
 global.settings = require('./lib/settings');
 global.templateStore = require('./lib/templates');
@@ -26,6 +18,9 @@ global.redisConfig = {
 const express = require('express');
 const app = express();
 app.set('etag', false);
+
+// Add the request logger before anything else so that it can accurately log requests.
+app.use(logging.requestLogger);
 
 // Session middleware
 const session = require('express-session');
@@ -74,11 +69,14 @@ app.use('/', require('./routes/template'));
 app.use('/', require('./routes/ajax'));
 app.use('/', require('./routes/send'));
 
+// Error Logging
+app.use(logging.errorLogger);
+
 // Build queue & Start server
 sender.getReady().then(() => {
-  sender.getQueues().forEach(q => winston.log('info', "Queue `" + q.name + "` ready for command."));
+  sender.getQueues().forEach(q => logging.log('info', "Queue `" + q.name + "` ready for command."));
   app.listen(process.env.PORT || 3000, function () {
-    winston.log('info', "Server started on port " + (process.env.PORT || 3000).toString());
+    logging.log('info', "Server started on port " + (process.env.PORT || 3000).toString());
   });
 }).catch(err => console.error('Redis connection error', err));
 
