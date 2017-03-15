@@ -25,6 +25,7 @@ global.redisConfig = {
 // Requirements
 const express = require('express');
 const app = express();
+app.set('etag', false);
 
 // Session middleware
 const session = require('express-session');
@@ -47,7 +48,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true, limit: '4MB' })); // support encoded bodies
 
 // Set Static Public folder
-app.use(express.static('public'));
+app.use(express.static('public', { etag: true }));
 
 // Page Template Engine
 const Handlebars = require('handlebars');
