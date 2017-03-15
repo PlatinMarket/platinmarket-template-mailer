@@ -1,0 +1,16 @@
+indexes:
+
+- kind: Template
+  properties:
+  - name: name
+  - name: department
+
+- kind: Template
+  properties:
+  - name: name
+  - name: group
+
+- kind: Template
+  properties:
+  - name: name
+  - name: description
