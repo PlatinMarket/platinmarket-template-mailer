@@ -73,7 +73,7 @@
   });
 
   // Render settings
-  $.get('/settings/app.json').then(settings => Promise.resolve(Handlebars.compile($('#template-settings').html())({ settings: settings.sort((a, b) => ([a.name, b.name]).sort().indexOf(a.name) - 1) })))
+  $.get('/settings/app.json').then(settings => Promise.resolve(Handlebars.compile($('#template-settings').html())({ settings })))
     .then((template) => Promise.resolve($(template).hide()))
     .then((template) => $("[data-zone='app-settings']").html(template) && Promise.resolve(template))
     .then((template) => template.show('fast').promise().done(() => Promise.resolve()))
@@ -96,8 +96,6 @@
     $("form[name='settings']").find('textarea, input').attr('disabled', 'disabled');
     const settings = $("form[name='settings']").find('textarea, input').toArray().map(e => ({ name: $(e).attr('name'), value: parseValue(e) }));
     $.ajax({ type: 'POST', url: '/settings/app', data: JSON.stringify(settings), dataType: 'json', contentType: 'application/json'})
-      .then(settings => Promise.resolve(Handlebars.compile($('#template-settings').html())({ settings: settings.sort((a, b) => ([a.name, b.name]).sort().indexOf(a.name)) })))
-      .then(template => $("[data-zone='app-settings']").html(template) && Promise.resolve(template))
       .then(() => Promise.resolve($(e.target).button('reset') && $("form[name='settings']").find('textarea, input').removeAttr('disabled')))
       .then(() => toastr.success("Kaydedildi"))
       .catch((err) => {
