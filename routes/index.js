@@ -9,7 +9,7 @@ module.exports = (function() {
     templateStore.list()
       .then(templates => {
         templates = templates.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1);
-        const departments = Array.prototype.concat.apply([], templates.map(t => t.department)).filter((d,i,l) => l.indexOf(d) == i).map(d => ({ name: d, templates: templates.filter(t => t.department && t.department.indexOf(d) > -1) }));
+        const departments = Array.prototype.concat.apply([], templates.map(t => t.department.filter(d => req.user.isSuper || d == req.user.department))).filter((d,i,l) => l.indexOf(d) == i).map(d => ({ name: d, templates: templates.filter(t => t.department && t.department.indexOf(d) > -1) }));
         const groups = Array.prototype.concat.apply([], templates.map(t => t.group)).filter((d,i,l) => l.indexOf(d) == i).map(d => ({ name: d, templates: templates.filter(t => t.group && t.group.indexOf(d) > -1).map(t => t.name) }));
         res.render('index', { user: req.user, departments, groups });
       })

@@ -24,7 +24,7 @@ module.exports = (function() {
   // Get template list
   router.get('/template', (req, res) => {
     templateStore.list(['name', 'department'])
-      .then(list => res.json(list.filter((l,i) => (req.user.isSuper || l.department.indexOf(req.user.department) > -1) && list.findIndex(_l => _l.name == l.name) == i).map(l => Object.assign({id: l.id, name: l.name}))))
+      .then(list => res.json(list.filter(l => req.user.isSuper || l.department.indexOf(req.user.department) > -1).map(l => Object.assign({id: l.id, name: l.name})).filter((t,i,l) => l.findIndex(_t => _t.name == t.name) == i)))
       .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
   });
 
