@@ -1,4 +1,3 @@
-<link rel="stylesheet" type="text/css" href="/assets/font-awesome/css/font-awesome.min.css?t={{asset_cache}}" />
 <div class="container">
   <h3 class="page-header">Uygulama Ayarları</h3>
   <div class="row">
