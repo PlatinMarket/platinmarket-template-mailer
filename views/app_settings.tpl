@@ -1,11 +1,14 @@
 <div class="container">
-  <h3 class="page-header">Uygulama Ayarları</h3>
+  <h3 class="page-header">
+	  Uygulama ayarları
+	  <button type="submit" class="btn btn-success pull-right" data-loading-text="Lütfen bekleyin..." disabled="disabled">Kaydet</button>
+	  <div class="clearfix"></div>
+  </h3>
   <div class="row">
     <div class="col col-xs-12">
       <form data-zone="app-settings" name="settings">
         <p align="center"><i class="fa fa-refresh fa-3x fa-spin"></i> <h4 align="center">Lütfen bekleyin</h4></p>
       </form>
-      <button type="submit" class="btn btn-success" data-loading-text="Lütfen bekleyin..." disabled="disabled">Kaydet</button>
     </div>
   </div>
 </div>
