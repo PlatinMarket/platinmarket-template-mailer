@@ -25,7 +25,7 @@
 	</div>
 	<p class="text-center"><b>T</b>emplate <b class="text-primary">Ma</b>nage , <b class="text-info">R</b>ender , <b class="text-succcess">S</b>end<br/>platform by PlatinBOX</p>
 </div>
-<script type="application/javascript" src="/assets/jquery/dist/jquery.min.js"></script>
+<script type="application/javascript" src="/assets/jquery/dist/jquery.min.js?t={{asset_cache}}"></script>
 <script>
     $("input[name='email']").val(localStorage.getItem('lastEmail') || "");
     $("form")

@@ -48,15 +48,21 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true, limit: '4MB' })); // support encoded bodies
 
 // Set Static Public folder
-app.use(express.static('public', { etag: true }));
+app.use(express.static('public', { etag: false, lastModified: false, maxage: '7d'}));
 
 // Page Template Engine
 const Handlebars = require('handlebars');
+Handlebars.registerHelper('asset_cache', (options) => settings.getDefaults().find(s => s.name == 'asset_cache').value);
 Handlebars.registerHelper('raw-helper', (options) => options.fn());
 const expressHandlebars  = require('express-handlebars');
 app.engine('tpl', expressHandlebars({ defaultLayout: 'default', handlebars: Handlebars }));
 app.set('views', './views');
 app.set('view engine', 'tpl');
+
+// Production Settings
+if (process.env.NODE_ENV === "production") {
+  app.enable('view cache'); // Enable view cache
+}
 
 // Child Routes
 app.use('/', require('./routes/auth'));

@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="/assets/font-awesome/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="/assets/font-awesome/css/font-awesome.min.css?t={{asset_cache}}" />
 <div class="container">
   <h3 class="page-header">Uygulama Ayarları</h3>
   <div class="row">
@@ -47,7 +47,7 @@
   {{{{/raw-helper}}}}
 </script>
 
-<script src="/assets/speakingurl/speakingurl.min.js"></script>
+<script src="/assets/speakingurl/speakingurl.min.js?t={{asset_cache}}"></script>
 <script>
   // Switch case helper
   Handlebars.registerHelper("switch", function(value, options) {
@@ -71,7 +71,7 @@
   });
 
   // Render settings
-  $.get('/settings/app.json').then(settings => Promise.resolve(Handlebars.compile($('#template-settings').html())({ settings: settings.sort((a, b) => ([a.name, b.name]).sort().indexOf(a.name)) })))
+  $.get('/settings/app.json').then(settings => Promise.resolve(Handlebars.compile($('#template-settings').html())({ settings: settings.sort((a, b) => ([a.name, b.name]).sort().indexOf(a.name) - 1) })))
     .then((template) => Promise.resolve($(template).hide()))
     .then((template) => $("[data-zone='app-settings']").html(template) && Promise.resolve(template))
     .then((template) => template.show('fast').promise().done(() => Promise.resolve()))

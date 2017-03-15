@@ -128,8 +128,8 @@
 		</div>
 	</div>
 </div>
-<link rel="stylesheet" type="text/css" href="/assets/bootstrap-select/dist/css/bootstrap-select.min.css" />
-<script type="application/javascript" src="/assets/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/bootstrap-select/dist/css/bootstrap-select.min.css?t={{asset_cache}}" />
+<script type="application/javascript" src="/assets/bootstrap-select/dist/js/bootstrap-select.min.js?t={{asset_cache}}"></script>
 <script>
 	function generateData(endpoint) {
       var data = {};

@@ -26,14 +26,14 @@
 	</div>
 </div>
 
-<link rel="stylesheet" type="text/css" href="/assets/font-awesome/css/font-awesome.min.css" />
-<link rel="stylesheet" type="text/css" href="/css/mime.css" />
-<script src="/assets/speakingurl/speakingurl.min.js"></script>
-<script src="/assets/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
-<script src="/assets/blueimp-file-upload/js/jquery.fileupload.js"></script>
-<script src="/assets/clipboard/dist/clipboard.min.js"></script>
-<script src="/assets/filesize/lib/filesize.min.js"></script>
-<script src="/assets/history.js/scripts/bundled/html5/jquery.history.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/font-awesome/css/font-awesome.min.css?t={{asset_cache}}" />
+<link rel="stylesheet" type="text/css" href="/css/mime.css?t={{asset_cache}}" />
+<script src="/assets/speakingurl/speakingurl.min.js?t={{asset_cache}}"></script>
+<script src="/assets/blueimp-file-upload/js/vendor/jquery.ui.widget.js?t={{asset_cache}}"></script>
+<script src="/assets/blueimp-file-upload/js/jquery.fileupload.js?t={{asset_cache}}"></script>
+<script src="/assets/clipboard/dist/clipboard.min.js?t={{asset_cache}}"></script>
+<script src="/assets/filesize/lib/filesize.min.js?t={{asset_cache}}"></script>
+<script src="/assets/history.js/scripts/bundled/html5/jquery.history.js?t={{asset_cache}}"></script>
 <script id="template-path-breadcrumb" type="text/x-handlebars-template">
 	\{{#if paths}}
 		<li><a data-path-href="" style="cursor:pointer">Root</a></li>

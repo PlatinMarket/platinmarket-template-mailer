@@ -80,11 +80,11 @@
 	</div>
 </div>
 
-<link rel="stylesheet" type="text/css" href="/assets/bootstrap-select/dist/css/bootstrap-select.min.css" />
-<script type="application/javascript" src="/assets/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-<script type="application/javascript" src="/assets/moment/min/moment.min.js"></script>
-<script type="application/javascript" src="/assets/moment/locale/tr.js"></script>
-<script type="application/javascript" src="/assets/lodash/dist/lodash.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/bootstrap-select/dist/css/bootstrap-select.min.css?t={{asset_cache}}" />
+<script type="application/javascript" src="/assets/bootstrap-select/dist/js/bootstrap-select.min.js?t={{asset_cache}}"></script>
+<script type="application/javascript" src="/assets/moment/min/moment.min.js?t={{asset_cache}}"></script>
+<script type="application/javascript" src="/assets/moment/locale/tr.js?t={{asset_cache}}"></script>
+<script type="application/javascript" src="/assets/lodash/dist/lodash.min.js?t={{asset_cache}}"></script>
 <script id="template-job-item" type="text/x-handlebars-template">
 	\{{#each jobs}}
 		<a class="list-group-item" href="javascript:showJobDetails(\{{id}});" data-job-id="\{{id}}">
