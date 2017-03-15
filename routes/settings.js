@@ -6,6 +6,21 @@ module.exports = (function() {
   const ajv = new require('ajv')({ allErrors: true });
   const emailSender = require('../sender/email');
 
+  /*
+  User Variables
+   */
+  // Variable settings page
+  router.get('/settings/variable', (req, res) => res.render('variable_settings', { user: req.user }));
+
+  // Returns variables as json
+  router.get('/settings/variable.json', (req, res) => settings.getVariables(req.user.email).then(vars => res.json(vars)));
+
+  // Save variables
+  router.post('/settings/variable', (req, res) => settings.setVariables(req.user.email, req.body).then(() => res.sendStatus(200)).catch(err => res.status(500).json({message: err.message, stack: err.stack})));
+
+  /*
+   App Settings
+   */
   // App settings page
   router.get('/settings/app', (req, res) => res.render('app_settings', { user: req.user }));
 
