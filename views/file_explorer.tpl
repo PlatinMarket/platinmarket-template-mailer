@@ -26,7 +26,6 @@
 	</div>
 </div>
 
-<link rel="stylesheet" type="text/css" href="/assets/font-awesome/css/font-awesome.min.css?t={{asset_cache}}" />
 <link rel="stylesheet" type="text/css" href="/css/mime.css?t={{asset_cache}}" />
 <script src="/assets/speakingurl/speakingurl.min.js?t={{asset_cache}}"></script>
 <script src="/assets/blueimp-file-upload/js/vendor/jquery.ui.widget.js?t={{asset_cache}}"></script>
