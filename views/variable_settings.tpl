@@ -1,5 +1,5 @@
 <div class="container">
-  <h3 class="page-header">Uygulama Ayarları</h3>
+  <h3 class="page-header">Değişken Ayarları</h3>
   <div class="row">
     <div class="col col-xs-12">
       <form data-zone="variable-settings" name="settings">
