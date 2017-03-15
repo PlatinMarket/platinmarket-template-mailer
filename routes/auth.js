@@ -21,7 +21,8 @@ const superUserPages = [
   '/template/:id/edit',
   '/template/create',
   '/template/:id/delete',
-  '/settings/publish'
+  '/settings/app',
+  '/settings/app.json'
 ];
 
 // Routes

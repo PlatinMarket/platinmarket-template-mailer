@@ -56,7 +56,10 @@
 					  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.name}} <span class="caret"></span></a>
 					  <ul class="dropdown-menu">
 						<li><a href="/settings">Ayarlar</a></li>
-						<li class="divider"></li>
+            {{#if user.isSuper}}
+              <li><a href="/settings/app">Uygulama ayarları</a></li>
+            {{/if}}
+            <li class="divider"></li>
 						<li><a href="/logout">Oturumu kapat</a></li>
 					  </ul>
 					</li>

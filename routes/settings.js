@@ -6,9 +6,17 @@ module.exports = (function() {
   const ajv = new require('ajv')({ allErrors: true });
   const emailSender = require('../sender/email');
 
-  router.get('/settings', (req, res) => {
-    res.render('settings', { user: req.user });
-  });
+  // App settings page
+  router.get('/settings/app', (req, res) => res.render('app_settings', { user: req.user }));
+
+  // Save settings
+  router.post('/settings/app', (req, res) => settings.saveDefaults(req.body).then(() => res.json(settings.getDefaults())).catch(err => res.status(500).json({message: err.message, stack: err.stack})));
+
+  // Returns app settings as json
+  router.get('/settings/app.json', (req, res) => res.json(settings.getDefaults()));
+
+  // User settings page
+  router.get('/settings', (req, res) => res.render('settings', { user: req.user }));
 
   // SMTP Validation
   router.post('/settings/smtp', (req, res, next) => {

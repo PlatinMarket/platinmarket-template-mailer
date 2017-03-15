@@ -50,8 +50,10 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '4MB' })); // support enc
 app.use(express.static('public'));
 
 // Page Template Engine
+const Handlebars = require('handlebars');
+Handlebars.registerHelper('raw-helper', (options) => options.fn());
 const expressHandlebars  = require('express-handlebars');
-app.engine('tpl', expressHandlebars({defaultLayout: 'default'}));
+app.engine('tpl', expressHandlebars({ defaultLayout: 'default', handlebars: Handlebars }));
 app.set('views', './views');
 app.set('view engine', 'tpl');
 
