@@ -90,7 +90,7 @@
 		<a class="list-group-item" href="javascript:showJobDetails(\{{id}});" data-job-id="\{{id}}">
 			<h4 class="list-group-item-heading">
 				<b>\{{subject}}</b>
-				<small class="text-muted pull-right">\{{fromNow timestamp}}</small>
+				<small class="text-muted pull-right"><i class="fa fa-clock-o"></i> \{{fromNow timestamp}}</small>
 			</h4>
 			<p class="list-group-item-text">\{{from}} &rarr; \{{to}}</p>
 		</a>
