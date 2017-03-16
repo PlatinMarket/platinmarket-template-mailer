@@ -41,7 +41,7 @@
 			{{/if}}
 		</div>
 		<div class="col-lg-9">
-			<div class="department-zone">
+			<div class="sents-zone">
 				<h3 class="page-header">Gönderiler</h3>
 				<div class="row">
 					<div class="col-lg-2">
@@ -72,7 +72,7 @@
 					</div>
 					<div class="clearfix"></div>
 				</div>
-				<div class="panel panel-default table-responsive">
+				<div class="panel panel-default">
 					<div class="list-group sents" data-zone="jobs"></div>
 				</div>
 			</div>
@@ -89,8 +89,10 @@
 	\{{#each jobs}}
 		<a class="list-group-item" href="javascript:showJobDetails(\{{id}});" data-job-id="\{{id}}">
 			<h4 class="list-group-item-heading">
-				<b>\{{subject}}</b>
-				<small class="text-muted pull-right"><i class="fa fa-clock-o"></i> \{{fromNow timestamp}}</small>
+				<div class="row">
+					<div class="col col-xs-8 sent-subject">\{{subject}}</div>
+					<small class="col col-xs-4 text-muted text-right"><i class="fa fa-clock-o"></i> \{{fromNow timestamp}}</small>
+				</div>
 			</h4>
 			<p class="list-group-item-text">\{{from}} &rarr; \{{to}}</p>
 		</a>
