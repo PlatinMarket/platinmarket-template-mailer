@@ -74,9 +74,9 @@ app.use(logging.errorLogger);
 
 // Build queue & Start server
 sender.getReady().then(() => {
-  sender.getQueues().forEach(q => logging.log('info', "Queue `" + q.name + "` ready for command."));
+  sender.getQueues().forEach(q => logging.log('verbose', "Queue `" + q.name + "` ready for command."));
   app.listen(process.env.PORT || 3000, function () {
-    logging.log('info', "Server started on port " + (process.env.PORT || 3000).toString());
+    logging.log('verbose', "Server started on port " + (process.env.PORT || 3000).toString());
   });
 }).catch(err => console.error('Redis connection error', err));
 

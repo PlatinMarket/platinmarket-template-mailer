@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/datastore": "^0.7.0",
+    "@google-cloud/logging": "^0.8.0",
     "@google-cloud/storage": "^0.7.0",
     "ajv": "^4.11.2",
     "body-parser": "^1.16.0",
@@ -39,6 +40,7 @@
     "request": "^2.79.0",
     "speakingurl": "^11.0.0",
     "winston": "^2.3.1",
+    "winston-googlecloud": "^0.1.8",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
