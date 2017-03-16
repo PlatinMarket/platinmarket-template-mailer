@@ -16,5 +16,10 @@ module.exports = (function() {
       .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
   });
 
+  // Health Check
+  router.get('/healthz', (req, res) => {
+    res.sendStatus(200);
+  });
+
   return router;
 })();
