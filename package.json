@@ -16,6 +16,7 @@
   "dependencies": {
     "@google-cloud/datastore": "^2.0.0",
     "@google-cloud/logging": "^4.1.0",
+    "@google-cloud/logging-winston": "^0.10.2",
     "@google-cloud/storage": "^2.3.1",
     "ajv": "^6.5.5",
     "body-parser": "^1.18.3",
@@ -41,7 +42,6 @@
     "request": "^2.88.0",
     "speakingurl": "^14.0.1",
     "winston": "^3.1.0",
-    "winston-googlecloud": "^0.1.8",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
