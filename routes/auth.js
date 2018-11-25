@@ -1,5 +1,7 @@
 'use strict';
 
+const jwt = require('jsonwebtoken');
+
 // Login Require Pages
 const loginRequirePages = [
   '/send',
@@ -30,8 +32,32 @@ module.exports = (function() {
   const router = require('express').Router();
   const auth = require('../lib/auth');
 
+  // Check JWT token
+  router.use(loginRequirePages, function (req, res, next) {
+    // Check if JWT_SECRET setted
+    if (!process.env.JWT_SECRET) return next();
+    // Check has token
+    if (!req.headers.authorization || req.headers.authorization.split(' ')[0] !== 'Bearer' || req.headers.authorization.split(' ').length < 1) return next();
+    // Get token
+    const token = req.headers.authorization.split(' ')[1];
+    // verify token
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) return res.status(401).json({ message: "Geçersiz token" });
+      const email = (decoded || {}).email;
+      if (!email) return res.status(401).json({ message: "Geçersiz payload" });
+      settings.get({ email })
+        .then(user => {
+          req.user = user;
+          next();
+        })
+        .catch(err => res.status(500).json({ message: err.message, stack: err.stack }));
+    });
+  });
+
   // Login require pages
   router.use(loginRequirePages, function (req, res, next) {
+    // Check already auth
+    if (req.user) return next();
     var sess = req.session;
     if (sess && sess.user) {
       settings.get(sess.user)
@@ -42,7 +68,7 @@ module.exports = (function() {
         .catch(err => res.status(500).json({message: err.message, stack: err.stack}));
       return;
     }
-    if (req.get('X-Requested-With') == 'XMLHttpRequest') return res.status(401).json({message: "Giriş yapınız" });
+    if (req.get('X-Requested-With') === 'XMLHttpRequest' || req.get('Accept') === 'application/json') return res.status(401).json({message: "Giriş yapınız" });
     res.redirect('/login');
   });
 
