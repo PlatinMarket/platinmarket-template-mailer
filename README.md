@@ -42,6 +42,7 @@ PROJECT_ID=GOOGLE_PROJECT_ID BUCKET=GOOGLE_STORAGE_BUCKET REDIS_PORT=REDIS_PORT 
 * `LOG_LEVEL` optional Log level default `info` (uses Google Cloud Logging in production mode)
 * `NODE_ENV` optional Production flag default null (use `production` for production)
 * `PORT` optional Server port default `3000`
+* `JWT_SECRET` optional jwt secret for validation api call
 
 ### Using
 navigate to [http://localhost:3000](http://localhost:3000) 
