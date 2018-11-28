@@ -110,6 +110,14 @@ module.exports = (function() {
       .catch(err => res.status(404).send(err ? err.message : 'Template `' + req.params.id + '` not found'));
   });
 
+  // Show template details
+  router.get('/template/:id', function (req, res) {
+    delete(req.template.subject);
+    delete(req.template.html);
+    delete(req.template.text);
+    res.json(req.template);
+  });
+
   // Template edit
   router.get('/template/:id/edit', (req, res) => {
     res.render('edit_create_template', { user: req.user, currentTemplate: req.template });

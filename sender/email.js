@@ -118,19 +118,24 @@ EmailSender.prototype.getAttachments = function (attachments) {
 };
 
 // Create message object
-EmailSender.prototype.createMessage = function (message, user, to) {
+EmailSender.prototype.createMessage = function (message, user, to, guid) {
   return Promise.resolve({
     from: user.email,
     to: to,
     subject: message.subject,
     html: message.html,
     text: message.text || null,
-    attachments: this.getAttachments(message.attachments)
+    attachments: this.getAttachments(message.attachments),
+    headers: {
+      'X-MC-Metadata': JSON.stringify({ hizmet_id: guid }),
+      'X-MC-Autotext': !message.text ? 'on' : 'off',
+      'X-MC-GoogleAnalytics': 'www.platinmarket.com, platinmarket.com, demo.platinmarket.com'
+    },
   });
 };
 
 // Handle mail send
-EmailSender.prototype.process = function(message, from, to) {
+EmailSender.prototype.process = function(message, from, to, guid) {
   return new Promise((resolve, reject) => {
     // Check user properties
     if (!from.smtp || !from.smtp.auth) return reject(new Error("Bad config for user `" + from.email + "`"));
@@ -154,7 +159,7 @@ EmailSender.prototype.process = function(message, from, to) {
     });
 
     // Send message
-    this.createMessage(message, from, to)
+    this.createMessage(message, from, to, guid)
       .then(m => transport.sendMail(m))
       .then((result) => {
         transport.close();
