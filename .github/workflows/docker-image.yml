@@ -1,8 +1,7 @@
 name: Build Docker Image & Deploy Scaleway
 
 on:
-  push:
-    branches: [ release ]
+  workflow_dispatch:
 
 jobs:
 
