@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout
-    - uses: actions/checkout@v2
+      uses: actions/checkout@v2
     
     # Login Scaleway
     - run : docker login rg.fr-par.scw.cloud/platinmarket -u nologin -p ${{ secrets.SCALEWAY_SECRET }}
@@ -23,4 +23,4 @@ jobs:
     
     # Push Scaleway
     - name: Push image to scaeway image repository
-    - run : docker push rg.fr-par.scw.cloud/platinmarket/ubuntu:$GITHUB_SHA
+      run : docker push rg.fr-par.scw.cloud/platinmarket/ubuntu:$GITHUB_SHA
