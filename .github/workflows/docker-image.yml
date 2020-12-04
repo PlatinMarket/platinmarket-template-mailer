@@ -1,18 +1,26 @@
-name: Docker Image CI
+name: Build Docker Image & Deploy Scaleway
 
 on:
   push:
     branches: [ release ]
-  pull_request:
-    branches: [ release ]
 
 jobs:
 
-  build:
-
+  build-deploy:
+    name: Build & Deploy to Scaleway Container Registry
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout
     - uses: actions/checkout@v2
+    
+    # Login Scaleway
+    - run : docker login rg.fr-par.scw.cloud/platinmarket -u nologin -p ${{ secrets.SCALEWAY_SECRET }}
+
+    # Build Docker image
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run : docker build . --file Dockerfile --tag "rg.fr-par.scw.cloud/platinmarket/platinmarket-mailer:$GITHUB_SHA" --build-arg GITHUB_SHA="$GITHUB_SHA" --build-arg GITHUB_REF="$GITHUB_REF"
+    
+    # Push Scaleway
+    - name: Push image to scaeway image repository
+    - run : docker push rg.fr-par.scw.cloud/platinmarket/ubuntu:$GITHUB_SHA
