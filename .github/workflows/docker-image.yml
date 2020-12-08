@@ -22,4 +22,4 @@ jobs:
     
     # Push Scaleway
     - name: Push image to scaeway image repository
-      run : docker push rg.fr-par.scw.cloud/platinmarket/ubuntu:${{ github.sha }}
+      run : docker push rg.fr-par.scw.cloud/platinmarket/platinmarket-mailer:${{ github.sha }}
