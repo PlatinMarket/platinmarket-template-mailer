@@ -18,8 +18,8 @@ jobs:
 
     # Build Docker image
     - name: Build the Docker image
-      run : docker build . --file Dockerfile --tag "rg.fr-par.scw.cloud/platinmarket/platinmarket-mailer:$GITHUB_SHA" --build-arg GITHUB_SHA="$GITHUB_SHA" --build-arg GITHUB_REF="$GITHUB_REF"
+      run : docker build . --file Dockerfile --tag "rg.fr-par.scw.cloud/platinmarket/platinmarket-mailer:${{ github.sha }}" --build-arg GITHUB_SHA="${{ github.sha }}" --build-arg GITHUB_REF="${{ github.ref }}"
     
     # Push Scaleway
     - name: Push image to scaeway image repository
-      run : docker push rg.fr-par.scw.cloud/platinmarket/ubuntu:$GITHUB_SHA
+      run : docker push rg.fr-par.scw.cloud/platinmarket/ubuntu:${{ github.sha }}
