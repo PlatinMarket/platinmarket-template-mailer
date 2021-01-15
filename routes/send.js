@@ -15,7 +15,7 @@ module.exports = (function() {
       if (!jobs || jobs.length === 0) return next();
       res.json(jobs.map(j => Object.assign({id: parseInt(j.id, 10), guid: j.data.guid || undefined, subject: j.data.message.subject, to: j.data.to, type: j.data.message.template.type })));
     }).catch(err => {
-      winston.log('error', 'SEND_PROCESS_0', err);
+      loggin.log('error', 'SEND_PROCESS_0', err);
       res.status(500).send(err);
     });
   });
@@ -37,12 +37,12 @@ module.exports = (function() {
             next();
           })
           .catch(err => {
-            winston.log('error', 'SEND_PROCESS_1_0', err);
+            loggin.log('error', 'SEND_PROCESS_1_0', err);
             res.sendStatus(500);
           })
       })
       .catch(err => {
-        winston.log('error', 'SEND_PROCESS_1_1', err);
+        loggin.log('error', 'SEND_PROCESS_1_1', err);
         res.sendStatus(500);
       });
   });
@@ -60,13 +60,13 @@ module.exports = (function() {
         const defaultSmtpUser = settings.defaultSmtpUser();
         req.user = params.from === defaultSmtpUser.email ? Object.assign(defaultSmtpUser, { isDefault: true }) : (users.find(u => u.email == params.from) || req.user);
         if (!req.user) {
-          winston.log('warn', 'SEND_PROCESS_2_0', new Error('User ' + params.from + ' not found'));
+          loggin.log('warn', 'SEND_PROCESS_2_0', new Error('User ' + params.from + ' not found'));
           res.sendStatus(400);
         };
         next();
       })
       .catch(err => {
-        winston.log('error', 'SEND_PROCESS_2_1', err);
+        loggin.log('error', 'SEND_PROCESS_2_1', err);
         res.sendStatus(500);
       });
   });
@@ -79,7 +79,7 @@ module.exports = (function() {
         next();
       })
       .catch(err => {
-        winston.log('error', 'SEND_PROCESS_3', err);
+        loggin.log('error', 'SEND_PROCESS_3', err);
         res.sendStatus(500);
       });
   });
@@ -89,7 +89,7 @@ module.exports = (function() {
     Promise.all(req.templates.map(t => sender.addQueue(t.template.type, t, req.user, req.body.to, (req.body.guid || null)))).then((jobs) => {
       res.json(jobs.map(j => Object.assign({id: parseInt(j.id, 10), guid: j.data.guid || undefined, subject: j.data.message.subject, to: j.data.to, type: j.data.message.template.type })));
     }).catch(err => {
-      winston.log('error', 'SEND_PROCESS_4', err);
+      loggin.log('error', 'SEND_PROCESS_4', err);
       res.sendStatus(500);
     });
   });
