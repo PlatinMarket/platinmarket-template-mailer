@@ -3,7 +3,8 @@
 // Routes
 module.exports = (function() {
   const router = require('express').Router();
-  const ajv = new require('ajv')({ allErrors: true });
+  const Ajv = require('ajv');
+  const ajv = new Ajv({ allErrors: true, strict: false });
   const emailSender = require('../sender/email');
 
   /*

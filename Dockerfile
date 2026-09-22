@@ -1,10 +1,10 @@
-FROM node:8.9.0-alpine
+FROM node:20-alpine
 
 ENV NODE_OPTIONS=--use-openssl-ca
 
-# Install Git
+# Install build dependencies
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh libc6-compat python make g++ ca-certificates
+    apk add --no-cache bash git openssh-client libc6-compat python3 make g++ ca-certificates
 
 # Create app directory
 RUN mkdir -p /app/
@@ -13,8 +13,8 @@ RUN mkdir -p /app/
 COPY . /app/
 WORKDIR /app
 
-# Install depencies
-RUN npm --unsafe-perm install
+# Install dependencies
+RUN npm install --unsafe-perm
 
 EXPOSE 3000
 

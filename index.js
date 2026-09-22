@@ -24,16 +24,25 @@ app.use(logging.requestLogger);
 
 // Session middleware
 const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
+const { RedisStore } = require('connect-redis');
+const { createClient } = require('redis');
+
+const redisUrl = redisConfig.pass
+  ? `redis://:${encodeURIComponent(redisConfig.pass)}@${redisConfig.host}:${redisConfig.port}`
+  : `redis://${redisConfig.host}:${redisConfig.port}`;
+
+const redisClient = createClient({ url: redisUrl });
+redisClient.connect().catch(err => console.error('Redis Session Client Error', err));
+
 app.set('trust proxy', 1); // trust first proxy
 app.use(session({
   secret: 'keyboard cat',
-  store: new RedisStore(redisConfig),
+  store: new RedisStore({ client: redisClient }),
   resave: false,
   saveUninitialized: true,
-  maxAge: 86400000,
   cookie: {
-    httpOnly: false
+    httpOnly: false,
+    maxAge: 86400000
   }
 }));
 
@@ -43,14 +52,14 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true, limit: '4MB' })); // support encoded bodies
 
 // Set Static Public folder
-app.use(express.static('public', { etag: false, lastModified: false, maxage: '7d'}));
+app.use(express.static('public', { etag: false, lastModified: false, maxAge: '7d'}));
 
 // Page Template Engine
 const Handlebars = require('handlebars');
 Handlebars.registerHelper('asset_cache', (options) => settings.getDefaults().find(s => s.name == 'asset_cache').value);
 Handlebars.registerHelper('raw-helper', (options) => options.fn());
-const expressHandlebars  = require('express-handlebars');
-app.engine('tpl', expressHandlebars({ defaultLayout: 'default', handlebars: Handlebars }));
+const { engine: expressHandlebars } = require('express-handlebars');
+app.engine('tpl', expressHandlebars({ defaultLayout: 'default', extname: '.tpl', handlebars: Handlebars }));
 app.set('views', './views');
 app.set('view engine', 'tpl');
 
